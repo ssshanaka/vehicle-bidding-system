@@ -266,3 +266,165 @@ public class AuctionController {
         return "seller-auctions";
     }
 
+    // Seller: Create auction form
+    @GetMapping("/seller/auctions/create")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER') or hasRole('CUSTOMER_SERVICE') or hasRole('VEHICLE_INSPECTOR')")
+    public String sellerCreateAuctionForm(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username);
+
+        List<VehicleListing> availableListings = vehicleListingRepository.findAvailableForAuctionBySeller(user);
+
+        model.addAttribute("auctionForm", new Auction());
+        model.addAttribute("userListings", availableListings);
+        return "seller-create-auction";
+    }
+
+    // Seller: Submit auction for approval
+    @PostMapping("/seller/auctions/create")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER') or hasRole('CUSTOMER_SERVICE') or hasRole('VEHICLE_INSPECTOR')")
+    public String createAuction(@Valid @ModelAttribute("auctionForm") Auction auction, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "seller-create-auction";
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username);
+
+        Long listingId = auction.getListing().getListingId(); // Assuming listingId is set in form
+        VehicleListing listing = vehicleListingRepository.findById(listingId)
+                .orElseThrow(() -> new IllegalArgumentException("Vehicle Listing not found"));
+
+        if (!listing.getSeller().getUserId().equals(user.getUserId())) {
+            throw new IllegalArgumentException("Listing does not belong to you");
+        }
+
+        auction.setListing(listing);
+        auctionService.createAuction(auction);
+
+        return "redirect:/seller/auctions";
+    }
+
+    // Seller: Edit pending auction form
+    @GetMapping("/seller/auctions/edit/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER') or hasRole('CUSTOMER_SERVICE') or hasRole('VEHICLE_INSPECTOR')")
+    public String sellerEditAuctionForm(@PathVariable Long id, Model model) {
+        Auction auction = auctionService.getAuctionById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username);
+
+        if (!auction.getListing().getSeller().getUserId().equals(user.getUserId()) || !"Pending".equals(auction.getStatus().name())) {
+            throw new IllegalArgumentException("Cannot edit this auction");
+        }
+
+        model.addAttribute("auction", auction);
+        return "seller-edit-auction";
+    }
+
+    // Seller: Update pending auction
+    @PostMapping("/seller/auctions/edit/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER') or hasRole('CUSTOMER_SERVICE') or hasRole('VEHICLE_INSPECTOR')")
+    public String sellerEditAuction(@PathVariable Long id, @Valid @ModelAttribute Auction auction,
+                                    BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "seller-edit-auction";
+        }
+
+        Auction existing = auctionService.getAuctionById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username);
+
+        if (!existing.getListing().getSeller().getUserId().equals(user.getUserId()) || !"Pending".equals(existing.getStatus().name())) {
+            throw new IllegalArgumentException("Cannot edit this auction");
+        }
+
+        existing.setStartTime(auction.getStartTime());
+        existing.setEndTime(auction.getEndTime());
+        existing.setExtensionDuration(auction.getExtensionDuration());
+
+        auctionService.updateAuction(existing);
+        return "redirect:/seller/auctions";
+    }
+
+    // Admin View: Manage all auctions
+    @GetMapping("/admin/auctions")
+    @PreAuthorize("hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER')")
+    public String adminAuctions(Model model, @RequestParam(required = false) String search) {
+        List<Auction> auctions = (search == null)
+                ? auctionService.getAllAuctions()
+                : auctionService.getAllAuctions().stream()
+                .filter(a -> a.getListing().getMake().toLowerCase().contains(search.toLowerCase()) ||
+                        a.getListing().getModel().toLowerCase().contains(search.toLowerCase()) ||
+                        String.valueOf(a.getAuctionId()).contains(search))
+                .toList();
+
+        model.addAttribute("auctions", auctions);
+        return "admin-auctions";
+    }
+
+    // Admin: Edit auction form (for approval/scheduling)
+    @GetMapping("/admin/auctions/edit/{id}")
+    @PreAuthorize("hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER')")
+    public String editAuctionForm(@PathVariable Long id, Model model) {
+        Auction auction = auctionService.getAuctionById(id);
+        model.addAttribute("auction", auction);
+        return "admin-edit-auction";
+    }
+
+    // Admin: Update and approve auction
+    @PostMapping("/admin/auctions/edit/{id}")
+    @PreAuthorize("hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER')")
+    public String editAuction(@PathVariable Long id, @Valid @ModelAttribute Auction auction,
+                              BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin-edit-auction";
+        }
+
+        Auction existing = auctionService.getAuctionById(id);
+        existing.setStartTime(auction.getStartTime());
+        existing.setEndTime(auction.getEndTime());
+        existing.setExtensionDuration(auction.getExtensionDuration());
+        existing.setStatus(Auction.Status.ACTIVE); // Approve by setting to Active if scheduled
+
+        auctionService.updateAuction(existing);
+        return "redirect:/admin/auctions";
+    }
+
+    // Admin: Start pending auction now (force start)
+    @PostMapping("/admin/auctions/start/{id}")
+    @PreAuthorize("hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER')")
+    public String startAuction(@PathVariable Long id) {
+        auctionService.startAuction(id);
+        return "redirect:/admin/auctions";
+    }
+
+    // Admin: End auction manually
+    @PostMapping("/admin/auctions/end/{id}")
+    @PreAuthorize("hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER')")
+    public String endAuction(@PathVariable Long id) {
+        auctionService.endAuction(id);
+        return "redirect:/admin/auctions";
+    }
+
+    // View auction details (public access)
+    @GetMapping("/auctions/details/{id}")
+    public String viewAuction(@PathVariable Long id, Model model, Authentication auth) {
+        Auction auction = auctionService.getAuctionById(id);
+        model.addAttribute("auction", auction);
+        model.addAttribute("bids", bidRepository.findByAuctionAuctionIdOrderByAmountDesc(id));
+        model.addAttribute("timeRemaining", auctionService.getTimeRemaining(id));
+        model.addAttribute("isActive", auctionService.isAuctionActive(id));
+        
+        // Add user information if authenticated
+        if (auth != null && auth.isAuthenticated()) {
+            User user = userRepository.findByUsername(auth.getName());
+            model.addAttribute("user", user);
+        }
+        
+        return "auction-details";
+    }
+
