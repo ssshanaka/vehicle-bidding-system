@@ -428,3 +428,158 @@ public class AuctionController {
         return "auction-details";
     }
 
+    // API endpoint for auction timer data
+    @GetMapping("/api/auctions/{id}/timer")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getAuctionTimer(@PathVariable Long id) {
+        Auction auction = auctionService.getAuctionById(id);
+        Map<String, Object> response = new HashMap<>();
+        
+        response.put("auctionId", auction.getAuctionId());
+        response.put("status", auction.getStatus().name());
+        response.put("isActive", auctionService.isAuctionActive(id));
+        response.put("timeRemaining", auctionService.getTimeRemaining(id));
+        response.put("currentEndTime", auction.getCurrentEndTime());
+        response.put("extensionDuration", auction.getExtensionDuration());
+        
+        return ResponseEntity.ok(response);
+    }
+
+    // API endpoint for auction status updates
+    @GetMapping("/api/auctions/{id}/status")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getAuctionStatus(@PathVariable Long id) {
+        Auction auction = auctionService.getAuctionById(id);
+        Map<String, Object> response = new HashMap<>();
+        
+        response.put("auctionId", auction.getAuctionId());
+        response.put("status", auction.getStatus().name());
+        response.put("highestBid", auction.getHighestBid());
+        response.put("winner", auction.getWinner() != null ? auction.getWinner().getUsername() : null);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    // Admin: Force start auction
+    @PostMapping("/admin/auctions/force-start/{id}")
+    @PreAuthorize("hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER')")
+    public String forceStartAuction(@PathVariable Long id) {
+        auctionService.forceStartAuction(id);
+        return "redirect:/admin/auctions";
+    }
+
+    // Admin: Force end auction
+    @PostMapping("/admin/auctions/force-end/{id}")
+    @PreAuthorize("hasRole('ADMIN_OFFICER') or hasRole('IT_CONSULTANT') or hasRole('SALES_MANAGER')")
+    public String forceEndAuction(@PathVariable Long id) {
+        auctionService.forceEndAuction(id);
+        return "redirect:/admin/auctions";
+    }
+
+    // Enhanced public auction list with pagination, filtering, and sorting
+    @GetMapping("/auctions/list")
+    public String auctionList(Model model, 
+                             @RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "12") int size,
+                             @RequestParam(required = false) String status,
+                             @RequestParam(required = false) String search,
+                             @RequestParam(required = false) String sortBy,
+                             @RequestParam(required = false) String sortDir) {
+        
+        try {
+            // Create pageable with sorting
+            Pageable pageable = createPageable(page, size, sortBy, sortDir);
+            
+            // Get paginated auctions
+            Page<Auction> auctionPage;
+            Auction.Status statusEnum = null;
+            
+            if (status != null && !status.isEmpty()) {
+                try {
+                    statusEnum = Auction.Status.valueOf(status.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    // Invalid status, ignore
+                }
+            }
+            
+            try {
+                if (statusEnum != null) {
+                    if (search != null && !search.trim().isEmpty()) {
+                        auctionPage = auctionService.getAuctionsByStatusAndSearchWithPagination(statusEnum, search, pageable);
+                    } else {
+                        auctionPage = auctionService.getAuctionsByStatusWithPagination(statusEnum, pageable);
+                    }
+                } else {
+                    if (search != null && !search.trim().isEmpty()) {
+                        auctionPage = auctionService.getAuctionsBySearchWithPagination(search, pageable);
+                    } else {
+                        auctionPage = auctionService.getAuctionsWithPagination(pageable);
+                    }
+                }
+            } catch (Exception e) {
+                // Fallback to simple method if enhanced methods fail
+                System.out.println("Enhanced pagination failed, using fallback: " + e.getMessage());
+                List<Auction> allAuctions = statusEnum != null ? 
+                    auctionService.getAuctionsByStatus(statusEnum) : 
+                    auctionService.getAllAuctions();
+                
+                int start = page * size;
+                int end = Math.min(start + size, allAuctions.size());
+                List<Auction> pageContent = allAuctions.subList(start, end);
+                
+                // Create a simple page implementation
+                auctionPage = new org.springframework.data.domain.PageImpl<>(pageContent, pageable, allAuctions.size());
+            }
+            
+            // Add bid counts for each auction
+            for (Auction auction : auctionPage.getContent()) {
+                try {
+                    long bidCount = auctionService.getBidCountForAuction(auction.getAuctionId());
+                    long bidderCount = auctionService.getDistinctBidderCountForAuction(auction.getAuctionId());
+                    auction.setBidCount(bidCount);
+                    auction.setBidderCount(bidderCount);
+                } catch (Exception e) {
+                    // Set default values if bid count fails
+                    auction.setBidCount(0L);
+                    auction.setBidderCount(0L);
+                }
+            }
+            
+            // Get statistics
+            AuctionService.AuctionStatistics stats = auctionService.getAuctionStatistics();
+            
+            model.addAttribute("auctions", auctionPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", auctionPage.getTotalPages());
+            model.addAttribute("totalElements", auctionPage.getTotalElements());
+            model.addAttribute("size", size);
+            model.addAttribute("currentStatus", status);
+            model.addAttribute("searchTerm", search);
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("sortDir", sortDir);
+            model.addAttribute("stats", stats);
+            
+            return "auction-list";
+            
+        } catch (Exception e) {
+            // Log the error and return a fallback
+            e.printStackTrace();
+            model.addAttribute("error", "Failed to load auctions: " + e.getMessage());
+            model.addAttribute("auctions", java.util.Collections.emptyList());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+            model.addAttribute("totalElements", 0);
+            model.addAttribute("size", size);
+            model.addAttribute("currentStatus", status);
+            model.addAttribute("searchTerm", search);
+            model.addAttribute("sortBy", sortBy);
+            model.addAttribute("sortDir", sortDir);
+            
+            // Create empty stats
+            AuctionService.AuctionStatistics emptyStats = new AuctionService.AuctionStatistics(0, 0, 0, 0);
+            model.addAttribute("stats", emptyStats);
+            
+            return "auction-list";
+        }
+    }
+
