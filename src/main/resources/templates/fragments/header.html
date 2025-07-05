@@ -303,3 +303,73 @@
     </div>
   </div>
 
+  <!-- Bid Modal -->
+  <div
+    class="modal fade"
+    id="bidModal"
+    tabindex="-1"
+    aria-labelledby="bidModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-success text-white border-0">
+          <h5 class="modal-title" id="bidModalLabel">
+            <i class="bi bi-hammer me-2"></i>Place Your Bid
+          </h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="bidForm">
+            <input type="hidden" id="bidListingId" name="listingId" />
+            <div class="mb-3">
+              <label for="bidAmount" class="form-label fw-semibold"
+                >Bid Amount (LKR)</label
+              >
+              <div class="input-group">
+                <span class="input-group-text"
+                  ><i class="bi bi-currency-dollar"></i
+                ></span>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="bidAmount"
+                  name="amount"
+                  step="1000"
+                  min="0"
+                  placeholder="Enter your bid amount"
+                  required
+                />
+              </div>
+              <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>
+                Enter your bid amount in Sri Lankan Rupees
+              </div>
+            </div>
+            <div class="alert alert-info border-0">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>Current Highest Bid:</strong>
+              <span id="currentBidAmount" class="fw-bold">0</span> LKR
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success btn-lg">
+                <i class="bi bi-hammer me-2"></i>Place Bid
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle (includes Popper.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Header JavaScript - Loaded after Bootstrap but before page scripts -->
+  <script th:src="@{/js/global-header.js}"></script>
+</div>
