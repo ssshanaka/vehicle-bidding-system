@@ -333,3 +333,148 @@
                 </div>
               </div>
 
+              <div class="card-body d-flex flex-column">
+                <h5
+                  class="card-title"
+                  th:text="${auction.vehicleMake + ' ' + auction.vehicleModel + ' (' + auction.vehicleYear + ')'}"
+                >
+                  Vehicle Name
+                </h5>
+
+                <div class="mb-2">
+                  <small class="text-muted">
+                    <i class="bi bi-tag"></i>
+                    <span th:text="${auction.condition}">Good</span>
+                  </small>
+                </div>
+
+                <!-- Current Bid or Starting Price -->
+                <div class="mt-auto">
+                  <div
+                    th:if="${auction.status == 'ACTIVE'}"
+                    class="current-bid"
+                  >
+                    <i class="bi bi-currency-dollar"></i>
+                    <span
+                      th:text="${#numbers.formatDecimal(auction.currentBid, 0, 0)}"
+                      >0</span
+                    >
+                    LKR
+                  </div>
+                  <div th:if="${auction.status == 'PENDING'}" class="text-info">
+                    <i class="bi bi-currency-dollar"></i>
+                    <span
+                      th:text="${#numbers.formatDecimal(auction.startingBid, 0, 0)}"
+                      >0</span
+                    >
+                    LKR
+                  </div>
+                  <small
+                    class="text-muted"
+                    th:text="${auction.status == 'ACTIVE'} ? 'Current Highest Bid' : 'Starting Price'"
+                    >Current Bid</small
+                  >
+                </div>
+              </div>
+
+              <div class="card-footer bg-transparent">
+                <div class="d-flex gap-2">
+                  <a
+                    th:href="@{/auctions/details/{id}(id=${auction.id})}"
+                    class="btn btn-outline-primary btn-sm flex-fill"
+                  >
+                    <i class="bi bi-eye"></i> View Details
+                  </a>
+
+                  <!-- Show different buttons based on authentication status -->
+                  <div th:if="${user == null}">
+                    <!-- For visitors: Login to Bid button -->
+                    <button
+                      class="btn btn-warning btn-sm flex-fill"
+                      data-bs-toggle="modal"
+                      data-bs-target="#loginModal"
+                    >
+                      <i class="bi bi-box-arrow-in-right"></i> Login to Bid
+                    </button>
+                  </div>
+                  <div th:if="${user != null}">
+                    <!-- For logged in users: Bid button -->
+                    <a
+                      th:href="@{/auctions/place-bid/{id}(id=${auction.id})}"
+                      class="btn btn-success btn-sm flex-fill"
+                    >
+                      <i class="bi bi-hammer"></i> Bid Now
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Show message if no auctions available -->
+        <div
+          class="row"
+          th:if="${featuredAuctions == null or featuredAuctions.isEmpty()}"
+        >
+          <div class="col-12 text-center">
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle"></i>
+              No auctions available at the moment. Check back later for new
+              auctions!
+            </div>
+          </div>
+        </div>
+
+        <!-- View All Button -->
+        <div class="text-center mt-4">
+          <a href="/auctions" class="btn btn-primary btn-custom">
+            <i class="bi bi-hammer"></i> View All Auctions
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div
+      class="modal fade"
+      id="loginModal"
+      tabindex="-1"
+      aria-labelledby="loginModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginModalLabel">
+              <i class="bi bi-box-arrow-in-right"></i> Login Required
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>You need to be logged in to place bids on auctions.</p>
+            <div class="d-grid gap-2">
+              <a href="/login" class="btn btn-primary">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+              </a>
+              <a href="/register" class="btn btn-outline-secondary">
+                <i class="bi bi-person-plus"></i> Create Account
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Page-specific JavaScript - Loaded after header and footer scripts -->
+    <script th:src="@{/js/homepage.js}"></script>
+  </body>
+</html>
