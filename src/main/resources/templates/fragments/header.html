@@ -81,3 +81,89 @@
             </li>
           </div>
 
+          <!-- Authenticated Users -->
+          <li
+            class="nav-item dropdown"
+            th:if="${user != null or currentUser != null}"
+          >
+            <a
+              class="nav-link dropdown-toggle d-flex align-items-center"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <div class="d-flex align-items-center">
+                <div
+                  class="bg-light rounded-circle d-flex align-items-center justify-content-center me-2 overflow-hidden"
+                  style="width: 32px; height: 32px"
+                >
+                  <img
+                    th:if="${(user != null and user.profilePicture != null and user.profilePicture != '') or (currentUser != null and currentUser.profilePicture != null and currentUser.profilePicture != '')}"
+                    th:src="@{'/images/profile/' + ${user != null ? user.profilePicture : currentUser.profilePicture}}"
+                    alt="Profile Picture"
+                    class="rounded-circle"
+                    style="width: 100%; height: 100%; object-fit: cover"
+                  />
+                  <i
+                    th:unless="${(user != null and user.profilePicture != null and user.profilePicture != '') or (currentUser != null and currentUser.profilePicture != null and currentUser.profilePicture != '')}"
+                    class="bi bi-person-fill text-primary"
+                  ></i>
+                </div>
+                <div class="d-flex flex-column">
+                  <span
+                    class="fw-semibold"
+                    th:text="${user != null ? user.username : currentUser.username}"
+                    >Username</span
+                  >
+                  <small
+                    class="text-light opacity-75"
+                    th:text="${user != null ? user.role.name() : currentUser.role.name()}"
+                    >Role</small
+                  >
+                </div>
+                <span
+                  class="badge bg-danger ms-2"
+                  th:if="${unreadCount != null and unreadCount > 0}"
+                  th:text="${unreadCount}"
+                ></span>
+              </div>
+            </a>
+            <ul
+              class="dropdown-menu dropdown-menu-end shadow border-0"
+              style="min-width: 250px"
+            >
+              <!-- User Info Header -->
+              <li class="dropdown-header d-flex align-items-center">
+                <div
+                  class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2 overflow-hidden"
+                  style="width: 40px; height: 40px"
+                >
+                  <img
+                    th:if="${(user != null and user.profilePicture != null and user.profilePicture != '') or (currentUser != null and currentUser.profilePicture != null and currentUser.profilePicture != '')}"
+                    th:src="@{'/images/profile/' + ${user != null ? user.profilePicture : currentUser.profilePicture}}"
+                    alt="Profile Picture"
+                    class="rounded-circle"
+                    style="width: 100%; height: 100%; object-fit: cover"
+                  />
+                  <i
+                    th:unless="${(user != null and user.profilePicture != null and user.profilePicture != '') or (currentUser != null and currentUser.profilePicture != null and currentUser.profilePicture != '')}"
+                    class="bi bi-person-fill text-white"
+                  ></i>
+                </div>
+                <div>
+                  <div
+                    class="fw-semibold"
+                    th:text="${user != null ? user.username : currentUser.username}"
+                  >
+                    Username
+                  </div>
+                  <small
+                    class="text-muted"
+                    th:text="${user != null ? user.email : currentUser.email}"
+                    >email@example.com</small
+                  >
+                </div>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+
