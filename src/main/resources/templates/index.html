@@ -226,3 +226,110 @@
                       />
                     </div>
                   </div>
+                  <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-custom">
+                      <i class="bi bi-search"></i> Search Vehicles
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-custom ms-2"
+                      onclick="clearSearch()"
+                    >
+                      <i class="bi bi-arrow-clockwise"></i> Clear
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="row text-center">
+          <div class="col-md-3 mb-4">
+            <div class="h2 text-warning" th:text="${totalListings}">0</div>
+            <p class="mb-0">Total Listings</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="h2 text-success" th:text="${activeAuctions}">0</div>
+            <p class="mb-0">Active Auctions</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="h2 text-info" th:text="${totalUsers}">0</div>
+            <p class="mb-0">Registered Users</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="h2 text-primary" th:text="${completedAuctions}">0</div>
+            <p class="mb-0">Completed Auctions</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Auctions Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h2 class="text-center mb-5">
+              <i class="bi bi-hammer text-warning"></i> Featured Auctions
+            </h2>
+          </div>
+        </div>
+
+        <div
+          class="row"
+          th:if="${featuredAuctions != null and !featuredAuctions.isEmpty()}"
+        >
+          <div
+            class="col-lg-4 col-md-6 mb-4"
+            th:each="auction : ${featuredAuctions}"
+          >
+            <div class="card featured-card h-100">
+              <!-- Vehicle Image -->
+              <div class="position-relative">
+                <img
+                  th:src="${auction.vehicleImageUrl != null and !auction.vehicleImageUrl.isEmpty()} ? ${auction.vehicleImageUrl} : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTAgMTUwSDQ1MFYyNTBIMjUwVjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+YXRoIGQ9Ik0yNTAgMjc1SDM3NVYzMjVIMjUwVjI3NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg=='"
+                  class="vehicle-image"
+                  th:alt="${auction.vehicleMake + ' ' + auction.vehicleModel + ' (' + auction.vehicleYear + ')'}"
+                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTAgMTUwSDQ1MFYyNTBIMjUwVjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+YXRoIGQ9Ik0yNTAgMjc1SDM3NVYzMjVIMjUwVjI3NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg=='; this.style.border='2px solid #dc3545';"
+                />
+
+                <!-- Auction Status Badge -->
+                <div class="position-absolute top-0 end-0 m-2">
+                  <span
+                    th:if="${auction.status == 'ACTIVE'}"
+                    class="badge bg-success"
+                    >Live Auction</span
+                  >
+                  <span
+                    th:if="${auction.status == 'PENDING'}"
+                    class="badge bg-warning"
+                    >Scheduled</span
+                  >
+                </div>
+
+                <!-- Countdown Timer -->
+                <div class="position-absolute bottom-0 start-0 m-2">
+                  <div class="countdown-timer">
+                    <i class="bi bi-clock"></i>
+                    <span
+                      th:if="${auction.status == 'ACTIVE'}"
+                      th:data-end-time="${auction.endTime}"
+                      th:id="'timer-end-' + ${auction.id}"
+                      >Loading...</span
+                    >
+                    <span
+                      th:if="${auction.status == 'PENDING'}"
+                      th:data-start-time="${auction.startTime}"
+                      th:id="'timer-start-' + ${auction.id}"
+                      >Loading...</span
+                    >
+                  </div>
+                </div>
+              </div>
+
