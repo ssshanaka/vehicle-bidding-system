@@ -583,3 +583,31 @@ public class AuctionController {
         }
     }
 
+    // Helper method to create Pageable with sorting
+    private Pageable createPageable(int page, int size, String sortBy, String sortDir) {
+        Sort sort = Sort.by("endTime").ascending(); // Default sort
+        
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? 
+                Sort.Direction.DESC : Sort.Direction.ASC;
+            
+            switch (sortBy.toLowerCase()) {
+                case "endtime":
+                    sort = Sort.by(direction, "endTime");
+                    break;
+                case "starttime":
+                    sort = Sort.by(direction, "startTime");
+                    break;
+                case "highestbid":
+                    // For highest bid sorting, we'll need a custom implementation
+                    sort = Sort.by(direction, "endTime"); // Fallback to endTime
+                    break;
+                default:
+                    sort = Sort.by(direction, "endTime");
+                    break;
+            }
+        }
+        
+        return PageRequest.of(page, size, sort);
+    }
+}
