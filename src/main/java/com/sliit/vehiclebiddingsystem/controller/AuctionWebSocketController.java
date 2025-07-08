@@ -61,3 +61,38 @@ public class AuctionWebSocketController {
         }
     }
 
+    @MessageMapping("/auctions/subscribe")
+    @SendTo("/topic/auctions")
+    public Map<String, Object> subscribeToAllAuctions() {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Subscribed to all auction updates");
+            response.put("timestamp", System.currentTimeMillis());
+            return response;
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Failed to subscribe to auctions: " + e.getMessage());
+            return error;
+        }
+    }
+
+    // Broadcast auction updates to all subscribers
+    public void broadcastAuctionUpdate(Auction auction) {
+        Map<String, Object> update = new HashMap<>();
+        update.put("auctionId", auction.getAuctionId());
+        update.put("status", auction.getStatus().name());
+        update.put("isActive", auctionService.isAuctionActive(auction.getAuctionId()));
+        update.put("timeRemaining", auctionService.getTimeRemaining(auction.getAuctionId()));
+        update.put("highestBid", auction.getHighestBid());
+        update.put("currentEndTime", auction.getCurrentEndTime());
+        update.put("extensionDuration", auction.getExtensionDuration());
+        update.put("winner", auction.getWinner() != null ? auction.getWinner().getUsername() : null);
+        update.put("timestamp", System.currentTimeMillis());
+
+        // Send to specific auction subscribers
+        messagingTemplate.convertAndSend("/topic/auctions/" + auction.getAuctionId(), update);
+        
+        // Send to all auction subscribers
+        messagingTemplate.convertAndSend("/topic/auctions", update);
+    }
+}
