@@ -98,3 +98,58 @@ public class AuctionService {
         return updated;
     }
 
+    public Auction startAuction(Long id) {
+        Auction auction = getAuctionById(id);
+
+        if (Status.PENDING.equals(auction.getStatus())) {
+            LocalDateTime now = LocalDateTime.now();
+            auction.setStartTime(now);
+            auction.setCurrentEndTime(auction.getEndTime());
+            auction.setStatus(Status.ACTIVE);
+
+            Auction updated = auctionRepository.save(auction);
+            broadcastAuctionUpdate(updated);
+            return updated;
+        }
+
+        return auction;
+    }
+
+    public void endAuction(Long id) {
+        Auction auction = getAuctionById(id);
+
+        if (Status.ACTIVE.equals(auction.getStatus())) {
+            auction.setStatus(Status.CLOSED);
+            auction.setWinner(bidRepository.findHighestBidderByAuctionId(id));
+
+            Auction updated = auctionRepository.save(auction);
+            broadcastAuctionUpdate(updated);
+            
+            // Send notifications
+            notificationService.createAuctionClosureNotification(id);
+            if (updated.getWinner() != null) {
+                notificationService.createWinnerNotification(id);
+            }
+        }
+    }
+
+    public void extendAuctionIfNeeded(Long id, LocalDateTime bidTime) {
+        Auction auction = getAuctionById(id);
+        extendAuctionIfNeeded(auction, bidTime);
+    }
+    
+    public void extendAuctionIfNeeded(Auction auction, LocalDateTime bidTime) {
+        if (Status.ACTIVE.equals(auction.getStatus())) {
+            LocalDateTime threshold = auction.getCurrentEndTime().minusSeconds(30);
+
+            if (bidTime.isAfter(threshold)) {
+                auction.setCurrentEndTime(auction.getCurrentEndTime().plusSeconds(auction.getExtensionDuration()));
+
+                Auction updated = auctionRepository.save(auction);
+                broadcastAuctionUpdate(updated);
+
+                logger.info("Auction {} extended to {}", auction.getAuctionId(), auction.getCurrentEndTime());
+            }
+        }
+    }
+
