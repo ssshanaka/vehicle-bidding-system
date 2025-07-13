@@ -53,4 +53,48 @@ public class AuctionService {
         return auctions;
     }
 
- 
+    private void updateHighestBids(List<Auction> auctions) {
+        for (Auction auction : auctions) {
+            Double highest = bidRepository.findHighestBidByAuctionId(auction.getAuctionId());
+            auction.setHighestBid(highest != null ? highest : 0.0);
+        }
+    }
+
+    public Auction getAuctionById(Long id) {
+        Auction auction = auctionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Auction not found"));
+
+        Double highest = bidRepository.findHighestBidByAuctionId(auction.getAuctionId());
+        auction.setHighestBid(highest != null ? highest : 0.0);
+
+        return auction;
+    }
+
+    public Auction createAuction(Auction auction) {
+        if (auction.getEndTime().isBefore(auction.getStartTime())) {
+            throw new IllegalArgumentException("End time must be after start time");
+        }
+
+        if (!"APPROVED".equals(auction.getListing().getStatus())) {
+            throw new IllegalArgumentException("Vehicle listing must be approved before creating auction");
+        }
+
+        auction.setStatus(Status.PENDING);
+        auction.setCurrentEndTime(auction.getEndTime()); // Set initial current end time
+
+        Auction saved = auctionRepository.save(auction);
+        broadcastAuctionUpdate(saved);
+
+        return saved;
+    }
+
+    public Auction updateAuction(Auction auction) {
+        if (auction.getEndTime().isBefore(auction.getStartTime())) {
+            throw new IllegalArgumentException("End time must be after start time");
+        }
+
+        Auction updated = auctionRepository.save(auction);
+        broadcastAuctionUpdate(updated);
+        return updated;
+    }
+
