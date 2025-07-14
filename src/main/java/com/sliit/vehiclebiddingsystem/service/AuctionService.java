@@ -153,3 +153,63 @@ public class AuctionService {
         }
     }
 
+    // Scheduled job: End expired auctions every 1 min
+    @Scheduled(fixedRate = 60000)
+    public void checkAndEndExpiredAuctions() {
+        List<Auction> activeAuctions = getActiveAuctions();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Auction auction : activeAuctions) {
+            if (auction.getCurrentEndTime().isBefore(now)) {
+                endAuction(auction.getAuctionId());
+            }
+        }
+    }
+
+    // Scheduled job: Start scheduled approved auctions
+    @Scheduled(fixedRate = 60000)
+    public void checkAndStartScheduledAuctions() {
+        List<Auction> pendingAuctions = auctionRepository.findByStatus(Status.PENDING);
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Auction auction : pendingAuctions) {
+            if (auction.getStartTime().isBefore(now)) {
+                startAuction(auction.getAuctionId());
+            }
+        }
+    }
+
+    public List<Auction> getAuctionsByStatus(Status status) {
+        List<Auction> auctions = auctionRepository.findByStatus(status);
+        updateHighestBids(auctions);
+        return auctions;
+    }
+
+    public List<Auction> getUpcomingAuctions() {
+        List<Auction> auctions = auctionRepository.findByStatus(Status.PENDING);
+        LocalDateTime now = LocalDateTime.now();
+        return auctions.stream()
+                .filter(auction -> auction.getStartTime().isAfter(now))
+                .toList();
+    }
+
+    public boolean isAuctionActive(Long auctionId) {
+        Auction auction = getAuctionById(auctionId);
+        return Status.ACTIVE.equals(auction.getStatus()) && 
+               auction.getCurrentEndTime().isAfter(LocalDateTime.now());
+    }
+
+    public long getTimeRemaining(Long auctionId) {
+        Auction auction = getAuctionById(auctionId);
+        if (!Status.ACTIVE.equals(auction.getStatus())) {
+            return 0;
+        }
+        
+        LocalDateTime now = LocalDateTime.now();
+        if (auction.getCurrentEndTime().isBefore(now)) {
+            return 0;
+        }
+        
+        return java.time.Duration.between(now, auction.getCurrentEndTime()).getSeconds();
+    }
+
