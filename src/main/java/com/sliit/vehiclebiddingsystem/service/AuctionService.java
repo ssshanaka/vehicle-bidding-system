@@ -213,3 +213,61 @@ public class AuctionService {
         return java.time.Duration.between(now, auction.getCurrentEndTime()).getSeconds();
     }
 
+    public void handleLastSecondBid(Long auctionId) {
+        Auction auction = getAuctionById(auctionId);
+        if (Status.ACTIVE.equals(auction.getStatus())) {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime threshold = auction.getCurrentEndTime().minusSeconds(auction.getExtensionDuration());
+            
+            if (now.isAfter(threshold)) {
+                auction.setCurrentEndTime(auction.getCurrentEndTime().plusSeconds(auction.getExtensionDuration()));
+                auctionRepository.save(auction);
+                broadcastAuctionUpdate(auction);
+                
+                logger.info("Auction {} extended by {} seconds due to last-second bid", 
+                           auctionId, auction.getExtensionDuration());
+            }
+        }
+    }
+
+    public Auction getAuctionByListingId(Long listingId) {
+        return auctionRepository.findByListingListingId(listingId)
+                .orElse(null);
+    }
+
+    public void forceEndAuction(Long auctionId) {
+        Auction auction = getAuctionById(auctionId);
+        if (Status.ACTIVE.equals(auction.getStatus())) {
+            auction.setStatus(Status.CLOSED);
+            auction.setWinner(bidRepository.findHighestBidderByAuctionId(auctionId));
+            auctionRepository.save(auction);
+            broadcastAuctionUpdate(auction);
+            
+            logger.info("Auction {} force ended by admin", auctionId);
+        }
+    }
+
+    public void forceStartAuction(Long auctionId) {
+        Auction auction = getAuctionById(auctionId);
+        if (Status.PENDING.equals(auction.getStatus())) {
+            LocalDateTime now = LocalDateTime.now();
+            auction.setStartTime(now);
+            auction.setCurrentEndTime(auction.getEndTime());
+            auction.setStatus(Status.ACTIVE);
+            auctionRepository.save(auction);
+            broadcastAuctionUpdate(auction);
+            
+            logger.info("Auction {} force started by admin", auctionId);
+        }
+    }
+
+    private void broadcastAuctionUpdate(Auction auction) {
+        try {
+            messagingTemplate.convertAndSend("/topic/auctions/" + auction.getAuctionId(), auction);
+            messagingTemplate.convertAndSend("/topic/auctions", auction); // Broadcast to all auction subscribers
+        } catch (Exception e) {
+            logger.error("Error broadcasting auction update for auction {}: {}", auction.getAuctionId(), e.getMessage());
+            // Don't throw exception - broadcasting failure shouldn't break the main flow
+        }
+    }
+
