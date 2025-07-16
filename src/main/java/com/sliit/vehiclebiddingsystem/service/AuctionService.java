@@ -329,3 +329,41 @@ public class AuctionService {
         return auctionPage;
     }
 
+    public long getBidCountForAuction(Long auctionId) {
+        return bidRepository.countByAuctionAuctionId(auctionId);
+    }
+
+    public long getDistinctBidderCountForAuction(Long auctionId) {
+        return bidRepository.findDistinctBiddersByAuctionId(auctionId).size();
+    }
+
+    // Enhanced method to get auction statistics
+    public AuctionStatistics getAuctionStatistics() {
+        long totalAuctions = auctionRepository.count();
+        long activeAuctions = auctionRepository.countByStatus(Status.ACTIVE);
+        long pendingAuctions = auctionRepository.countByStatus(Status.PENDING);
+        long closedAuctions = auctionRepository.countByStatus(Status.CLOSED);
+        
+        return new AuctionStatistics(totalAuctions, activeAuctions, pendingAuctions, closedAuctions);
+    }
+
+    // Inner class for auction statistics
+    public static class AuctionStatistics {
+        private final long totalAuctions;
+        private final long activeAuctions;
+        private final long pendingAuctions;
+        private final long closedAuctions;
+
+        public AuctionStatistics(long totalAuctions, long activeAuctions, long pendingAuctions, long closedAuctions) {
+            this.totalAuctions = totalAuctions;
+            this.activeAuctions = activeAuctions;
+            this.pendingAuctions = pendingAuctions;
+            this.closedAuctions = closedAuctions;
+        }
+
+        public long getTotalAuctions() { return totalAuctions; }
+        public long getActiveAuctions() { return activeAuctions; }
+        public long getPendingAuctions() { return pendingAuctions; }
+        public long getClosedAuctions() { return closedAuctions; }
+    }
+}
