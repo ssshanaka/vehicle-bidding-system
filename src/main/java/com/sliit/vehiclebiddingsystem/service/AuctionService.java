@@ -271,3 +271,61 @@ public class AuctionService {
         }
     }
 
+    // Enhanced methods for pagination and filtering
+    public Page<Auction> getAuctionsWithPagination(Pageable pageable) {
+        Page<Auction> auctionPage = auctionRepository.findAllWithListingAndSeller(pageable);
+        updateHighestBids(auctionPage.getContent());
+        return auctionPage;
+    }
+
+    public Page<Auction> getAuctionsByStatusWithPagination(Status status, Pageable pageable) {
+        Page<Auction> auctionPage = auctionRepository.findByStatusWithListingAndSeller(status, pageable);
+        updateHighestBids(auctionPage.getContent());
+        return auctionPage;
+    }
+
+    public Page<Auction> getAuctionsByStatusAndSearchWithPagination(Status status, String search, Pageable pageable) {
+        Page<Auction> auctionPage;
+        if (search != null && !search.trim().isEmpty()) {
+            auctionPage = auctionRepository.findByStatusAndSearchWithListingAndSeller(status, search.trim(), pageable);
+        } else {
+            auctionPage = auctionRepository.findByStatusWithListingAndSeller(status, pageable);
+        }
+        updateHighestBids(auctionPage.getContent());
+        return auctionPage;
+    }
+
+    public Page<Auction> getAuctionsBySearchWithPagination(String search, Pageable pageable) {
+        Page<Auction> auctionPage;
+        if (search != null && !search.trim().isEmpty()) {
+            auctionPage = auctionRepository.findBySearchWithListingAndSeller(search.trim(), pageable);
+        } else {
+            auctionPage = auctionRepository.findAllWithListingAndSeller(pageable);
+        }
+        updateHighestBids(auctionPage.getContent());
+        return auctionPage;
+    }
+
+    public Page<Auction> getAuctionsByStatusAndSort(Status status, String sortBy, String sortDir, Pageable pageable) {
+        Page<Auction> auctionPage;
+        
+        switch (sortBy.toLowerCase()) {
+            case "endtime":
+                if ("desc".equalsIgnoreCase(sortDir)) {
+                    auctionPage = auctionRepository.findByStatusOrderByEndTimeDesc(status, pageable);
+                } else {
+                    auctionPage = auctionRepository.findByStatusOrderByEndTimeAsc(status, pageable);
+                }
+                break;
+            case "starttime":
+                auctionPage = auctionRepository.findByStatusOrderByStartTimeDesc(status, pageable);
+                break;
+            default:
+                auctionPage = auctionRepository.findByStatusWithListingAndSeller(status, pageable);
+                break;
+        }
+        
+        updateHighestBids(auctionPage.getContent());
+        return auctionPage;
+    }
+
