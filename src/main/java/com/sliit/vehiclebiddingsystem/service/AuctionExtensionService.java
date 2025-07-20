@@ -72,3 +72,57 @@ public class AuctionExtensionService {
         }
     }
 
+    /**
+     * Extend auction by the configured extension duration
+     */
+    private void extendAuction(Auction auction, LocalDateTime now) {
+        int extensionSeconds = auction.getExtensionDuration() != null ? auction.getExtensionDuration() : 30;
+        LocalDateTime newEndTime = auction.getEndTime().plusSeconds(extensionSeconds);
+        
+        // Update the auction end time
+        auction.setEndTime(newEndTime);
+        auction.setCurrentEndTime(newEndTime);
+        auctionRepository.save(auction);
+        
+        // Log the auto-extension
+        auditLogService.logSystemAction("AUTO_EXTEND_AUCTION", auction.getAuctionId(), "AUCTION", 
+            "Auction auto-extended by " + extensionSeconds + " seconds due to last-second bid activity");
+        
+        System.out.println("Auto-extended auction " + auction.getAuctionId() + " by " + extensionSeconds + " seconds");
+    }
+
+    /**
+     * Manually extend an auction (called by sales manager)
+     */
+    public void manuallyExtendAuction(Long auctionId, int extensionMinutes, String reason) {
+        Auction auction = auctionRepository.findById(auctionId).orElse(null);
+        if (auction == null || auction.getStatus() != Status.ACTIVE) {
+            throw new IllegalArgumentException("Auction not found or not active");
+        }
+        
+        LocalDateTime newEndTime = auction.getEndTime().plusMinutes(extensionMinutes);
+        auction.setEndTime(newEndTime);
+        auction.setCurrentEndTime(newEndTime);
+        auctionRepository.save(auction);
+        
+        // Log the manual extension
+        auditLogService.logSystemAction("MANUAL_EXTEND_AUCTION", auctionId, "AUCTION", 
+            "Auction manually extended by " + extensionMinutes + " minutes. Reason: " + reason);
+    }
+
+    /**
+     * Check for auctions that have ended and close them
+     * Runs every minute
+     */
+    @Scheduled(fixedRate = 60000)
+    public void closeExpiredAuctions() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Auction> activeAuctions = auctionRepository.findByStatus(Status.ACTIVE);
+        
+        for (Auction auction : activeAuctions) {
+            if (auction.getEndTime().isBefore(now)) {
+                closeAuction(auction);
+            }
+        }
+    }
+
