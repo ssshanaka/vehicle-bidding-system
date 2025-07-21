@@ -126,3 +126,70 @@ public class AuctionExtensionService {
         }
     }
 
+    /**
+     * Close an expired auction
+     */
+    private void closeAuction(Auction auction) {
+        auction.setStatus(Status.CLOSED);
+        
+        // Ensure end time is after start time to satisfy database constraint
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = auction.getStartTime();
+        LocalDateTime endTime = now.isAfter(startTime) ? now : startTime.plusMinutes(1);
+        
+        auction.setEndTime(endTime);
+        auction.setCurrentEndTime(endTime);
+        auctionRepository.save(auction);
+        
+        // Determine winner (highest bidder)
+        List<Bid> bids = bidRepository.findByAuctionAuctionIdOrderByAmountDesc(auction.getAuctionId());
+        if (!bids.isEmpty()) {
+            Bid winningBid = bids.get(0);
+            auction.setWinner(winningBid.getBidder());
+            auctionRepository.save(auction);
+        }
+        
+        // Send notifications for auction closure
+        try {
+            notificationService.createAuctionClosureNotification(auction.getAuctionId());
+            if (auction.getWinner() != null) {
+                notificationService.createWinnerNotification(auction.getAuctionId());
+            }
+        } catch (Exception e) {
+            // Log error but don't fail the auction closure
+            System.err.println("Error sending auction closure notifications: " + e.getMessage());
+        }
+        
+        // Log the auction closure
+        auditLogService.logSystemAction("CLOSE_AUCTION", auction.getAuctionId(), "AUCTION", 
+            "Auction automatically closed due to end time");
+        
+        System.out.println("Closed auction " + auction.getAuctionId());
+    }
+
+    /**
+     * Check for low engagement auctions and send alerts
+     * Runs every 5 minutes
+     */
+    @Scheduled(fixedRate = 300000)
+    public void checkLowEngagementAuctions() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Auction> activeAuctions = auctionRepository.findByStatus(Status.ACTIVE);
+        
+        for (Auction auction : activeAuctions) {
+            // Check if auction has been running for at least 1 hour
+            long hoursRunning = java.time.Duration.between(auction.getStartTime(), now).toHours();
+            
+            if (hoursRunning >= 1) {
+                List<Bid> bids = bidRepository.findByAuctionAuctionIdOrderByAmountDesc(auction.getAuctionId());
+                
+                // Alert if fewer than 3 bids
+                if (bids.size() < 3) {
+                    // This would trigger a notification to the sales manager
+                    System.out.println("Low engagement alert: Auction " + auction.getAuctionId() + 
+                        " has only " + bids.size() + " bids after " + hoursRunning + " hours");
+                }
+            }
+        }
+    }
+}
