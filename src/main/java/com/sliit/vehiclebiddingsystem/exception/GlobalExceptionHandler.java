@@ -75,5 +75,57 @@ public class GlobalExceptionHandler {
         return modelAndView;
     }
 
+    /**
+     * Handles illegal argument exceptions
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+        logger.error("Illegal argument exception for request: {} - {}", 
+                    request.getRequestURI(), ex.getMessage(), ex);
+        
+        return ResponseEntity.badRequest()
+                .body("Invalid request parameters: " + ex.getMessage());
+    }
 
+    /**
+     * Handles JWT-related exceptions
+     */
+    @ExceptionHandler({ExpiredJwtException.class, MalformedJwtException.class, 
+                      UnsupportedJwtException.class, SignatureException.class})
+    public ResponseEntity<String> handleJwtException(Exception ex, HttpServletRequest request) {
+        logger.warn("JWT exception for request: {} - {}", 
+                   request.getRequestURI(), ex.getMessage());
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Authentication failed: Invalid or expired token");
+    }
+
+    /**
+     * Handles authentication exceptions
+     */
+    @ExceptionHandler({BadCredentialsException.class, AuthenticationException.class})
+    public ResponseEntity<String> handleAuthenticationException(Exception ex, HttpServletRequest request) {
+        logger.warn("Authentication exception for request: {} - {}", 
+                   request.getRequestURI(), ex.getMessage());
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Authentication failed: " + ex.getMessage());
+    }
+
+    /**
+     * Handles all other exceptions
+     */
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleGenericException(Exception ex, HttpServletRequest request) {
+        logger.error("Unexpected exception during request processing: {} - {}", 
+                    request.getRequestURI(), ex.getMessage(), ex);
+        
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("errorMessage", "An unexpected error occurred. Please try again later.");
+        modelAndView.addObject("errorDetails", "Unexpected error");
+        modelAndView.addObject("requestUri", request.getRequestURI());
+        modelAndView.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        
+        return modelAndView;
+    }
 }
