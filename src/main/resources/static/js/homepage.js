@@ -231,3 +231,50 @@ class HomepageManager {
     bsModal.show();
   }
 
+  /**
+   * Fetch current bid (mock)
+   */
+  async fetchCurrentBid(listingId) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ currentBid: Math.floor(Math.random() * 1000000) + 100000 });
+      }, 500);
+    });
+  }
+
+  /**
+   * Handle bid submission
+   */
+  handleBidSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    const amountInput = document.getElementById("bidAmount");
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    if (!amountInput.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const amount = parseFloat(amountInput.value);
+    this.setButtonLoading(submitBtn, true);
+
+    this.submitBid(amount)
+      .then((response) => {
+        if (response.success) {
+          this.showAlert("Bid placed successfully!", "success");
+          this.closeBidModal();
+          this.updateCountdowns();
+        } else {
+          this.showAlert("Failed to place bid. Please try again.", "danger");
+        }
+      })
+      .catch((error) => {
+        console.error("Bid error:", error);
+        this.showAlert("Failed to place bid. Please try again.", "danger");
+      })
+      .finally(() => {
+        this.setButtonLoading(submitBtn, false);
+      });
+  }
+
