@@ -278,3 +278,82 @@ class HomepageManager {
       });
   }
 
+  /**
+   * Submit bid (mock implementation)
+   */
+  async submitBid(amount) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (Math.random() > 0.1) {
+          resolve({ success: true, bidId: Math.floor(Math.random() * 1000) });
+        } else {
+          reject(new Error("Bid submission failed"));
+        }
+      }, 1000);
+    });
+  }
+
+  /**
+   * Close bid modal
+   */
+  closeBidModal() {
+    const modal = document.getElementById("bidModal");
+    if (modal) {
+      const bsModal = bootstrap.Modal.getInstance(modal);
+      if (bsModal) {
+        bsModal.hide();
+      }
+    }
+  }
+
+  /**
+   * Initialize countdown timers for active and scheduled auctions
+   */
+  initializeCountdownTimers() {
+    this.updateCountdowns();
+    setInterval(() => {
+      this.updateCountdowns();
+    }, 1000); // Update every second for real-time countdown
+  }
+
+  /**
+   * Update countdown timers for both live and scheduled auctions
+   */
+  updateCountdowns() {
+    // Update end timers for live auctions
+    const endTimers = document.querySelectorAll('[id^="timer-end-"]');
+    endTimers.forEach((timer) => {
+      const endTimeStr = timer.getAttribute("data-end-time");
+      if (endTimeStr) {
+        const endTime = new Date(endTimeStr);
+        const now = new Date();
+        const timeDiff = endTime - now;
+
+        if (timeDiff > 0) {
+          timer.textContent = this.formatTimeRemaining(timeDiff);
+        } else {
+          timer.textContent = "Ended";
+          timer.parentElement.classList.add("bg-danger");
+        }
+      }
+    });
+
+    // Update start timers for scheduled auctions
+    const startTimers = document.querySelectorAll('[id^="timer-start-"]');
+    startTimers.forEach((timer) => {
+      const startTimeStr = timer.getAttribute("data-start-time");
+      if (startTimeStr) {
+        const startTime = new Date(startTimeStr);
+        const now = new Date();
+        const timeDiff = startTime - now;
+
+        if (timeDiff > 0) {
+          timer.textContent = this.formatTimeRemaining(timeDiff);
+        } else {
+          timer.textContent = "Starting";
+          timer.parentElement.classList.add("bg-success");
+        }
+      }
+    });
+  }
+
