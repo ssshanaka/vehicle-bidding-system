@@ -357,3 +357,96 @@ class HomepageManager {
     });
   }
 
+  /**
+   * Format time remaining in a readable format
+   */
+  formatTimeRemaining(milliseconds) {
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days}d ${hours % 24}h ${minutes % 60}m`;
+    } else if (hours > 0) {
+      return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds % 60}s`;
+    } else {
+      return `${seconds}s`;
+    }
+  }
+
+  /**
+   * Setup form validation
+   */
+  setupFormValidation() {
+    const bidAmountInput = document.getElementById("bidAmount");
+    if (bidAmountInput) {
+      bidAmountInput.addEventListener("input", (e) => {
+        const value = parseFloat(e.target.value);
+        if (value && value < 1000) {
+          e.target.setCustomValidity("Minimum bid amount is 1,000 LKR");
+        } else {
+          e.target.setCustomValidity("");
+        }
+      });
+    }
+
+    const searchInput = document.getElementById("search");
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        if (e.target.value.length > 0 && e.target.value.length < 2) {
+          e.target.setCustomValidity("Please enter at least 2 characters");
+        } else {
+          e.target.setCustomValidity("");
+        }
+      });
+    }
+  }
+
+  /**
+   * Set button loading state
+   */
+  setButtonLoading(button, isLoading) {
+    if (!button) return;
+
+    if (isLoading) {
+      button.disabled = true;
+      button.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+    } else {
+      button.disabled = false;
+      const originalText =
+        button.getAttribute("data-original-text") || "Place Bid"; // Adjusted for bid button
+      if (originalText) {
+        button.innerHTML = originalText;
+      }
+    }
+  }
+
+  /**
+   * Show alert message
+   */
+  showAlert(message, type = "info") {
+    const existingAlerts = document.querySelectorAll(".alert-dismissible");
+    existingAlerts.forEach((alert) => alert.remove());
+
+    const alertDiv = document.createElement("div");
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText =
+      "top: 100px; right: 20px; z-index: 9999; min-width: 300px;";
+    alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+    document.body.appendChild(alertDiv);
+
+    setTimeout(() => {
+      if (alertDiv.parentNode) {
+        alertDiv.remove();
+      }
+    }, 5000);
+  }
+
