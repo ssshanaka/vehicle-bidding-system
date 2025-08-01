@@ -74,3 +74,81 @@
                   />
                 </div>
 
+                <!-- Sort By -->
+                <div class="col-md-2">
+                  <label for="sortBy" class="form-label fw-semibold">
+                    <i class="bi bi-sort-down me-1"></i>Sort By
+                  </label>
+                  <select class="form-select" id="sortBy" name="sortBy">
+                    <option value="">Default</option>
+                    <option
+                      value="endtime"
+                      th:selected="${sortBy == 'endtime'}"
+                    >
+                      End Time
+                    </option>
+                    <option
+                      value="starttime"
+                      th:selected="${sortBy == 'starttime'}"
+                    >
+                      Start Time
+                    </option>
+                    <option
+                      value="highestbid"
+                      th:selected="${sortBy == 'highestbid'}"
+                    >
+                      Highest Bid
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Sort Direction -->
+                <div class="col-md-2">
+                  <label for="sortDir" class="form-label fw-semibold">
+                    <i class="bi bi-arrow-up-down me-1"></i>Order
+                  </label>
+                  <select class="form-select" id="sortDir" name="sortDir">
+                    <option value="asc" th:selected="${sortDir == 'asc'}">
+                      Ascending
+                    </option>
+                    <option value="desc" th:selected="${sortDir == 'desc'}">
+                      Descending
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Page Size -->
+                <div class="col-md-2">
+                  <label for="size" class="form-label fw-semibold">
+                    <i class="bi bi-list me-1"></i>Per Page
+                  </label>
+                  <select class="form-select" id="size" name="size">
+                    <option value="12" th:selected="${size == 12}">12</option>
+                    <option value="24" th:selected="${size == 24}">24</option>
+                    <option value="48" th:selected="${size == 48}">48</option>
+                  </select>
+                </div>
+
+                <!-- Actions -->
+                <div class="col-md-1 d-flex align-items-end">
+                  <div class="d-grid gap-2 w-100">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="bi bi-funnel me-1"></i>Filter
+                    </button>
+                    <a
+                      href="/auctions/list"
+                      class="btn btn-outline-secondary btn-sm"
+                    >
+                      <i class="bi bi-arrow-clockwise me-1"></i>Clear
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Hidden fields -->
+                <input type="hidden" name="page" th:value="${currentPage}" />
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
