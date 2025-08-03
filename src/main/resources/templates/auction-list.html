@@ -152,3 +152,85 @@
         </div>
       </div>
 
+      <!-- Results Info -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted">
+                Showing <span th:text="${#lists.size(auctions)}">0</span> of
+                <span th:text="${totalElements}">0</span> auctions
+              </span>
+            </div>
+            <div>
+              <span class="text-muted">
+                Page <span th:text="${currentPage + 1}">1</span> of
+                <span th:text="${totalPages}">1</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auctions Grid -->
+      <div class="row">
+        <div class="col-12">
+          <!-- No Results -->
+          <div class="row" th:if="${#lists.isEmpty(auctions)}">
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="bi bi-search display-1 text-muted mb-3"></i>
+                <h4 class="text-muted">No auctions found</h4>
+                <p class="text-muted">
+                  Try adjusting your search criteria or check back later for new
+                  auctions.
+                </p>
+                <a href="/auctions/list" class="btn btn-primary">
+                  <i class="bi bi-arrow-clockwise me-1"></i>
+                  View All Auctions
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Auction Cards -->
+          <div class="row" th:if="${!#lists.isEmpty(auctions)}">
+            <div class="col-md-6 col-lg-4 mb-4" th:each="auction : ${auctions}">
+              <div class="card h-100 shadow-sm border-0 auction-card">
+                <div class="card-header bg-white border-0 pb-0">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6
+                        class="card-title mb-1 fw-bold"
+                        th:text="${auction.listing.make + ' ' + auction.listing.model}"
+                      >
+                        Vehicle
+                      </h6>
+                      <small
+                        class="text-muted"
+                        th:text="${auction.listing.year}"
+                        >2020</small
+                      >
+                    </div>
+                    <span
+                      class="badge"
+                      th:class="${auction.status.name() == 'ACTIVE' ? 'bg-success' : 
+                                     auction.status.name() == 'PENDING' ? 'bg-warning' : 'bg-secondary'}"
+                    >
+                      <i
+                        class="bi bi-clock me-1"
+                        th:if="${auction.status.name() == 'ACTIVE'}"
+                      ></i>
+                      <i
+                        class="bi bi-hourglass me-1"
+                        th:if="${auction.status.name() == 'PENDING'}"
+                      ></i>
+                      <i
+                        class="bi bi-check-circle me-1"
+                        th:if="${auction.status.name() == 'CLOSED'}"
+                      ></i>
+                      <span th:text="${auction.status.name()}">Status</span>
+                    </span>
+                  </div>
+                </div>
+
