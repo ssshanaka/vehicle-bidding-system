@@ -450,3 +450,55 @@ class HomepageManager {
     }, 5000);
   }
 
+  /**
+   * Format currency
+   */
+  formatCurrency(amount) {
+    return new Intl.NumberFormat("en-LK", {
+      style: "currency",
+      currency: "LKR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  }
+
+  /**
+   * Setup smooth scrolling functionality
+   */
+  setupSmoothScrolling() {
+    // Handle anchor links with smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute("href").substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      });
+    });
+  }
+
+  /**
+   * Smooth scroll to element
+   */
+  scrollToElement(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  new HomepageManager();
+});
+
+// Export for global access
+window.HomepageManager = HomepageManager;
