@@ -324,3 +324,54 @@
         </div>
       </div>
 
+      <!-- Pagination -->
+      <div class="row" th:if="${totalPages > 1}">
+        <div class="col-12">
+          <nav aria-label="Auction pagination">
+            <ul class="pagination justify-content-center">
+              <!-- Previous Page -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/auctions/list(page=${currentPage - 1}, size=${size}, status=${currentStatus}, search=${searchTerm}, sortBy=${sortBy}, sortDir=${sortDir})}"
+                >
+                  <i class="bi bi-chevron-left"></i>
+                  Previous
+                </a>
+              </li>
+
+              <!-- Page Numbers -->
+              <li
+                class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${pageNum == currentPage} ? 'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/auctions/list(page=${pageNum}, size=${size}, status=${currentStatus}, search=${searchTerm}, sortBy=${sortBy}, sortDir=${sortDir})}"
+                  th:text="${pageNum + 1}"
+                  >1</a
+                >
+              </li>
+
+              <!-- Next Page -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/auctions/list(page=${currentPage + 1}, size=${size}, status=${currentStatus}, search=${searchTerm}, sortBy=${sortBy}, sortDir=${sortDir})}"
+                >
+                  Next
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
