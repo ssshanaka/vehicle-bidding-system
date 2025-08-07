@@ -108,3 +108,99 @@
         </ol>
       </nav>
 
+      <!-- Page Header -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h1 class="h3 mb-1 fw-bold">
+                <i class="bi bi-hammer me-2 text-primary"></i>
+                <span
+                  th:text="${auction.listing.make + ' ' + auction.listing.model}"
+                  >Auction Details</span
+                >
+              </h1>
+              <p class="text-muted mb-0">
+                <i class="bi bi-calendar me-1"></i>
+                <span th:text="${auction.listing.year}">Year</span> •
+                <i class="bi bi-speedometer2 me-1"></i>
+                <span th:text="${auction.listing.mileage}">Mileage</span>
+                miles
+              </p>
+            </div>
+            <div>
+              <span
+                class="badge fs-6 fw-semibold px-3 py-2"
+                th:classappend="${auction.status.name() == 'ACTIVE'} ? 'bg-success' : (${auction.status.name() == 'PENDING'} ? 'bg-warning' : 'bg-secondary')"
+              >
+                <i class="bi bi-circle-fill me-1" style="font-size: 0.6rem"></i>
+                <span th:text="${auction.status.name()}">Status</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Image Gallery -->
+        <div class="col-lg-8 mb-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+              <div class="image-gallery">
+                <!-- Main Image -->
+                <div class="position-relative">
+                  <img
+                    id="mainImage"
+                    th:src="${auction.listing.images != null and !auction.listing.images.isEmpty()} ? ${auction.listing.images[0].imageUrl} : '/images/placeholder-car.jpg'"
+                    class="card-img-top main-image w-100"
+                    alt="Vehicle Image"
+                    onclick="openImageModal()"
+                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTAgMTUwSDQ1MFYyNTBIMjUwVjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+YXRoIGQ9Ik0yNTAgMjc1SDM3NVYzMjVIMjUwVjI3NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg=='; this.style.border='2px solid #dc3545';"
+                  />
+                  <div class="position-absolute top-0 end-0 m-3">
+                    <span
+                      class="badge bg-primary bg-opacity-90 fs-6 fw-semibold"
+                    >
+                      <i class="bi bi-images me-1"></i>
+                      <span
+                        th:text="${auction.listing.images != null ? auction.listing.images.size() : 0}"
+                        >0</span
+                      >
+                      images
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Thumbnail Gallery -->
+                <div
+                  th:if="${auction.listing.images != null and !auction.listing.images.isEmpty()}"
+                  class="p-3"
+                >
+                  <div class="d-flex gap-2 overflow-auto">
+                    <img
+                      th:each="image, iterStat : ${auction.listing.images}"
+                      th:src="${image.imageUrl}"
+                      onclick="changeMainImage(this.src)"
+                      class="thumbnail rounded border"
+                      style="min-width: 80px"
+                      th:alt="'Image ' + ${iterStat.index + 1}"
+                      onerror="this.style.display='none';"
+                    />
+                  </div>
+                </div>
+
+                <!-- No Images Message -->
+                <div
+                  th:if="${auction.listing.images == null or auction.listing.images.isEmpty()}"
+                  class="p-4 text-center text-muted"
+                >
+                  <i class="bi bi-image fs-1 mb-3 text-muted"></i>
+                  <p class="mb-0 fw-semibold">
+                    No images available for this vehicle
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
