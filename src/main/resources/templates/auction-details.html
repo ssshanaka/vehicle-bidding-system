@@ -204,3 +204,91 @@
           </div>
         </div>
 
+        <!-- Auction Information & Bidding -->
+        <div class="col-lg-4 mb-4">
+          <!-- Auction Status & Timer -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-primary text-white border-0">
+              <h6 class="card-title mb-0 fw-semibold">
+                <i class="bi bi-clock me-2"></i>Auction Status
+              </h6>
+            </div>
+            <div class="card-body">
+              <!-- Countdown Timer for Active Auctions -->
+              <div
+                th:if="${auction.status.name() == 'ACTIVE'}"
+                class="countdown-timer-large"
+                th:data-auction-id="${auction.auctionId}"
+                th:data-end-time="${auction.endTime}"
+              >
+                <h6 class="mb-2">Time Remaining</h6>
+                <div>
+                  <span
+                    class="timer-display fs-2 fw-bold"
+                    th:id="'timer-end-' + ${auction.auctionId}"
+                    >Loading...</span
+                  >
+                </div>
+                <small class="opacity-75">
+                  Extension:
+                  <span th:text="${auction.extensionDuration}">30</span> seconds
+                </small>
+              </div>
+
+              <!-- Schedule for Pending Auctions -->
+              <div
+                th:if="${auction.status.name() == 'PENDING'}"
+                class="countdown-timer-large"
+                th:data-auction-id="${auction.auctionId}"
+                th:data-start-time="${auction.startTime}"
+              >
+                <h6 class="mb-2">Starts In</h6>
+                <div>
+                  <span
+                    class="timer-display fs-2 fw-bold"
+                    th:id="'timer-start-' + ${auction.auctionId}"
+                    >Loading...</span
+                  >
+                </div>
+              </div>
+
+              <!-- Winner for Closed Auctions -->
+              <div
+                th:if="${auction.status.name() == 'CLOSED'}"
+                class="text-center"
+              >
+                <h6 class="mb-2">Auction Closed</h6>
+                <div class="fs-4 fw-bold">
+                  <span
+                    th:text="${auction.winner != null ? auction.winner.username : 'No winner'}"
+                    >No winner</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Bid & Bidding Section -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-success text-white border-0">
+              <h6 class="card-title mb-0 fw-semibold">
+                <i class="bi bi-currency-dollar me-2"></i>Current Bid
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="text-center mb-3">
+                <div class="fs-1 fw-bold text-success">
+                  <span
+                    th:text="${auction.highestBid != null ? #numbers.formatDecimal(auction.highestBid, 0, 0) : '0'}"
+                    >0</span
+                  >
+                  LKR
+                </div>
+                <small class="text-muted">
+                  <span
+                    th:text="${auction.status.name() == 'ACTIVE'} ? 'Current Highest Bid' : 'Starting Price'"
+                    >Current Bid</span
+                  >
+                </small>
+              </div>
+
