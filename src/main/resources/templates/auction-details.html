@@ -292,3 +292,110 @@
                 </small>
               </div>
 
+              <!-- Bidding Actions -->
+              <div th:if="${auction.status.name() == 'ACTIVE'}">
+                <div th:if="${user != null}">
+                  <a
+                    th:href="@{/auctions/place-bid/{id}(id=${auction.auctionId})}"
+                    class="btn btn-success btn-lg w-100 mb-2 fw-semibold"
+                  >
+                    <i class="bi bi-hammer me-2"></i>Place Bid
+                  </a>
+                  <small class="text-muted d-block text-center">
+                    You must bid higher than the current amount
+                  </small>
+                </div>
+                <div th:unless="${user != null}">
+                  <a
+                    href="/login"
+                    class="btn btn-primary btn-lg w-100 mb-2 fw-semibold"
+                  >
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Login to Bid
+                  </a>
+                  <small class="text-muted d-block text-center">
+                    Please login to place your bid
+                  </small>
+                </div>
+              </div>
+
+              <div th:if="${auction.status.name() == 'PENDING'}">
+                <div class="alert alert-info text-center border-0 shadow-sm">
+                  <i class="bi bi-info-circle me-2"></i>
+                  <strong>Auction Not Started</strong><br />
+                  <small>This auction will begin soon. Check back later!</small>
+                </div>
+              </div>
+
+              <div th:if="${auction.status.name() == 'CLOSED'}">
+                <div
+                  class="alert alert-secondary text-center border-0 shadow-sm"
+                >
+                  <i class="bi bi-check-circle me-2"></i>
+                  <strong>Auction Closed</strong><br />
+                  <small>This auction has ended.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle Details -->
+      <div class="row">
+        <div class="col-lg-8 mb-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-info text-white border-0">
+              <h6 class="card-title mb-0 fw-semibold">
+                <i class="bi bi-car-front me-2"></i>Vehicle Information
+              </h6>
+            </div>
+            <div class="card-body">
+              <!-- Basic Details -->
+              <div class="detail-section">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <div class="detail-label fw-semibold">
+                      <i class="bi bi-car me-1 text-primary"></i>Make
+                    </div>
+                    <div
+                      class="detail-value fw-semibold"
+                      th:text="${auction.listing.make}"
+                    >
+                      Make
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="detail-label fw-semibold">
+                      <i class="bi bi-tag me-1 text-primary"></i>Model
+                    </div>
+                    <div
+                      class="detail-value fw-semibold"
+                      th:text="${auction.listing.model}"
+                    >
+                      Model
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="detail-label fw-semibold">
+                      <i class="bi bi-calendar me-1 text-primary"></i>Year
+                    </div>
+                    <div
+                      class="detail-value fw-semibold"
+                      th:text="${auction.listing.year}"
+                    >
+                      Year
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="detail-label fw-semibold">
+                      <i class="bi bi-speedometer2 me-1 text-primary"></i
+                      >Mileage
+                    </div>
+                    <div class="detail-value fw-semibold">
+                      <span th:text="${auction.listing.mileage}">Mileage</span>
+                      miles
+                    </div>
+                  </div>
+                </div>
+              </div>
+
