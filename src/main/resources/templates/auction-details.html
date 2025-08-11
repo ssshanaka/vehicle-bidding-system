@@ -399,3 +399,103 @@
                 </div>
               </div>
 
+              <!-- Condition & Specifications -->
+              <div class="detail-section">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <div class="detail-label fw-semibold">
+                      <i class="bi bi-star me-1 text-primary"></i>Condition
+                    </div>
+                    <div class="detail-value">
+                      <span
+                        class="badge fw-semibold"
+                        th:classappend="${auction.listing.condition.name() == 'EXCELLENT'} ? 'bg-success' : (${auction.listing.condition.name() == 'GOOD'} ? 'bg-info' : (${auction.listing.condition.name() == 'FAIR'} ? 'bg-warning' : 'bg-secondary'))"
+                        th:text="${auction.listing.condition.name()}"
+                        >Condition</span
+                      >
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="detail-label fw-semibold">
+                      <i class="bi bi-fuel-pump me-1 text-primary"></i>Fuel Type
+                    </div>
+                    <div
+                      class="detail-value fw-semibold"
+                      th:text="${auction.listing.fuelType}"
+                    >
+                      Fuel Type
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="detail-label fw-semibold">
+                      <i class="bi bi-gear me-1 text-primary"></i>Transmission
+                    </div>
+                    <div
+                      class="detail-value fw-semibold"
+                      th:text="${auction.listing.transmission}"
+                    >
+                      Transmission
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bid History -->
+        <div class="col-lg-4 mb-4">
+          <div class="card border-0 shadow-sm bid-history-card">
+            <div class="card-header bg-warning text-dark border-0">
+              <h6 class="card-title mb-0 fw-semibold">
+                <i class="bi bi-clock-history me-2"></i>Bid History
+              </h6>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0 border-0">
+                  <thead class="table-warning">
+                    <tr>
+                      <th class="fw-semibold">
+                        <i class="bi bi-person me-1"></i>Bidder
+                      </th>
+                      <th class="fw-semibold">
+                        <i class="bi bi-currency-dollar me-1"></i>Amount
+                      </th>
+                      <th class="fw-semibold">
+                        <i class="bi bi-clock me-1"></i>Time
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="bid : ${bids}">
+                      <td>
+                        <small th:text="${bid.bidder.username}">user1</small>
+                      </td>
+                      <td>
+                        <span
+                          class="fw-bold text-success"
+                          th:text="'#numbers.formatDecimal(bid.amount, 0, 0)'"
+                          >1000</span
+                        >
+                      </td>
+                      <td>
+                        <small
+                          th:text="${#temporals.format(bid.timestamp, 'HH:mm')}"
+                          >12:00</small
+                        >
+                      </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(bids)}">
+                      <td colspan="3" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox me-2"></i>No bids placed yet
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
