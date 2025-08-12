@@ -499,3 +499,103 @@
         </div>
       </div>
 
+      <!-- Description Section -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-secondary text-white border-0">
+              <h6 class="card-title mb-0 fw-semibold">
+                <i class="bi bi-align-left me-2"></i>Description
+              </h6>
+            </div>
+            <div class="card-body">
+              <div
+                class="description-text"
+                th:text="${auction.listing.description}"
+              >
+                Vehicle description will appear here...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="d-flex gap-2 justify-content-end">
+            <a
+              th:href="@{/auctions}"
+              class="btn btn-secondary btn-lg fw-semibold"
+            >
+              <i class="bi bi-arrow-left me-2"></i>Back to Auctions
+            </a>
+            <a
+              th:href="@{/auctions/list}"
+              class="btn btn-outline-primary btn-lg fw-semibold"
+            >
+              <i class="bi bi-list me-2"></i>All Auctions
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-primary text-white border-0">
+            <h5 class="modal-title fw-semibold">
+              <i class="bi bi-images me-2"></i>Vehicle Images
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body text-center">
+            <img
+              id="modalImage"
+              src=""
+              class="img-fluid rounded"
+              alt="Vehicle Image"
+            />
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x me-1"></i>Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Custom Styles for Auction Details Page -->
+    <style>
+      /* Modern Card Styling */
+      .card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: none;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+      }
+
+      .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        font-weight: 600;
+      }
+
