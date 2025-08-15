@@ -802,3 +802,107 @@
         border-radius: 8px;
       }
 
+      .main-image:hover {
+        transform: scale(1.02);
+      }
+
+      .thumbnail {
+        height: 80px;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        border-radius: 4px;
+      }
+
+      .thumbnail:hover,
+      .thumbnail.active {
+        opacity: 1;
+      }
+
+      /* Status Badge Styling */
+      .status-badge {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        main {
+          margin: 0.5rem;
+          padding: 1rem !important;
+        }
+
+        .card-body {
+          padding: 2rem 1.5rem;
+        }
+
+        .main-image {
+          height: 300px;
+        }
+      }
+    </style>
+
+    <script>
+      // Change main image when thumbnail is clicked
+      function changeMainImage(imageUrl) {
+        document.getElementById("mainImage").src = imageUrl;
+
+        // Update active thumbnail
+        document.querySelectorAll(".thumbnail").forEach((thumb) => {
+          thumb.classList.remove("active");
+        });
+        event.target.classList.add("active");
+      }
+
+      // Open image modal
+      function openImageModal() {
+        const mainImage = document.getElementById("mainImage");
+        const modalImage = document.getElementById("modalImage");
+        modalImage.src = mainImage.src;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("imageModal")
+        );
+        modal.show();
+      }
+
+      // Initialize auction timer when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Initializing auction timers...");
+
+        // Find all timer display elements
+        const timerDisplays = document.querySelectorAll(".timer-display");
+        console.log("Found timer displays:", timerDisplays.length);
+
+        timerDisplays.forEach(function (timerDisplay) {
+          console.log("Processing timer display:", timerDisplay);
+
+          // Find the parent container with data attributes
+          const parentContainer = timerDisplay.closest(
+            ".countdown-timer-large"
+          );
+          if (!parentContainer) {
+            console.log("No parent container found for timer display");
+            return;
+          }
+
+          const endTime = parentContainer.dataset.endTime;
+          const startTime = parentContainer.dataset.startTime;
+
+          console.log("End time:", endTime);
+          console.log("Start time:", startTime);
+
+          let targetTime = null;
+          let isEndTimer = false;
+
+          if (endTime) {
+            targetTime = new Date(endTime);
+            isEndTimer = true;
+            console.log("Setting up end timer for:", targetTime);
+          } else if (startTime) {
+            targetTime = new Date(startTime);
+            isEndTimer = false;
+            console.log("Setting up start timer for:", targetTime);
+          }
+
