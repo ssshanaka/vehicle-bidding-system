@@ -906,3 +906,95 @@
             console.log("Setting up start timer for:", targetTime);
           }
 
+          if (targetTime) {
+            const updateTimer = function () {
+              const now = new Date();
+              const timeDiff = targetTime.getTime() - now.getTime();
+
+              console.log("Time difference:", timeDiff);
+
+              if (timeDiff > 0) {
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor(
+                  (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                );
+                const minutes = Math.floor(
+                  (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
+                );
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+                let timeString = "";
+                if (days > 0) {
+                  timeString =
+                    days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+                } else if (hours > 0) {
+                  timeString = hours + "h " + minutes + "m " + seconds + "s";
+                } else if (minutes > 0) {
+                  timeString = minutes + "m " + seconds + "s";
+                } else {
+                  timeString = seconds + "s";
+                }
+
+                timerDisplay.textContent = timeString;
+                setTimeout(updateTimer, 1000);
+              } else {
+                if (isEndTimer) {
+                  timerDisplay.textContent = "Auction Ended";
+                } else {
+                  timerDisplay.textContent = "Starting...";
+                }
+                // Reload page after 2 seconds to show updated status
+                setTimeout(function () {
+                  window.location.reload();
+                }, 2000);
+              }
+            };
+
+            updateTimer();
+          } else {
+            console.log("No valid time found for timer");
+            timerDisplay.textContent = "No time data";
+          }
+        });
+
+        // Initialize first thumbnail as active
+        const firstThumbnail = document.querySelector(".thumbnail");
+        if (firstThumbnail) {
+          firstThumbnail.classList.add("active");
+        }
+
+        // Check for success parameter in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("success") === "true") {
+          // Show success message if redirected from successful bid placement
+          const successMessage = document.createElement("div");
+          successMessage.className =
+            "alert alert-success alert-dismissible fade show position-fixed";
+          successMessage.style.top = "20px";
+          successMessage.style.right = "20px";
+          successMessage.style.zIndex = "9999";
+          successMessage.innerHTML = `
+            <i class="bi bi-check-circle me-2"></i>
+            Bid placed successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          `;
+          document.body.appendChild(successMessage);
+
+          // Remove success parameter from URL
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+
+          // Auto-remove after 5 seconds
+          setTimeout(() => {
+            if (successMessage.parentNode) {
+              successMessage.remove();
+            }
+          }, 5000);
+        }
+      });
+    </script>
+  </body>
+</html>
