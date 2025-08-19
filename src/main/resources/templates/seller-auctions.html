@@ -38,3 +38,41 @@
               <th>Actions</th>
             </tr>
           </thead>
+          <tbody>
+            <tr th:each="auction : ${sellerAuctions}">
+              <td th:text="${auction.auctionId}"></td>
+              <td
+                th:text="${auction.listing.make + ' ' + auction.listing.model}"
+              ></td>
+              <td th:text="${auction.highestBid}"></td>
+              <td th:text="${auction.status}"></td>
+              <td>
+                <span
+                  th:id="${'countdown-' + auction.auctionId}"
+                  th:attr="data-end-time=${auction.currentEndTime}"
+                ></span>
+              </td>
+              <td>
+                <a
+                  th:href="@{/auctions/details/{id}(id=${auction.auctionId})}"
+                  class="btn btn-sm btn-info"
+                  >View Details</a
+                >
+                <!-- Edit only if Pending -->
+                <a
+                  th:href="@{/seller/auctions/edit/{id}(id=${auction.auctionId})}"
+                  class="btn btn-sm btn-warning"
+                  th:if="${auction.status.name() == 'PENDING'}"
+                  >Edit</a
+                >
+              </td>
+            </tr>
+            <tr th:if="${sellerAuctions.empty}">
+              <td colspan="6" class="text-center">No auctions created yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
