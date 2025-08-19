@@ -250,3 +250,41 @@
   transform: scale(1.1);
 }
 
+/* Modern Form Styling */
+#main-header .form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+#main-header .form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  background: white;
+}
+
+#main-header .input-group-text {
+  background: rgba(248, 249, 250, 0.8);
+  border: 2px solid #e9ecef;
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+#main-header .form-control:focus + .input-group-text,
+#main-header .form-control:focus ~ .input-group-text {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
+  color: #667eea;
+}
+
+#main-header .form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
