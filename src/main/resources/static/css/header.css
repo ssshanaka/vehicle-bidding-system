@@ -377,3 +377,50 @@
   font-weight: 500;
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+  #main-header .navbar-brand {
+    font-size: 1.4rem;
+  }
+
+  #main-header .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  #main-header .dropdown-menu {
+    margin-top: 0.25rem;
+    border-radius: 12px;
+  }
+
+  #main-header .modal-body {
+    padding: 1.5rem;
+  }
+
+  #main-header .btn-primary,
+  #main-header .btn-success {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Performance Optimizations */
+#main-header .navbar,
+#main-header .nav-link,
+#main-header .dropdown-menu,
+#main-header .modal-content {
+  will-change: transform;
+}
