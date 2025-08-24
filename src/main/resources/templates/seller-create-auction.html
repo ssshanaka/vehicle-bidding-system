@@ -222,3 +222,53 @@
           );
         });
 
+        // Custom validation for datetime fields
+        const startTimeInput = document.getElementById("startTime");
+        const endTimeInput = document.getElementById("endTime");
+
+        if (startTimeInput && endTimeInput) {
+          // Set minimum start time to current time
+          const now = new Date();
+          now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+          startTimeInput.min = now.toISOString().slice(0, 16);
+
+          // Update end time minimum when start time changes
+          startTimeInput.addEventListener("change", function () {
+            if (this.value) {
+              endTimeInput.min = this.value;
+            }
+          });
+
+          // Validate end time is after start time
+          endTimeInput.addEventListener("change", function () {
+            if (startTimeInput.value && this.value) {
+              const startTime = new Date(startTimeInput.value);
+              const endTime = new Date(this.value);
+
+              if (endTime <= startTime) {
+                this.setCustomValidity("End time must be after start time");
+              } else {
+                this.setCustomValidity("");
+              }
+            }
+          });
+
+          // Validate minimum auction duration (1 hour)
+          endTimeInput.addEventListener("change", function () {
+            if (startTimeInput.value && this.value) {
+              const startTime = new Date(startTimeInput.value);
+              const endTime = new Date(this.value);
+              const duration = (endTime - startTime) / (1000 * 60 * 60); // hours
+
+              if (duration < 1) {
+                this.setCustomValidity("Auction must be at least 1 hour long");
+              } else {
+                this.setCustomValidity("");
+              }
+            }
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
