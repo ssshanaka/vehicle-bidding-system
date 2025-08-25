@@ -55,3 +55,64 @@
           </div>
         </div>
 
+        <div class="mb-3">
+          <label for="endTime" class="form-label"
+            >Proposed End Time (Mandatory)</label
+          >
+          <input
+            type="datetime-local"
+            id="endTime"
+            th:field="*{endTime}"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">
+            End time is required and must be after start time.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="extensionDuration" class="form-label"
+            >Extension Duration in Seconds (Optional, default 30)</label
+          >
+          <input
+            type="number"
+            id="extensionDuration"
+            th:field="*{extensionDuration}"
+            class="form-control"
+            min="0"
+            placeholder="30"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Update and Resubmit for Approval
+        </button>
+        <a th:href="@{/seller/auctions}" class="btn btn-secondary"
+          >Back to My Auctions</a
+        >
+      </form>
+    </div>
+
+    <script>
+      // Bootstrap form validation
+      (function () {
+        "use strict";
+        var forms = document.querySelectorAll(".needs-validation");
+        Array.prototype.slice.call(forms).forEach(function (form) {
+          form.addEventListener(
+            "submit",
+            function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add("was-validated");
+            },
+            false
+          );
+        });
+      })();
+    </script>
+  </body>
+</html>
