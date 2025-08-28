@@ -37,3 +37,84 @@
         </div>
       </form>
 
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Vehicle</th>
+              <th>Current Bid</th>
+              <th>Status</th>
+              <th>Countdown</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="auction : ${auctions}">
+              <td th:text="${auction.auctionId}"></td>
+              <td
+                th:text="${auction.listing.make + ' ' + auction.listing.model}"
+              ></td>
+              <td th:text="${auction.highestBid}"></td>
+              <td th:text="${auction.status}"></td>
+              <td>
+                <span
+                  th:id="${'countdown-' + auction.auctionId}"
+                  th:attr="data-end-time=${auction.currentEndTime}"
+                ></span>
+              </td>
+              <td>
+                <a
+                  th:href="@{/admin/auctions/edit/{id}(id=${auction.auctionId})}"
+                  class="btn btn-sm btn-warning"
+                  >Edit/Approve</a
+                >
+                <form
+                  th:action="@{/admin/auctions/start/{id}(id=${auction.auctionId})}"
+                  method="post"
+                  class="d-inline"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-success"
+                    th:if="${auction.status.name() == 'PENDING'}"
+                  >
+                    Start Now
+                  </button>
+                </form>
+                <form
+                  th:action="@{/admin/auctions/end/{id}(id=${auction.auctionId})}"
+                  method="post"
+                  class="d-inline"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-danger"
+                    th:if="${auction.status.name() == 'ACTIVE'}"
+                  >
+                    End
+                  </button>
+                </form>
+                <a
+                  th:href="@{/auctions/details/{id}(id=${auction.auctionId})}"
+                  class="btn btn-sm btn-info"
+                  >View</a
+                >
+              </td>
+            </tr>
+            <tr th:if="${auctions.empty}">
+              <td colspan="6" class="text-center">No auctions available.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination (if needed) -->
+      <nav aria-label="Pagination" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+          <!-- Add pagination links here using Thymeleaf -->
+        </ul>
+      </nav>
+    </div>
+  </body>
+</html>
