@@ -78,5 +78,63 @@ public class HomepageAuctionDto {
         return vehicleImageUrl;
     }
 
+    public void setVehicleImageUrl(String vehicleImageUrl) {
+        this.vehicleImageUrl = vehicleImageUrl;
+    }
 
+    public BigDecimal getCurrentBid() {
+        return currentBid;
+    }
+
+    public void setCurrentBid(BigDecimal currentBid) {
+        this.currentBid = currentBid;
+    }
+
+    public BigDecimal getStartingBid() {
+        return startingBid;
+    }
+
+    public void setStartingBid(BigDecimal startingBid) {
+        this.startingBid = startingBid;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Integer getBidCount() {
+        return bidCount;
+    }
+
+    public void setBidCount(Integer bidCount) {
+        this.bidCount = bidCount;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
 }
