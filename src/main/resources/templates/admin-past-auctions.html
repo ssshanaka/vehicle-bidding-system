@@ -54,3 +54,53 @@
                       <th>Actions</th>
                     </tr>
                   </thead>
+                  <tbody>
+                    <tr th:each="auction : ${auctions.content}">
+                      <td th:text="${auction.auctionId}">1</td>
+                      <td
+                        th:text="${auction.listing.make + ' ' + auction.listing.model}"
+                      >
+                        Toyota Camry
+                      </td>
+                      <td th:text="${auction.listing.year}">2020</td>
+                      <td th:text="${auction.listing.seller.username}">
+                        seller1
+                      </td>
+                      <td
+                        th:text="${auction.winner != null ? auction.winner.username : 'No winner'}"
+                      >
+                        buyer1
+                      </td>
+                      <td
+                        th:text="${#temporals.format(auction.startTime, 'yyyy-MM-dd HH:mm')}"
+                      >
+                        2024-01-15 10:00
+                      </td>
+                      <td
+                        th:text="${#temporals.format(auction.endTime, 'yyyy-MM-dd HH:mm')}"
+                      >
+                        2024-01-15 14:30
+                      </td>
+                      <td
+                        th:text="${auction.highestBid != null ? '$' + #numbers.formatDecimal(auction.highestBid, 1, 2) : 'No bids'}"
+                      >
+                        $15,000
+                      </td>
+                      <td>
+                        <button
+                          class="btn btn-sm btn-info"
+                          th:onclick="'viewAuctionDetails(' + ${auction.auctionId} + ')'"
+                        >
+                          <i class="fas fa-eye"></i> View Details
+                        </button>
+                      </td>
+                    </tr>
+                    <tr th:if="${auctions.content.isEmpty()}">
+                      <td colspan="9" class="text-center text-muted">
+                        No past auctions
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
