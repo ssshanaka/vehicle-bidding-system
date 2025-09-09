@@ -46,3 +46,70 @@
         </div>
       </div>
 
+      <!-- Search and Filter Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <form th:action="@{/auctions}" method="get" class="row g-3">
+                <!-- Search -->
+                <div class="col-md-4">
+                  <label for="search" class="form-label fw-semibold">
+                    <i class="bi bi-search me-1"></i>
+                    Search Vehicles
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="search"
+                    name="search"
+                    th:value="${search}"
+                    placeholder="Search by make, model, or description..."
+                  />
+                </div>
+
+                <!-- Sort By -->
+                <div class="col-md-3">
+                  <label for="sortBy" class="form-label fw-semibold">
+                    <i class="bi bi-sort-down me-1"></i>
+                    Sort By
+                  </label>
+                  <select class="form-select" id="sortBy" name="sortBy">
+                    <option value="">Default (End Time)</option>
+                    <option
+                      value="endtime"
+                      th:selected="${sortBy == 'endtime'}"
+                    >
+                      End Time
+                    </option>
+                    <option
+                      value="starttime"
+                      th:selected="${sortBy == 'starttime'}"
+                    >
+                      Start Time
+                    </option>
+                    <option
+                      value="highestbid"
+                      th:selected="${sortBy == 'highestbid'}"
+                    >
+                      Highest Bid
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Sort Direction -->
+                <div class="col-md-2">
+                  <label for="sortDir" class="form-label fw-semibold">
+                    <i class="bi bi-arrow-up-down me-1"></i>
+                    Order
+                  </label>
+                  <select class="form-select" id="sortDir" name="sortDir">
+                    <option value="asc" th:selected="${sortDir == 'asc'}">
+                      Ascending
+                    </option>
+                    <option value="desc" th:selected="${sortDir == 'desc'}">
+                      Descending
+                    </option>
+                  </select>
+                </div>
+
