@@ -113,3 +113,61 @@
                   </select>
                 </div>
 
+                <!-- Page Size -->
+                <div class="col-md-2">
+                  <label for="size" class="form-label fw-semibold">
+                    <i class="bi bi-list me-1"></i>
+                    Per Page
+                  </label>
+                  <select class="form-select" id="size" name="size">
+                    <option value="12" th:selected="${size == 12}">12</option>
+                    <option value="24" th:selected="${size == 24}">24</option>
+                    <option value="48" th:selected="${size == 48}">48</option>
+                  </select>
+                </div>
+
+                <!-- Actions -->
+                <div class="col-md-1 d-flex align-items-end">
+                  <div class="d-grid gap-2 w-100">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="bi bi-funnel me-1"></i>
+                      Filter
+                    </button>
+                    <a
+                      th:href="@{/auctions}"
+                      class="btn btn-outline-secondary btn-sm"
+                    >
+                      <i class="bi bi-arrow-clockwise me-1"></i>
+                      Clear
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Hidden fields to preserve current page -->
+                <input type="hidden" name="page" th:value="${currentPage}" />
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Info -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted">
+                Showing <span th:text="${#lists.size(auctions)}">0</span> of
+                <span th:text="${totalElements}">0</span> auctions
+              </span>
+            </div>
+            <div>
+              <span class="text-muted">
+                Page <span th:text="${currentPage + 1}">1</span> of
+                <span th:text="${totalPages}">1</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
