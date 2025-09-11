@@ -37,5 +37,55 @@ public class HomepageService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Get featured auctions for homepage display
+     */
+    public List<HomepageAuctionDto> getFeaturedAuctions() {
+        List<HomepageAuctionDto> featuredAuctions = new ArrayList<>();
+        
+        try {
+            // Get up to 3 active (live) auctions
+            List<Auction> activeAuctions = auctionRepository.findTop5ByStatusOrderByEndTimeAsc(
+                Auction.Status.ACTIVE, PageRequest.of(0, 3));
+            
+            for (Auction auction : activeAuctions) {
+                featuredAuctions.add(mapAuctionToDto(auction));
+            }
+            
+            // Get up to 3 pending (scheduled) auctions
+            List<Auction> pendingAuctions = auctionRepository.findTop3ByStatusOrderByStartTimeAsc(
+                Auction.Status.PENDING, PageRequest.of(0, 3));
+            
+            for (Auction auction : pendingAuctions) {
+                featuredAuctions.add(mapAuctionToDto(auction));
+            }
+            
+            logger.info("Retrieved {} featured auctions ({} active, {} scheduled)", 
+                featuredAuctions.size(), activeAuctions.size(), pendingAuctions.size());
+            
+        } catch (Exception e) {
+            logger.error("Error retrieving featured auctions", e);
+        }
+        
+        return featuredAuctions;
+    }
+
+    /**
+     * Get homepage statistics
+     */
+    public HomepageStatsDto getHomepageStats() {
+        try {
+            long totalListings = listingRepository.count();
+            long activeAuctions = auctionRepository.countByStatus(Auction.Status.ACTIVE);
+            long totalUsers = userRepository.count();
+            long completedAuctions = auctionRepository.countByStatus(Auction.Status.CLOSED);
+            
+            return new HomepageStatsDto(totalListings, activeAuctions, totalUsers, completedAuctions);
+        } catch (Exception e) {
+            logger.error("Error retrieving homepage statistics", e);
+            return new HomepageStatsDto(0, 0, 0, 0);
+        }
+    }
+
 
 }
