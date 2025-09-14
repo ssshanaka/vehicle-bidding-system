@@ -211,3 +211,40 @@
                     />
                   </div>
 
+                  <!-- Timer -->
+                  <div class="text-center mb-3 p-2 bg-light rounded">
+                    <small class="text-muted d-block">Time Remaining</small>
+                    <div
+                      class="countdown-timer fw-bold"
+                      th:data-auction-id="${auction.auctionId}"
+                      th:data-end-time="${auction.currentEndTime}"
+                    >
+                      <span class="timer-display">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-footer bg-white border-0 pt-0">
+                  <div class="d-grid gap-2">
+                    <a
+                      th:href="@{/auctions/details/{id}(id=${auction.auctionId})}"
+                      class="btn btn-primary"
+                    >
+                      <i class="bi bi-eye me-1"></i>
+                      View Details
+                    </a>
+                    <a
+                      th:href="@{/auctions/place-bid/{id}(id=${auction.auctionId})}"
+                      class="btn btn-success"
+                    >
+                      <i class="bi bi-hammer me-1"></i>
+                      Place Bid
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
