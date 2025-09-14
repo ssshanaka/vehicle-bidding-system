@@ -87,5 +87,57 @@ public class HomepageService {
         }
     }
 
-
+    /**
+     * Map Auction entity to HomepageAuctionDto
+     */
+    private HomepageAuctionDto mapAuctionToDto(Auction auction) {
+        HomepageAuctionDto dto = new HomepageAuctionDto();
+        
+        try {
+            dto.setId(auction.getAuctionId());
+            dto.setStatus(auction.getStatus().name());
+            dto.setStartTime(auction.getStartTime());
+            dto.setEndTime(auction.getEndTime());
+            
+            // Get vehicle information from the listing
+            VehicleListing listing = auction.getListing();
+            if (listing != null) {
+                dto.setVehicleMake(listing.getMake());
+                dto.setVehicleModel(listing.getModel());
+                dto.setVehicleYear(listing.getYear());
+                dto.setCondition(listing.getCondition().name());
+                
+                // Get the first image URL
+                List<VehicleImage> images = listing.getImages();
+                if (images != null && !images.isEmpty()) {
+                    dto.setVehicleImageUrl(images.get(0).getImageUrl());
+                }
+            }
+            
+            // Get current bid information
+            List<Bid> bids = auction.getBids();
+            if (bids != null && !bids.isEmpty()) {
+                dto.setBidCount(bids.size());
+                // Get the highest bid
+                Bid highestBid = bids.stream()
+                    .max((b1, b2) -> b1.getAmount().compareTo(b2.getAmount()))
+                    .orElse(null);
+                if (highestBid != null) {
+                    dto.setCurrentBid(BigDecimal.valueOf(highestBid.getAmount()));
+                }
+            } else {
+                dto.setBidCount(0);
+                // Set starting bid to 0 if no bids exist
+                dto.setCurrentBid(BigDecimal.ZERO);
+            }
+            
+            // Set starting bid to 0 for now (no starting bid field in Auction entity)
+            dto.setStartingBid(BigDecimal.ZERO);
+            
+        } catch (Exception e) {
+            logger.error("Error mapping auction to DTO for auction ID: {}", auction.getAuctionId(), e);
+        }
+        
+        return dto;
+    }
 }
