@@ -248,3 +248,54 @@
         </div>
       </div>
 
+      <!-- No Results -->
+      <div class="row" th:if="${#lists.isEmpty(auctions)}">
+        <div class="col-12">
+          <div class="text-center py-5">
+            <i class="bi bi-search display-1 text-muted mb-3"></i>
+            <h4 class="text-muted">No auctions found</h4>
+            <p class="text-muted">
+              Try adjusting your search criteria or check back later for new
+              auctions.
+            </p>
+            <a th:href="@{/auctions}" class="btn btn-primary">
+              <i class="bi bi-arrow-clockwise me-1"></i>
+              View All Auctions
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="row" th:if="${totalPages > 1}">
+        <div class="col-12">
+          <nav aria-label="Auction pagination">
+            <ul class="pagination justify-content-center">
+              <!-- Previous Page -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/auctions(page=${currentPage - 1}, size=${size}, search=${search}, sortBy=${sortBy}, sortDir=${sortDir})}"
+                >
+                  <i class="bi bi-chevron-left"></i>
+                  Previous
+                </a>
+              </li>
+
+              <!-- Page Numbers -->
+              <li
+                class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${pageNum == currentPage} ? 'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/auctions(page=${pageNum}, size=${size}, search=${search}, sortBy=${sortBy}, sortDir=${sortDir})}"
+                  th:text="${pageNum + 1}"
+                  >1</a
+                >
+              </li>
+
