@@ -52,3 +52,62 @@ class AuctionTimer {
     }
   }
 
+  updateDisplay() {
+    if (!this.isActive) {
+      this.displayElement.innerHTML =
+        '<span class="text-muted">Auction Ended</span>';
+      return;
+    }
+
+    if (this.timeRemaining <= 0) {
+      this.displayElement.innerHTML =
+        '<span class="text-danger">Auction Ended</span>';
+      return;
+    }
+
+    const hours = Math.floor(this.timeRemaining / 3600);
+    const minutes = Math.floor((this.timeRemaining % 3600) / 60);
+    const seconds = this.timeRemaining % 60;
+
+    let timeString = "";
+    if (hours > 0) {
+      timeString += `${hours}h `;
+    }
+    if (minutes > 0 || hours > 0) {
+      timeString += `${minutes}m `;
+    }
+    timeString += `${seconds}s`;
+
+    // Color coding based on time remaining - update parent timer class
+    const timerElement = this.displayElement.closest(".countdown-timer");
+    if (timerElement) {
+      // Remove existing urgency classes
+      timerElement.classList.remove("urgent", "critical");
+
+      if (this.timeRemaining <= 60) {
+        timerElement.classList.add("critical");
+      } else if (this.timeRemaining <= 300) {
+        // 5 minutes
+        timerElement.classList.add("urgent");
+      }
+    }
+
+    this.displayElement.innerHTML = `<span>${timeString}</span>`;
+  }
+
+  onAuctionEnd() {
+    // Notify parent components that auction has ended
+    this.displayElement.dispatchEvent(
+      new CustomEvent("auctionEnded", {
+        detail: { auctionId: this.auctionId },
+      })
+    );
+  }
+
+  destroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+}
+
