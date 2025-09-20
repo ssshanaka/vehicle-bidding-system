@@ -111,3 +111,42 @@ class AuctionTimer {
   }
 }
 
+// Global function to initialize auction timer
+function initializeAuctionTimer(auctionId, displayElement) {
+  return new AuctionTimer(auctionId, displayElement);
+}
+
+// WebSocket integration for real-time updates
+class AuctionWebSocket {
+  constructor() {
+    this.socket = null;
+    this.stompClient = null;
+    this.connected = false;
+    this.timers = new Map();
+  }
+
+  connect() {
+    if (typeof SockJS === "undefined" || typeof Stomp === "undefined") {
+      console.warn(
+        "SockJS or Stomp not available. WebSocket features disabled."
+      );
+      return;
+    }
+
+    this.socket = new SockJS("/ws");
+    this.stompClient = Stomp.over(this.socket);
+
+    this.stompClient.connect(
+      {},
+      (frame) => {
+        console.log("Connected to WebSocket:", frame);
+        this.connected = true;
+        this.subscribeToUpdates();
+      },
+      (error) => {
+        console.error("WebSocket connection error:", error);
+        this.connected = false;
+      }
+    );
+  }
+
