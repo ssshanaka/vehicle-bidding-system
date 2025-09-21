@@ -150,3 +150,57 @@ class AuctionWebSocket {
     );
   }
 
+  subscribeToUpdates() {
+    if (!this.stompClient) return;
+
+    // Subscribe to general auction updates
+    this.stompClient.subscribe("/topic/auctions", (message) => {
+      const auction = JSON.parse(message.body);
+      this.handleAuctionUpdate(auction);
+    });
+
+    // Subscribe to specific auction updates
+    this.timers.forEach((timer, auctionId) => {
+      this.stompClient.subscribe(`/topic/auctions/${auctionId}`, (message) => {
+        const auction = JSON.parse(message.body);
+        this.handleAuctionUpdate(auction);
+      });
+    });
+  }
+
+  handleAuctionUpdate(auction) {
+    const timer = this.timers.get(auction.auctionId);
+    if (timer) {
+      timer.timeRemaining = auction.timeRemaining || 0;
+      timer.isActive = auction.status === "ACTIVE";
+      timer.updateDisplay();
+    }
+  }
+
+  registerTimer(auctionId, timer) {
+    this.timers.set(auctionId, timer);
+
+    if (this.connected && this.stompClient) {
+      this.stompClient.subscribe(`/topic/auctions/${auctionId}`, (message) => {
+        const auction = JSON.parse(message.body);
+        this.handleAuctionUpdate(auction);
+      });
+    }
+  }
+
+  disconnect() {
+    if (this.stompClient) {
+      this.stompClient.disconnect();
+    }
+    this.connected = false;
+  }
+}
+
+// Global WebSocket instance
+const auctionWebSocket = new AuctionWebSocket();
+
+// Initialize WebSocket connection when page loads
+document.addEventListener("DOMContentLoaded", function () {
+  auctionWebSocket.connect();
+});
+
