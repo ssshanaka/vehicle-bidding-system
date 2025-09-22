@@ -204,3 +204,42 @@ document.addEventListener("DOMContentLoaded", function () {
   auctionWebSocket.connect();
 });
 
+// Enhanced timer initialization with WebSocket support
+function initializeAuctionTimerWithWebSocket(auctionId, displayElement) {
+  const timer = new AuctionTimer(auctionId, displayElement);
+  auctionWebSocket.registerTimer(auctionId, timer);
+  return timer;
+}
+
+// Utility functions
+function formatTimeRemaining(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  } else {
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  }
+}
+
+function getTimeRemainingClass(seconds) {
+  if (seconds <= 60) return "critical";
+  if (seconds <= 300) return "urgent";
+  return "";
+}
+
+// Export for module systems
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    AuctionTimer,
+    AuctionWebSocket,
+    initializeAuctionTimer,
+    initializeAuctionTimerWithWebSocket,
+    formatTimeRemaining,
+    getTimeRemainingClass,
+  };
+}
