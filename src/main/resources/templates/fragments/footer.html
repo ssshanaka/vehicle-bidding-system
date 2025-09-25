@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <!-- Footer CSS -->
+    <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+  </head>
+  <body>
+    <footer class="footer text-white">
+      <div class="container">
+        <div class="row">
+          <!-- Company Info Section -->
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="footer-brand">
+              <div class="brand-icon-wrapper mb-3">
+                <i class="bi bi-car-front brand-icon"></i>
+              </div>
+              <h5 class="footer-title">Lanka Auto Traders</h5>
+              <p class="footer-description">
+                Your trusted platform for buying and selling quality vehicles
+                through competitive bidding. Experience the future of automotive
+                trading with our innovative platform.
+              </p>
+              <div class="social-links">
+                <a href="#" class="social-link" title="Facebook">
+                  <i class="bi bi-facebook"></i>
+                </a>
+                <a href="#" class="social-link" title="Twitter">
+                  <i class="bi bi-twitter"></i>
+                </a>
+                <a href="#" class="social-link" title="Instagram">
+                  <i class="bi bi-instagram"></i>
+                </a>
+                <a href="#" class="social-link" title="LinkedIn">
+                  <i class="bi bi-linkedin"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Links Section -->
+          <div class="col-lg-2 col-md-6 mb-4">
+            <div class="footer-section">
+              <h6 class="footer-heading">
+                <i class="bi bi-lightning me-2"></i>Quick Links
+              </h6>
+              <ul class="footer-links">
+                <li>
+                  <a href="/listings" class="footer-link">
+                    <i class="bi bi-grid-3x3-gap me-2"></i>Browse Listings
+                  </a>
+                </li>
+                <li>
+                  <a href="/register" class="footer-link">
+                    <i class="bi bi-person-plus me-2"></i>Create Account
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#loginModal"
+                    class="footer-link"
+                  >
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                  </a>
+                </li>
+                <li>
+                  <a href="/dashboard" class="footer-link">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+
+  </body>
+</html>
