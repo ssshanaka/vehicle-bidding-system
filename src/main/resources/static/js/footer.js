@@ -157,3 +157,70 @@ function handleContactClick(type, element) {
   }
 }
 
+// Update current date in footer
+function updateCurrentDate() {
+  const currentDateElement = document.querySelector(".current-date");
+  if (currentDateElement) {
+    const today = new Date();
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    const formattedDate = today.toLocaleDateString("en-US", options);
+
+    // Update the text content, keeping the icon
+    const icon = currentDateElement.querySelector("i");
+    if (icon) {
+      currentDateElement.innerHTML = `<i class="bi bi-calendar3 me-2"></i>${formattedDate}`;
+    } else {
+      currentDateElement.textContent = formattedDate;
+    }
+  }
+}
+
+// Initialize footer animations
+function initializeFooterAnimations() {
+  // Animate footer elements on scroll
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px",
+  };
+
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "translateY(0)";
+      }
+    });
+  }, observerOptions);
+
+  // Observe footer sections
+  const footerSections = document.querySelectorAll(
+    ".footer-section, .footer-brand"
+  );
+  footerSections.forEach(function (section) {
+    section.style.opacity = "0";
+    section.style.transform = "translateY(20px)";
+    section.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+    observer.observe(section);
+  });
+}
+
+// Show footer-specific notifications
+function showFooterNotification(message, type = "info") {
+  // Create notification element
+  const notification = document.createElement("div");
+  notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+  notification.style.cssText =
+    "bottom: 20px; right: 20px; z-index: 9999; min-width: 300px;";
+  notification.innerHTML = `
+    <i class="bi bi-info-circle me-2"></i>
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+
+  document.body.appendChild(notification);
+
