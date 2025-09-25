@@ -77,3 +77,83 @@ function initializeFooterLinks() {
   });
 }
 
+// Initialize contact information interactions
+function initializeContactInfo() {
+  const contactItems = document.querySelectorAll(".contact-item");
+
+  contactItems.forEach(function (item) {
+    item.addEventListener("mouseenter", function () {
+      this.style.transform = "translateX(5px)";
+    });
+
+    item.addEventListener("mouseleave", function () {
+      this.style.transform = "translateX(0)";
+    });
+
+    // Add click handlers for contact actions
+    const contactIcon = item.querySelector(".contact-icon");
+    if (contactIcon) {
+      contactIcon.addEventListener("click", function () {
+        const contactType = this.classList.contains("bi-geo-alt-fill")
+          ? "address"
+          : this.classList.contains("bi-telephone-fill")
+          ? "phone"
+          : this.classList.contains("bi-envelope-fill")
+          ? "email"
+          : "unknown";
+
+        handleContactClick(contactType, item);
+      });
+    }
+  });
+}
+
+// Handle contact information clicks
+function handleContactClick(type, element) {
+  switch (type) {
+    case "phone":
+      const phoneNumber = element.querySelector(".contact-value").textContent;
+      if (phoneNumber) {
+        // Copy phone number to clipboard
+        navigator.clipboard
+          .writeText(phoneNumber)
+          .then(function () {
+            showFooterNotification(
+              "Phone number copied to clipboard!",
+              "success"
+            );
+          })
+          .catch(function () {
+            showFooterNotification("Unable to copy phone number", "warning");
+          });
+      }
+      break;
+
+    case "email":
+      const email = element.querySelector(".contact-value").textContent;
+      if (email) {
+        // Copy email to clipboard
+        navigator.clipboard
+          .writeText(email)
+          .then(function () {
+            showFooterNotification("Email copied to clipboard!", "success");
+          })
+          .catch(function () {
+            showFooterNotification("Unable to copy email", "warning");
+          });
+      }
+      break;
+
+    case "address":
+      const address = element.querySelector(".contact-value").textContent;
+      if (address) {
+        // Open maps with address
+        const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(
+          address
+        )}`;
+        window.open(mapsUrl, "_blank");
+      }
+      break;
+  }
+}
+
