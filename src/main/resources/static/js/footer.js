@@ -224,3 +224,48 @@ function showFooterNotification(message, type = "info") {
 
   document.body.appendChild(notification);
 
+  // Auto remove after 3 seconds
+  setTimeout(function () {
+    if (notification.parentNode) {
+      notification.parentNode.removeChild(notification);
+    }
+  }, 3000);
+}
+
+// Utility function to handle footer link analytics
+function trackFooterLinkClick(linkText, linkUrl) {
+  console.log(`Footer link clicked: ${linkText} -> ${linkUrl}`);
+
+  // You can integrate with analytics services here
+  // Example: Google Analytics, Mixpanel, etc.
+  /*
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'footer_link_click', {
+      'link_text': linkText,
+      'link_url': linkUrl
+    });
+  }
+  */
+}
+
+// Initialize footer link tracking
+function initializeFooterLinkTracking() {
+  const footerLinks = document.querySelectorAll(".footer-link");
+
+  footerLinks.forEach(function (link) {
+    link.addEventListener("click", function () {
+      const linkText = this.textContent.trim();
+      const linkUrl = this.getAttribute("href");
+      trackFooterLinkClick(linkText, linkUrl);
+    });
+  });
+}
+
+// Initialize footer link tracking when DOM is ready
+document.addEventListener("DOMContentLoaded", function () {
+  initializeFooterLinkTracking();
+});
+
+// Export functions for global use
+window.showFooterNotification = showFooterNotification;
+window.trackFooterLinkClick = trackFooterLinkClick;
