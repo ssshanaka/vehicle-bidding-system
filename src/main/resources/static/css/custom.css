@@ -1,0 +1,51 @@
+body {
+  background-color: #f0f4f8; /* Softer blue-gray for automotive feel */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding-top: 76px; /* Account for fixed navbar */
+}
+
+.table {
+  margin-top: 20px;
+  border: 1px solid #dee2e6;
+}
+
+.btn {
+  margin-right: 5px;
+  transition: all 0.3s ease;
+}
+
+/* Accessibility: High contrast for buttons */
+.btn-primary {
+  background-color: #007bff; /* Primary blue */
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* Modal z-index management */
+.modal {
+  z-index: 1050 !important;
+}
+
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+
+/* Ensure dynamically created modals appear on top */
+.modal[style*="z-index"] {
+  z-index: inherit !important;
+}
+
+/* Specific z-index for different modal types */
+.modal.notification-modal {
+  z-index: 10000 !important;
+}
+
+.modal.confirmation-modal {
+  z-index: 10001 !important;
+}
+
