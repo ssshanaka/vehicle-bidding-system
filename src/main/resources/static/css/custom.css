@@ -100,3 +100,57 @@ body {
   opacity: 0.2; /* Subtler overlay */
 }
 
+/* Card hover effects */
+.featured-card {
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
+  border-radius: 12px; /* Rounded corners */
+}
+
+.featured-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+/* Search section styling */
+.search-section {
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f8f9fa 100%
+  ); /* Lighter for contrast */
+  padding: 50px 0;
+}
+
+.search-section .card {
+  border: none;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+  border-radius: 12px;
+}
+
+/* Statistics section */
+.stats-section {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+  padding: 60px 0; /* More padding */
+}
+
+.stats-section .h2 {
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Footer styling */
+.footer {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  padding: 40px 0;
+}
+
+.footer a {
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #ffc107 !important;
+}
+
