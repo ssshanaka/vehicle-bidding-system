@@ -154,3 +154,48 @@ body {
   color: #ffc107 !important;
 }
 
+/* Form enhancements */
+.form-control:focus {
+  border-color: #007bff; /* Match primary color */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Badge styling */
+.badge {
+  font-weight: 500;
+  padding: 0.5em 0.75em;
+  border-radius: 20px; /* Pill shape */
+}
+
+/* Countdown timer styling */
+.countdown-timer {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  padding: 8px 16px; /* Wider padding */
+  border-radius: 20px;
+  font-size: 0.9rem; /* Slightly larger */
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+  animation: pulse 2s infinite;
+}
+
+/* Urgent timer styling for low time remaining */
+.countdown-timer.urgent {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #212529;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+/* Critical timer styling for very low time remaining */
+.countdown-timer.critical {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+  animation: pulse 1s infinite;
+}
+
