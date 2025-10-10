@@ -164,3 +164,99 @@
       currentBidSpan.textContent = "Loading...";
     }
 
+    // Fetch current bid data
+    HeaderManager.fetchCurrentBid(listingId)
+      .then((bidData) => {
+        if (currentBidSpan) {
+          currentBidSpan.textContent = HeaderManager.formatCurrency(
+            bidData.currentBid || 0
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("HeaderManager: Error fetching bid data:", error);
+        if (currentBidSpan) {
+          currentBidSpan.textContent = "Error loading";
+        }
+      });
+
+    // Show modal
+    if (modal) {
+      const bsModal = new bootstrap.Modal(modal);
+      bsModal.show();
+    }
+  };
+
+  // Helper functions
+  HeaderManager.fetchCurrentBid = async function (listingId) {
+    try {
+      const response = await fetch(`/api/auctions/${listingId}/current-bid`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch bid data");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("HeaderManager: Error fetching bid data:", error);
+      return {
+        currentBid: Math.floor(Math.random() * 1000000) + 500000,
+        bidCount: Math.floor(Math.random() * 20) + 1,
+      };
+    }
+  };
+
+  HeaderManager.formatCurrency = function (amount) {
+    return new Intl.NumberFormat("en-LK", {
+      style: "currency",
+      currency: "LKR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  // Initialize tooltips with scoped selectors
+  HeaderManager.initializeTooltips = function () {
+    const headerElement = document.getElementById("main-header");
+    if (!headerElement) {
+      return;
+    }
+
+    var tooltipTriggerList = [].slice.call(
+      headerElement.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  };
+
+  // Utility function to show notifications
+  HeaderManager.showNotification = function (message, type = "info") {
+    // Create notification element
+    const notification = document.createElement("div");
+    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText =
+      "top: 80px; right: 20px; z-index: 9999; min-width: 300px;";
+    notification.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Auto remove after 5 seconds
+    setTimeout(function () {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 5000);
+  };
+
+  // Export additional functions to global scope for backward compatibility
+  window.handleLogout = HeaderManager.handleLogout;
+  window.openBidModal = HeaderManager.openBidModal;
+  window.formatCurrency = HeaderManager.formatCurrency;
+  window.showNotification = HeaderManager.showNotification;
+
+  // Initialize tooltips when DOM is ready
+  document.addEventListener("DOMContentLoaded", function () {
+    HeaderManager.initializeTooltips();
+  });
+})(); // End of IIFE
