@@ -334,3 +334,196 @@
       </div>
     </div>
 
+    <!-- Approve Modal -->
+    <div class="modal fade" id="approveModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Approve Listing</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="approveForm">
+              <div class="mb-3">
+                <label for="approveReason" class="form-label"
+                  >Approval Notes</label
+                >
+                <textarea
+                  class="form-control"
+                  id="approveReason"
+                  rows="3"
+                  placeholder="Enter any notes about the approval..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              onclick="confirmApprove()"
+            >
+              Approve
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal fade" id="rejectModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Reject Listing</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="rejectForm">
+              <div class="mb-3">
+                <label for="rejectionReason" class="form-label"
+                  >Rejection Reason *</label
+                >
+                <textarea
+                  class="form-control"
+                  id="rejectionReason"
+                  rows="3"
+                  placeholder="Enter the reason for rejection..."
+                  required
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="inspectorNotes" class="form-label"
+                  >Inspector Notes</label
+                >
+                <textarea
+                  class="form-control"
+                  id="inspectorNotes"
+                  rows="3"
+                  placeholder="Enter any additional notes..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="confirmReject()"
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentListingId = null;
+
+      function approveListing(listingId) {
+        currentListingId = listingId;
+        document.getElementById("approveForm").reset();
+        new bootstrap.Modal(document.getElementById("approveModal")).show();
+      }
+
+      function rejectListing(listingId) {
+        currentListingId = listingId;
+        document.getElementById("rejectForm").reset();
+        new bootstrap.Modal(document.getElementById("rejectModal")).show();
+      }
+
+      function confirmApprove() {
+        const reason = document.getElementById("approveReason").value;
+
+        fetch(`/admin/listings/${currentListingId}/approve`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `reason=${encodeURIComponent(reason)}`,
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error("Network response was not ok");
+            }
+          })
+          .then((data) => {
+            location.reload();
+          })
+          .catch((error) => {
+            alert("Error: " + error);
+          });
+      }
+
+      function confirmReject() {
+        const rejectionReason =
+          document.getElementById("rejectionReason").value;
+        const inspectorNotes = document.getElementById("inspectorNotes").value;
+
+        if (!rejectionReason.trim()) {
+          alert("Rejection reason is required");
+          return;
+        }
+
+        fetch(`/admin/listings/${currentListingId}/reject`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `rejectionReason=${encodeURIComponent(
+            rejectionReason
+          )}&inspectorNotes=${encodeURIComponent(inspectorNotes)}`,
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error("Network response was not ok");
+            }
+          })
+          .then((data) => {
+            location.reload();
+          })
+          .catch((error) => {
+            alert("Error: " + error);
+          });
+      }
+
+      function viewListingDetails(listingId) {
+        window.open(`/listings/${listingId}`, "_blank");
+      }
+
+      function viewAuctionDetails(auctionId) {
+        window.open(`/auctions/details/${auctionId}`, "_blank");
+      }
+    </script>
+
+    <!-- Include Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>
