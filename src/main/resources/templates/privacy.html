@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy - Lanka Auto Traders</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+
+    <style>
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 120px 0 80px 0;
+        margin-top: 12px;
+      }
+
+      .content-section {
+        padding: 60px 0;
+      }
+
+      .policy-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      .policy-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .section-icon {
+        font-size: 2rem;
+        color: #667eea;
+        margin-bottom: 1rem;
+      }
+
+      .policy-content {
+        background-color: #f8f9fa;
+        padding: 60px 0;
+      }
+
+      .toc-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: none;
+        border-radius: 15px;
+        position: sticky;
+        top: 100px;
+      }
+
+      .toc-link {
+        color: #495057;
+        text-decoration: none;
+        padding: 0.5rem 0;
+        display: block;
+        border-bottom: 1px solid #dee2e6;
+        transition: all 0.3s ease;
+      }
+
+      .toc-link:hover {
+        color: #667eea;
+        padding-left: 0.5rem;
+      }
+
+      .toc-link:last-child {
+        border-bottom: none;
+      }
+
+      .highlight-box {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid #2196f3;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 0 10px 10px 0;
+      }
+
+      .contact-info {
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-4">
+              <i class="bi bi-shield-check me-3"></i>Privacy Policy
+            </h1>
+            <p class="lead mb-4">
+              Your privacy is important to us. This policy explains how we
+              collect, use, and protect your personal information when you use
+              our vehicle bidding platform.
+            </p>
+            <div class="d-flex gap-3">
+              <a href="#last-updated" class="btn btn-light btn-custom">
+                <i class="bi bi-calendar"></i> Last Updated
+              </a>
+              <a
+                href="#contact-privacy"
+                class="btn btn-outline-light btn-custom"
+              >
+                <i class="bi bi-envelope"></i> Contact Us
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="text-center">
+              <i
+                class="bi bi-shield-lock"
+                style="font-size: 12rem; opacity: 0.3"
+              ></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Policy Content Section -->
+    <section class="policy-content">
+      <div class="container">
+        <div class="row">
+          <!-- Table of Contents -->
+          <div class="col-lg-3 mb-4">
+            <div class="card toc-card">
+              <div class="card-body">
+                <h5 class="card-title mb-3">
+                  <i class="bi bi-list-ul text-primary"></i> Table of Contents
+                </h5>
+                <nav class="nav flex-column">
+                  <a href="#introduction" class="toc-link">1. Introduction</a>
+                  <a href="#information-collection" class="toc-link"
+                    >2. Information We Collect</a
+                  >
+                  <a href="#information-use" class="toc-link"
+                    >3. How We Use Information</a
+                  >
+                  <a href="#information-sharing" class="toc-link"
+                    >4. Information Sharing</a
+                  >
+                  <a href="#data-security" class="toc-link">5. Data Security</a>
+                  <a href="#cookies" class="toc-link">6. Cookies & Tracking</a>
+                  <a href="#user-rights" class="toc-link">7. Your Rights</a>
+                  <a href="#data-retention" class="toc-link"
+                    >8. Data Retention</a
+                  >
+                  <a href="#policy-changes" class="toc-link"
+                    >9. Policy Changes</a
+                  >
+                  <a href="#contact-privacy" class="toc-link">10. Contact Us</a>
+                </nav>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Content -->
+          <div class="col-lg-9">
+            <!-- Last Updated -->
+            <div id="last-updated" class="card policy-card">
+              <div class="card-body">
+                <div class="text-center mb-4">
+                  <i class="bi bi-calendar-check section-icon"></i>
+                  <h3 class="card-title">Last Updated</h3>
+                  <p class="text-muted">
+                    This privacy policy was last updated on January 15, 2025
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Introduction -->
+            <div id="introduction" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-info-circle section-icon"></i>1. Introduction
+                </h3>
+                <p class="card-text">
+                  Lanka Auto Traders ("we," "our," or "us") is committed to
+                  protecting your privacy and personal information. This Privacy
+                  Policy explains how we collect, use, disclose, and safeguard
+                  your information when you visit our website or use our vehicle
+                  bidding platform.
+                </p>
+                <p class="card-text">
+                  By using our services, you agree to the collection and use of
+                  information in accordance with this policy. If you do not
+                  agree with our policies and practices, please do not use our
+                  services.
+                </p>
+                <div class="highlight-box">
+                  <h6 class="fw-bold text-primary">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Important
+                    Notice
+                  </h6>
+                  <p class="mb-0">
+                    This policy applies to all users of our platform, including
+                    buyers, sellers, and visitors. We encourage you to read this
+                    policy carefully and contact us if you have any questions.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Information Collection -->
+            <div id="information-collection" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-collection section-icon"></i>2. Information We
+                  Collect
+                </h3>
+
+                <h5 class="fw-semibold text-primary">Personal Information</h5>
+                <p>
+                  We collect information you provide directly to us, including:
+                </p>
+                <ul>
+                  <li>
+                    <strong>Account Information:</strong> Name, email address,
+                    phone number, username, and password
+                  </li>
+                  <li>
+                    <strong>Profile Information:</strong> Profile picture,
+                    address, and other details you choose to provide
+                  </li>
+                  <li>
+                    <strong>Vehicle Information:</strong> Details about vehicles
+                    you list for sale or bid on
+                  </li>
+                  <li>
+                    <strong>Payment Information:</strong> Billing address,
+                    payment method details (processed securely through
+                    third-party providers)
+                  </li>
+                  <li>
+                    <strong>Communication Records:</strong> Messages, support
+                    tickets, and other communications with us
+                  </li>
+                </ul>
+
+                <h5 class="fw-semibold text-primary mt-4">
+                  Automatically Collected Information
+                </h5>
+                <p>
+                  We automatically collect certain information when you use our
+                  platform:
+                </p>
+                <ul>
+                  <li>
+                    <strong>Device Information:</strong> IP address, browser
+                    type, operating system, and device identifiers
+                  </li>
+                  <li>
+                    <strong>Usage Data:</strong> Pages visited, time spent on
+                    pages, clicks, and other interactions
+                  </li>
+                  <li>
+                    <strong>Location Data:</strong> General geographic location
+                    based on IP address
+                  </li>
+                  <li>
+                    <strong>Cookies and Tracking:</strong> Information stored in
+                    cookies and similar technologies
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Information Use -->
+            <div id="information-use" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-gear section-icon"></i>3. How We Use
+                  Information
+                </h3>
+                <p>
+                  We use the collected information for the following purposes:
+                </p>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card border-primary">
+                      <div class="card-body">
+                        <h6 class="card-title text-primary">
+                          <i class="bi bi-person-check me-2"></i>Service
+                          Provision
+                        </h6>
+                        <ul class="small">
+                          <li>Create and manage your account</li>
+                          <li>Process bids and transactions</li>
+                          <li>Facilitate communication between users</li>
+                          <li>Provide customer support</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card border-success">
+                      <div class="card-body">
+                        <h6 class="card-title text-success">
+                          <i class="bi bi-shield-check me-2"></i>Security &
+                          Safety
+                        </h6>
+                        <ul class="small">
+                          <li>Verify user identity</li>
+                          <li>Prevent fraud and abuse</li>
+                          <li>Monitor platform security</li>
+                          <li>Enforce our terms of service</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card border-info">
+                      <div class="card-body">
+                        <h6 class="card-title text-info">
+                          <i class="bi bi-graph-up me-2"></i>Platform
+                          Improvement
+                        </h6>
+                        <ul class="small">
+                          <li>Analyze usage patterns</li>
+                          <li>Improve user experience</li>
+                          <li>Develop new features</li>
+                          <li>Optimize performance</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card border-warning">
+                      <div class="card-body">
+                        <h6 class="card-title text-warning">
+                          <i class="bi bi-bell me-2"></i>Communication
+                        </h6>
+                        <ul class="small">
+                          <li>Send important updates</li>
+                          <li>Provide notifications</li>
+                          <li>Marketing communications (with consent)</li>
+                          <li>Respond to inquiries</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Information Sharing -->
+            <div id="information-sharing" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-share section-icon"></i>4. Information Sharing
+                </h3>
+                <p>
+                  We do not sell, trade, or rent your personal information to
+                  third parties. We may share your information in the following
+                  limited circumstances:
+                </p>
+
+                <div class="alert alert-info">
+                  <h6 class="alert-heading">
+                    <i class="bi bi-info-circle me-2"></i>When We Share
+                    Information
+                  </h6>
+                  <ul class="mb-0">
+                    <li>
+                      <strong>Service Providers:</strong> Trusted third parties
+                      who help us operate our platform (payment processors,
+                      hosting providers, etc.)
+                    </li>
+                    <li>
+                      <strong>Legal Requirements:</strong> When required by law,
+                      court order, or to protect our rights and safety
+                    </li>
+                    <li>
+                      <strong>Business Transfers:</strong> In connection with a
+                      merger, acquisition, or sale of assets
+                    </li>
+                    <li>
+                      <strong>User Consent:</strong> When you explicitly consent
+                      to sharing your information
+                    </li>
+                    <li>
+                      <strong>Public Information:</strong> Information you
+                      choose to make public on your profile or listings
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Data Security -->
+            <div id="data-security" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-lock section-icon"></i>5. Data Security
+                </h3>
+                <p>
+                  We implement appropriate technical and organizational measures
+                  to protect your personal information:
+                </p>
+
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <div class="text-center">
+                      <i
+                        class="bi bi-shield-lock text-primary"
+                        style="font-size: 3rem"
+                      ></i>
+                      <h6 class="mt-2">Encryption</h6>
+                      <p class="small text-muted">
+                        All data is encrypted in transit and at rest
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="text-center">
+                      <i
+                        class="bi bi-key text-success"
+                        style="font-size: 3rem"
+                      ></i>
+                      <h6 class="mt-2">Access Control</h6>
+                      <p class="small text-muted">
+                        Strict access controls and authentication
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="text-center">
+                      <i
+                        class="bi bi-eye-slash text-info"
+                        style="font-size: 3rem"
+                      ></i>
+                      <h6 class="mt-2">Monitoring</h6>
+                      <p class="small text-muted">
+                        Continuous security monitoring and updates
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="alert alert-warning mt-4">
+                  <h6 class="alert-heading">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Important
+                    Security Note
+                  </h6>
+                  <p class="mb-0">
+                    While we strive to protect your information, no method of
+                    transmission over the internet or electronic storage is 100%
+                    secure. We cannot guarantee absolute security but
+                    continuously work to improve our security measures.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cookies -->
+            <div id="cookies" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-cookie section-icon"></i>6. Cookies & Tracking
+                  Technologies
+                </h3>
+                <p>
+                  We use cookies and similar technologies to enhance your
+                  experience:
+                </p>
+
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Cookie Type</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Essential Cookies</strong></td>
+                        <td>Authentication, security, basic functionality</td>
+                        <td>Session</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Performance Cookies</strong></td>
+                        <td>
+                          Analytics, usage statistics, performance monitoring
+                        </td>
+                        <td>1 year</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Functional Cookies</strong></td>
+                        <td>User preferences, settings, personalization</td>
+                        <td>6 months</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Marketing Cookies</strong></td>
+                        <td>Advertising, marketing campaigns (with consent)</td>
+                        <td>1 year</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p class="mt-3">
+                  You can control cookie settings through your browser
+                  preferences. However, disabling certain cookies may affect
+                  platform functionality.
+                </p>
+              </div>
+            </div>
+
+            <!-- User Rights -->
+            <div id="user-rights" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-person-check section-icon"></i>7. Your Rights
+                </h3>
+                <p>
+                  You have certain rights regarding your personal information:
+                </p>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card border-primary h-100">
+                      <div class="card-body">
+                        <h6 class="card-title text-primary">
+                          <i class="bi bi-eye me-2"></i>Access & Portability
+                        </h6>
+                        <ul class="small">
+                          <li>Request a copy of your personal data</li>
+                          <li>Export your data in a portable format</li>
+                          <li>View how your data is being used</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card border-success h-100">
+                      <div class="card-body">
+                        <h6 class="card-title text-success">
+                          <i class="bi bi-pencil me-2"></i>Correction & Update
+                        </h6>
+                        <ul class="small">
+                          <li>Update your personal information</li>
+                          <li>Correct inaccurate data</li>
+                          <li>Modify your preferences</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card border-danger h-100">
+                      <div class="card-body">
+                        <h6 class="card-title text-danger">
+                          <i class="bi bi-trash me-2"></i>Deletion
+                        </h6>
+                        <ul class="small">
+                          <li>Request deletion of your account</li>
+                          <li>Remove specific data points</li>
+                          <li>Right to be forgotten</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card border-warning h-100">
+                      <div class="card-body">
+                        <h6 class="card-title text-warning">
+                          <i class="bi bi-hand-stop me-2"></i>Restriction &
+                          Objection
+                        </h6>
+                        <ul class="small">
+                          <li>Restrict data processing</li>
+                          <li>Object to certain uses</li>
+                          <li>Withdraw consent</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="contact-info mt-4">
+                  <h6 class="fw-bold text-primary">
+                    <i class="bi bi-envelope me-2"></i>Exercise Your Rights
+                  </h6>
+                  <p class="mb-0">
+                    To exercise any of these rights, please contact us at
+                    <a
+                      href="mailto:privacy@lankaautotraders.lk"
+                      class="text-decoration-none"
+                      >privacy@lankaautotraders.lk</a
+                    >
+                    or through our contact form. We will respond within 30 days.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Data Retention -->
+            <div id="data-retention" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-clock-history section-icon"></i>8. Data
+                  Retention
+                </h3>
+                <p>
+                  We retain your personal information for as long as necessary
+                  to provide our services and comply with legal obligations:
+                </p>
+
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Retention Period</th>
+                        <th>Reason</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Account Information</td>
+                        <td>Until account deletion + 7 years</td>
+                        <td>Legal compliance, dispute resolution</td>
+                      </tr>
+                      <tr>
+                        <td>Transaction Records</td>
+                        <td>7 years</td>
+                        <td>Financial regulations, tax requirements</td>
+                      </tr>
+                      <tr>
+                        <td>Communication Records</td>
+                        <td>3 years</td>
+                        <td>Customer support, quality improvement</td>
+                      </tr>
+                      <tr>
+                        <td>Analytics Data</td>
+                        <td>2 years</td>
+                        <td>Platform improvement, anonymized analysis</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Policy Changes -->
+            <div id="policy-changes" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-arrow-repeat section-icon"></i>9. Policy
+                  Changes
+                </h3>
+                <p>
+                  We may update this Privacy Policy from time to time to reflect
+                  changes in our practices or legal requirements:
+                </p>
+
+                <div class="alert alert-info">
+                  <h6 class="alert-heading">
+                    <i class="bi bi-bell me-2"></i>Notification of Changes
+                  </h6>
+                  <ul class="mb-0">
+                    <li>
+                      We will notify you of significant changes via email or
+                      platform notification
+                    </li>
+                    <li>
+                      Updated policies will be posted on this page with a new
+                      "Last Updated" date
+                    </li>
+                    <li>
+                      Continued use of our services after changes constitutes
+                      acceptance of the new policy
+                    </li>
+                    <li>You may contact us if you disagree with any changes</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact -->
+            <div id="contact-privacy" class="card policy-card">
+              <div class="card-body">
+                <h3 class="card-title">
+                  <i class="bi bi-envelope section-icon"></i>10. Contact Us
+                </h3>
+                <p>
+                  If you have any questions about this Privacy Policy or our
+                  data practices, please contact us:
+                </p>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card border-primary">
+                      <div class="card-body text-center">
+                        <i
+                          class="bi bi-envelope-fill text-primary"
+                          style="font-size: 2rem"
+                        ></i>
+                        <h6 class="mt-2">Email</h6>
+                        <p class="small mb-0">privacy@lankaautotraders.lk</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card border-success">
+                      <div class="card-body text-center">
+                        <i
+                          class="bi bi-telephone-fill text-success"
+                          style="font-size: 2rem"
+                        ></i>
+                        <h6 class="mt-2">Phone</h6>
+                        <p class="small mb-0">+94 11 458 7746</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center mt-4">
+                  <a href="/contact" class="btn btn-primary btn-custom">
+                    <i class="bi bi-chat-dots me-2"></i>Contact Form
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Privacy Policy JavaScript -->
+    <script>
+      // Smooth scrolling for table of contents links
+      document.querySelectorAll(".toc-link").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+
+      // Highlight current section in TOC
+      window.addEventListener("scroll", function () {
+        const sections = document.querySelectorAll("[id]");
+        const scrollPos = window.scrollY + 100;
+
+        sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+          const sectionId = section.getAttribute("id");
+          const tocLink = document.querySelector(
+            `.toc-link[href="#${sectionId}"]`
+          );
+
+          if (
+            scrollPos >= sectionTop &&
+            scrollPos < sectionTop + sectionHeight
+          ) {
+            document.querySelectorAll(".toc-link").forEach((link) => {
+              link.classList.remove("text-primary", "fw-bold");
+            });
+            if (tocLink) {
+              tocLink.classList.add("text-primary", "fw-bold");
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
