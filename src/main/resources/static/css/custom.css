@@ -290,3 +290,69 @@ body {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Dropdown enhancements */
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}
+
+.dropdown-item {
+  padding: 0.75rem 1.5rem; /* More padding for touch */
+  transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #0056b3; /* Match primary */
+}
+
+/* Modal enhancements */
+.modal-header {
+  border-bottom: 1px solid #e9ecef;
+  border-top-left-radius: 12px; /* Rounded */
+  border-top-right-radius: 12px;
+}
+
+/* Specific modal header background colors for better readability */
+.modal-header.bg-dark {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%) !important;
+  color: #ffffff !important;
+}
+
+.modal-header.bg-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+  color: #ffffff !important;
+}
+
+.modal-header.bg-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+  color: #ffffff !important;
+}
+
+.modal-header.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+  color: #ffffff !important;
+}
+
+.modal-header.bg-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+  color: #ffffff !important;
+}
+
+.modal-header.bg-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+  color: #212529 !important;
+}
+
+.modal-header.bg-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+  color: #ffffff !important;
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
