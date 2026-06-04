@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Lanka Auto Traders</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="/css/custom.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+    <!-- Main Content -->
+    <main class="container-fluid py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+          <!-- Login Card -->
+          <div class="card border-0 shadow-lg">
+            <div class="card-header bg-primary text-white text-center border-0">
+              <h4 class="mb-0 fw-bold">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+              </h4>
+              <p class="mb-0 opacity-75">Welcome back to Lanka Auto Traders</p>
+            </div>
+            <div class="card-body p-4">
+              <!-- Alert -->
+              <div
+                id="alert"
+                class="alert alert-danger d-none border-0 shadow-sm"
+              >
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span id="alertText"></span>
+              </div>
+
+              <!-- Login Form -->
+              <form id="loginPageForm" class="needs-validation" novalidate>
+                <div class="mb-3">
+                  <label for="loginUsername" class="form-label fw-semibold">
+                    <i class="bi bi-person me-1"></i>Username
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-2">
+                      <i class="bi bi-person text-primary"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control border-2 border-start-0"
+                      id="loginUsername"
+                      placeholder="Enter your username"
+                      required
+                    />
+                  </div>
+                  <div class="invalid-feedback">
+                    Please provide a valid username.
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label for="loginPassword" class="form-label fw-semibold">
+                    <i class="bi bi-lock me-1"></i>Password
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-2">
+                      <i class="bi bi-lock text-primary"></i>
+                    </span>
+                    <input
+                      type="password"
+                      class="form-control border-2 border-start-0"
+                      id="loginPassword"
+                      placeholder="Enter your password"
+                      required
+                    />
+                  </div>
+                  <div class="invalid-feedback">
+                    Please provide a valid password.
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100 fw-semibold py-2"
+                >
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                </button>
+              </form>
+
+              <!-- Additional Links -->
+              <div class="text-center mt-4">
+                <p class="mb-2">
+                  <span class="text-muted">No account?</span>
+                  <a
+                    href="/register"
+                    class="text-primary fw-semibold text-decoration-none"
+                  >
+                    <i class="bi bi-person-plus me-1"></i>Register here
+                  </a>
+                </p>
+                <p class="mb-0">
+                  <a
+                    href="#"
+                    id="forgot"
+                    class="text-muted text-decoration-none"
+                  >
+                    <i class="bi bi-question-circle me-1"></i>Forgot Password?
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Features Card -->
+          <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body text-center">
+              <h6 class="fw-semibold text-primary mb-3">
+                <i class="bi bi-star me-2"></i>Why Choose Lanka Auto Traders?
+              </h6>
+              <div class="row g-3">
+                <div class="col-4">
+                  <div class="text-center">
+                    <i class="bi bi-shield-check text-success fs-4"></i>
+                    <small class="d-block text-muted mt-1">Secure</small>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="text-center">
+                    <i class="bi bi-lightning text-warning fs-4"></i>
+                    <small class="d-block text-muted mt-1">Fast</small>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="text-center">
+                    <i class="bi bi-people text-info fs-4"></i>
+                    <small class="d-block text-muted mt-1">Reliable</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Password Reset Modal -->
+    <div
+      class="modal fade"
+      id="passwordResetModal"
+      tabindex="-1"
+      aria-labelledby="passwordResetModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-primary text-white border-0">
+            <h5 class="modal-title fw-bold" id="passwordResetModalLabel">
+              <i class="bi bi-shield-lock me-2"></i>Reset Password
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div id="resetAlert" class="alert d-none" role="alert">
+              <i class="bi me-2"></i>
+              <span id="resetAlertText"></span>
+            </div>
+            <form id="passwordResetForm">
+              <div class="mb-3">
+                <label for="resetEmail" class="form-label fw-semibold">
+                  <i class="bi bi-envelope me-1"></i>Email Address
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-2">
+                    <i class="bi bi-envelope text-primary"></i>
+                  </span>
+                  <input
+                    type="email"
+                    class="form-control border-2 border-start-0"
+                    id="resetEmail"
+                    placeholder="Enter your email address"
+                    required
+                  />
+                </div>
+                <div class="invalid-feedback">
+                  Please provide a valid email address.
+                </div>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary fw-semibold">
+                  <i class="bi bi-send me-2"></i>Send Reset Link
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  <i class="bi bi-x-circle me-2"></i>Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("loginPageForm");
+      const alertBox = document.getElementById("alert");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        alertBox.classList.add("d-none");
+        const payload = {
+          username: document.getElementById("loginUsername").value.trim(),
+          password: document.getElementById("loginPassword").value,
+        };
+        try {
+          const res = await fetch("/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) {
+            const txt = await res.text();
+            throw new Error(txt || "Login failed");
+          }
+          const data = await res.json();
+          // Check for any admin role
+          if (
+            data.role === "ADMIN_OFFICER" ||
+            data.role === "IT_CONSULTANT" ||
+            data.role === "SALES_MANAGER" ||
+            data.role === "CUSTOMER_SERVICE" ||
+            data.role === "VEHICLE_INSPECTOR"
+          ) {
+            window.location.href = "/admin/dashboard";
+          } else {
+            window.location.href = "/";
+          }
+        } catch (err) {
+          document.getElementById("alertText").textContent = err.message;
+          alertBox.classList.remove("d-none");
+        }
+      });
+
+      // Password Reset Modal functionality
+      document.getElementById("forgot").addEventListener("click", (e) => {
+        e.preventDefault();
+        // Clear any previous alerts
+        const resetAlert = document.getElementById("resetAlert");
+        resetAlert.classList.add("d-none");
+        // Reset form
+        document.getElementById("passwordResetForm").reset();
+        // Show modal
+        const modal = new bootstrap.Modal(
+          document.getElementById("passwordResetModal")
+        );
+        modal.show();
+      });
+
+      // Handle password reset form submission
+      document
+        .getElementById("passwordResetForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("resetEmail").value.trim();
+          const resetAlert = document.getElementById("resetAlert");
+          const resetAlertText = document.getElementById("resetAlertText");
+          const submitBtn = e.target.querySelector('button[type="submit"]');
+          const originalBtnText = submitBtn.innerHTML;
+
+          // Show loading state
+          submitBtn.innerHTML =
+            '<i class="bi bi-hourglass-split me-2"></i>Sending...';
+          submitBtn.disabled = true;
+
+          try {
+            const res = await fetch("/auth/request-password-reset", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email }),
+            });
+
+            if (res.ok) {
+              // Success
+              resetAlert.className = "alert alert-success";
+              resetAlert.querySelector("i").className =
+                "bi bi-check-circle-fill me-2";
+              resetAlertText.textContent =
+                "Reset link sent successfully! Check your email for instructions.";
+
+              // Close modal after 3 seconds
+              setTimeout(() => {
+                bootstrap.Modal.getInstance(
+                  document.getElementById("passwordResetModal")
+                ).hide();
+              }, 3000);
+            } else if (res.status === 429) {
+              // Rate limited
+              resetAlert.className = "alert alert-warning";
+              resetAlert.querySelector("i").className =
+                "bi bi-exclamation-triangle-fill me-2";
+              resetAlertText.textContent =
+                "Too many password reset requests. Please wait before trying again.";
+            } else {
+              // Other error
+              const errorMsg = await res.text();
+              resetAlert.className = "alert alert-danger";
+              resetAlert.querySelector("i").className =
+                "bi bi-exclamation-triangle-fill me-2";
+              resetAlertText.textContent =
+                errorMsg || "Failed to send reset link. Please try again.";
+            }
+          } catch (err) {
+            // Network error
+            resetAlert.className = "alert alert-danger";
+            resetAlert.querySelector("i").className =
+              "bi bi-exclamation-triangle-fill me-2";
+            resetAlertText.textContent =
+              "Network error. Please check your connection and try again.";
+          } finally {
+            // Reset button state
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+            resetAlert.classList.remove("d-none");
+          }
+        });
+
+      // Form validation
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                  },
+                  false
+                );
+              }
+            );
+          },
+          false
+        );
+      })();
+    </script>
+
+    <!-- Include Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Custom Styles for Login Page -->
+    <style>
+      /* Modern Card Styling */
+      .card {
+        border-radius: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      /* Button Styling */
+      .btn {
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+
+      /* Form Control Styling */
+      .form-control {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        border-color: #667eea;
+      }
+
+      .input-group-text {
+        border-radius: 12px 0 0 12px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-color: #dee2e6;
+      }
+
+      .form-control.border-start-0 {
+        border-radius: 0 12px 12px 0;
+      }
+
+      /* Alert Styling */
+      .alert {
+        border-radius: 12px;
+        border: none;
+        font-weight: 500;
+      }
+
+      .alert-danger {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+      }
+
+      /* Link Styling */
+      a {
+        transition: all 0.3s ease;
+      }
+
+      a:hover {
+        transform: translateX(2px);
+      }
+
+      /* Icon Animations */
+      .bi {
+        transition: all 0.3s ease;
+      }
+
+      .card:hover .bi {
+        transform: scale(1.1);
+      }
+
+      /* Background Gradient */
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      /* Card Header Gradient */
+      .card-header {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ) !important;
+      }
+
+      /* Features Card Styling */
+      .card.border-0.shadow-sm {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .container-fluid {
+          padding: 2rem 1rem;
+        }
+
+        .card-body {
+          padding: 2rem 1.5rem;
+        }
+      }
+
+      /* Loading Animation */
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      /* Modal Styling */
+      .modal-content {
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      .modal-header {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ) !important;
+        border-bottom: none;
+      }
+
+      .modal-body .form-control {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .modal-body .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        border-color: #667eea;
+      }
+
+      .modal-body .input-group-text {
+        border-radius: 12px 0 0 12px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-color: #dee2e6;
+      }
+
+      .modal-body .form-control.border-start-0 {
+        border-radius: 0 12px 12px 0;
+      }
+
+      .modal-body .alert {
+        border-radius: 12px;
+        border: none;
+        font-weight: 500;
+      }
+
+      .modal-body .alert-success {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+      }
+
+      .modal-body .alert-warning {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        color: #856404;
+      }
+
+      .modal-body .alert-danger {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+      }
+
+      .modal-body .btn {
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+      }
+
+      .modal-body .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .modal-body .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+      }
+
+      .modal-body .btn-primary:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+
+      .modal-body .btn:active {
+        transform: scale(0.98);
+      }
+
+      /* Modal backdrop */
+      .modal-backdrop {
+        background-color: rgba(102, 126, 234, 0.3);
+      }
+    </style>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

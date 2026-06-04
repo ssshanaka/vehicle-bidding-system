@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard - Vehicle Bidding System</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+
+    <style>
+      /* Hero Section Styling */
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+      }
+
+      .hero-section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero-section p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+      }
+
+      /* Stat Card Styling */
+      .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .stat-sublabel {
+        color: #adb5bd;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+      }
+
+      /* Content Card Styling */
+      .content-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+      }
+
+      .content-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1.5rem 2rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .content-card .card-body {
+        padding: 2rem;
+      }
+
+      /* Button Styling */
+      .btn-custom {
+        border-radius: 15px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+      }
+
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Action Button Styling */
+      .action-btn {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 20px;
+        padding: 2rem 1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: #2c3e50;
+        display: block;
+        height: 100%;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        border-color: #667eea;
+        color: #667eea;
+        text-decoration: none;
+      }
+
+      .action-btn i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .action-btn h5 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .action-btn p {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin: 0;
+      }
+
+      /* Navigation List Styling */
+      .nav-list {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+      }
+
+      .nav-list .list-group-item {
+        border: none;
+        border-bottom: 1px solid #f8f9fa;
+        padding: 1rem 2rem;
+        transition: all 0.3s ease;
+      }
+
+      .nav-list .list-group-item:last-child {
+        border-bottom: none;
+      }
+
+      .nav-list .list-group-item:hover {
+        background: rgba(102, 126, 234, 0.05);
+        transform: translateX(5px);
+      }
+
+      .nav-list .list-group-item i {
+        width: 20px;
+        text-align: center;
+        margin-right: 1rem;
+      }
+
+      /* Badge Styling */
+      .badge-modern {
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-success-modern {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+      }
+
+      .badge-primary-modern {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+      }
+
+      .badge-warning-modern {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        color: white;
+      }
+
+      .badge-danger-modern {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        color: white;
+      }
+
+      /* Custom scrollbar styling for better UX */
+      body::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      body::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+      }
+
+      body::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Dashboard Content -->
+    <div class="container-fluid py-4">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h1>
+                <i class="bi bi-speedometer2 me-3"></i>
+                User Dashboard
+              </h1>
+              <p>Welcome to your personal vehicle bidding control center</p>
+              <div class="d-flex gap-3">
+                <button
+                  class="btn btn-light btn-custom"
+                  onclick="location.reload()"
+                >
+                  <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                </button>
+                <a href="/profile" class="btn btn-outline-light btn-custom">
+                  <i class="bi bi-person-gear me-2"></i>Edit Profile
+                </a>
+              </div>
+            </div>
+            <div class="col-lg-4 text-end">
+              <div class="badge bg-light text-dark fs-5 px-4 py-2">
+                <i class="bi bi-person-badge me-2"></i>USER
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Info Card -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="content-card">
+            <div class="card-header">
+              <h5><i class="bi bi-person"></i> Account Information</h5>
+            </div>
+            <div class="card-body">
+              <div id="user" class="mb-3">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="content-card">
+            <div class="card-header">
+              <h5><i class="bi bi-lightning"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3 mb-3">
+                  <a href="/listings" class="action-btn">
+                    <i class="bi bi-search"></i>
+                    <h5>Browse Listings</h5>
+                    <p>Explore available vehicles</p>
+                  </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <a href="/auctions" class="action-btn">
+                    <i class="bi bi-hammer"></i>
+                    <h5>Live Auctions</h5>
+                    <p>Participate in live bidding</p>
+                  </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <a href="/seller/listings" class="action-btn">
+                    <i class="bi bi-list-ul"></i>
+                    <h5>My Listings</h5>
+                    <p>Manage your vehicle listings</p>
+                  </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <a href="/seller/auctions" class="action-btn">
+                    <i class="bi bi-graph-up"></i>
+                    <h5>My Auctions</h5>
+                    <p>Track your auction performance</p>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Statistics -->
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-hammer"></i>
+            </div>
+            <div class="stat-number" id="activeAuctions">-</div>
+            <div class="stat-label">Active Auctions</div>
+            <div class="stat-sublabel">Currently bidding</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-trophy"></i>
+            </div>
+            <div class="stat-number" id="wonAuctions">-</div>
+            <div class="stat-label">Auctions Won</div>
+            <div class="stat-sublabel">Total victories</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-list-ul"></i>
+            </div>
+            <div class="stat-number" id="myListings">-</div>
+            <div class="stat-label">My Listings</div>
+            <div class="stat-sublabel">Vehicles for sale</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-bell"></i>
+            </div>
+            <div class="stat-number" id="notifications">-</div>
+            <div class="stat-label">Notifications</div>
+            <div class="stat-sublabel">Unread messages</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <div class="content-card">
+            <div class="card-header">
+              <h5><i class="bi bi-clock-history"></i> Recent Activity</h5>
+            </div>
+            <div class="card-body">
+              <div id="recentActivity">
+                <div class="text-center py-4">
+                  <i class="bi bi-hourglass-split text-muted fs-1"></i>
+                  <p class="text-muted mt-2">Loading recent activity...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="content-card">
+            <div class="card-header">
+              <h5><i class="bi bi-calendar-event"></i> Upcoming Events</h5>
+            </div>
+            <div class="card-body">
+              <div id="upcomingEvents">
+                <div class="text-center py-4">
+                  <i class="bi bi-calendar-x text-muted fs-1"></i>
+                  <p class="text-muted mt-2">No upcoming events</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Access -->
+      <div class="row">
+        <div class="col-12">
+          <div class="content-card">
+            <div class="card-header">
+              <h5><i class="bi bi-grid-3x3-gap"></i> Quick Access</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-2 col-sm-4 col-6 mb-3">
+                  <a href="/listings" class="action-btn">
+                    <i class="bi bi-search"></i>
+                    <h6>Browse</h6>
+                    <small>Listings</small>
+                  </a>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6 mb-3">
+                  <a href="/auctions" class="action-btn">
+                    <i class="bi bi-hammer"></i>
+                    <h6>Live</h6>
+                    <small>Auctions</small>
+                  </a>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6 mb-3">
+                  <a href="/seller/listings" class="action-btn">
+                    <i class="bi bi-list-ul"></i>
+                    <h6>My</h6>
+                    <small>Listings</small>
+                  </a>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6 mb-3">
+                  <a href="/seller/auctions" class="action-btn">
+                    <i class="bi bi-graph-up"></i>
+                    <h6>My</h6>
+                    <small>Auctions</small>
+                  </a>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6 mb-3">
+                  <a href="/notifications" class="action-btn">
+                    <i class="bi bi-bell"></i>
+                    <h6>Notifications</h6>
+                    <small>Alerts</small>
+                  </a>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6 mb-3">
+                  <a href="/profile" class="action-btn">
+                    <i class="bi bi-person-gear"></i>
+                    <h6>Profile</h6>
+                    <small>Settings</small>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Load dashboard data
+      async function loadDashboardData() {
+        try {
+          // Load user data
+          const userRes = await fetch("/me");
+          if (!userRes.ok) {
+            document.getElementById("user").innerHTML = `
+              <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> Please login to access your dashboard.
+                <a href="/login" class="btn btn-primary btn-sm ms-2">Login</a>
+              </div>
+            `;
+            return;
+          }
+          const user = await userRes.json();
+
+          // Display user information
+          document.getElementById("user").innerHTML = `
+            <div class="row">
+              <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-person-circle text-primary me-2 fs-4"></i>
+                  <div>
+                    <h6 class="mb-1 fw-bold">${user.username}</h6>
+                    <small class="text-muted">Username</small>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-envelope text-primary me-2 fs-5"></i>
+                  <div>
+                    <h6 class="mb-1 fw-bold">${user.email}</h6>
+                    <small class="text-muted">Email Address</small>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-telephone text-primary me-2 fs-5"></i>
+                  <div>
+                    <h6 class="mb-1 fw-bold">${
+                      user.phone || "Not provided"
+                    }</h6>
+                    <small class="text-muted">Phone Number</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-shield-check text-success me-2 fs-5"></i>
+                  <div>
+                    <h6 class="mb-1 fw-bold">${user.role}</h6>
+                    <small class="text-muted">User Role</small>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-check-circle text-success me-2 fs-5"></i>
+                  <div>
+                    <h6 class="mb-1 fw-bold">Active</h6>
+                    <small class="text-muted">Account Status</small>
+                  </div>
+                </div>
+                <a href="/profile" class="btn btn-outline-primary btn-custom">
+                  <i class="bi bi-person-gear me-2"></i> Edit Profile
+                </a>
+              </div>
+            </div>
+          `;
+
+          // Load dashboard statistics
+          await loadDashboardStats();
+
+          // Load recent activity
+          await loadRecentActivity();
+        } catch (e) {
+          console.error("Error loading dashboard data:", e);
+          document.getElementById("user").innerHTML = `
+            <div class="alert alert-danger">
+              <i class="bi bi-exclamation-circle"></i> Failed to load user information.
+            </div>
+          `;
+        }
+      }
+
+      // Load dashboard statistics
+      async function loadDashboardStats() {
+        try {
+          // Load active auctions count
+          const auctionsRes = await fetch("/api/auctions?status=ACTIVE");
+          if (auctionsRes.ok) {
+            const auctionsData = await auctionsRes.json();
+            document.getElementById("activeAuctions").textContent =
+              auctionsData.totalElements || 0;
+          }
+
+          // Load user's listings count
+          const listingsRes = await fetch("/api/seller/listings");
+          if (listingsRes.ok) {
+            const listingsData = await listingsRes.json();
+            document.getElementById("myListings").textContent =
+              listingsData.totalElements || 0;
+          }
+
+          // Load notifications count
+          const notificationsRes = await fetch("/api/notifications/unread");
+          if (notificationsRes.ok) {
+            const notificationsData = await notificationsRes.json();
+            document.getElementById("notifications").textContent =
+              notificationsData.length || 0;
+          }
+
+          // Set won auctions (placeholder - would need specific API)
+          document.getElementById("wonAuctions").textContent = "0";
+        } catch (e) {
+          console.error("Error loading dashboard stats:", e);
+          // Set default values on error
+          document.getElementById("activeAuctions").textContent = "0";
+          document.getElementById("wonAuctions").textContent = "0";
+          document.getElementById("myListings").textContent = "0";
+          document.getElementById("notifications").textContent = "0";
+        }
+      }
+
+      // Load recent activity
+      async function loadRecentActivity() {
+        try {
+          const activityRes = await fetch("/api/user/activity");
+          if (activityRes.ok) {
+            const activities = await activityRes.json();
+            if (activities.length > 0) {
+              const activityHtml = activities
+                .slice(0, 5)
+                .map(
+                  (activity) => `
+                <div class="d-flex align-items-center mb-3 p-3 border rounded">
+                  <div class="me-3">
+                    <i class="bi bi-${getActivityIcon(
+                      activity.type
+                    )} text-primary fs-5"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="mb-1">${activity.title}</h6>
+                    <small class="text-muted">${new Date(
+                      activity.timestamp
+                    ).toLocaleString()}</small>
+                  </div>
+                </div>
+              `
+                )
+                .join("");
+              document.getElementById("recentActivity").innerHTML =
+                activityHtml;
+            } else {
+              document.getElementById("recentActivity").innerHTML = `
+                <div class="text-center py-4">
+                  <i class="bi bi-inbox text-muted fs-1"></i>
+                  <p class="text-muted mt-2">No recent activity</p>
+                </div>
+              `;
+            }
+          } else {
+            // Fallback content
+            document.getElementById("recentActivity").innerHTML = `
+              <div class="text-center py-4">
+                <i class="bi bi-clock-history text-muted fs-1"></i>
+                <p class="text-muted mt-2">Recent activity will appear here</p>
+              </div>
+            `;
+          }
+        } catch (e) {
+          console.error("Error loading recent activity:", e);
+          document.getElementById("recentActivity").innerHTML = `
+            <div class="text-center py-4">
+              <i class="bi bi-exclamation-triangle text-muted fs-1"></i>
+              <p class="text-muted mt-2">Unable to load recent activity</p>
+            </div>
+          `;
+        }
+      }
+
+      // Get activity icon based on type
+      function getActivityIcon(type) {
+        const iconMap = {
+          bid: "hammer",
+          listing: "list-ul",
+          auction: "gavel",
+          notification: "bell",
+          profile: "person-gear",
+          default: "circle",
+        };
+        return iconMap[type] || iconMap.default;
+      }
+
+      // Initialize dashboard when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        loadDashboardData();
+      });
+    </script>
+
+    <!-- Include Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>
