@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Support Dashboard - Vehicle Bidding System</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+
+    <style>
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 100px 0 80px 0;
+        margin-top: 56px;
+      }
+
+      .stats-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .ticket-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        margin-bottom: 20px;
+      }
+
+      .ticket-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-custom {
+        border-radius: 25px;
+        padding: 10px 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .filter-section {
+        background-color: #f8f9fa;
+        padding: 40px 0;
+        border-radius: 15px;
+        margin-bottom: 30px;
+      }
+
+      .conversation-log {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 15px;
+      }
+
+      .conversation-item {
+        border-left: 3px solid #dee2e6;
+        padding-left: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .conversation-item:last-child {
+        border-left-color: #28a745;
+      }
+
+      .conversation-item .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border-radius: 10px;
+      }
+
+      .conversation-item .card-body {
+        padding: 0.75rem;
+      }
+
+      .conversation-item h6 {
+        font-weight: 600;
+      }
+
+      .conversation-item small {
+        font-size: 0.75rem;
+      }
+
+      .priority-urgent {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+      }
+
+      .priority-high {
+        background: linear-gradient(135deg, #fd7e14 0%, #e55a00 100%);
+        color: white;
+      }
+
+      .priority-medium {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        color: #212529;
+      }
+
+      .priority-low {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        color: white;
+      }
+
+      .status-open {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+      }
+
+      .status-in-progress {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        color: #212529;
+      }
+
+      .status-resolved {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        color: white;
+      }
+
+      .status-closed {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+      }
+
+      .status-escalated {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        opacity: 0.3;
+        margin-bottom: 20px;
+      }
+
+      .quick-actions {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .section-title {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e9ecef;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-4">
+              <i class="fas fa-headset me-3"></i>Customer Support Dashboard
+            </h1>
+            <p class="lead mb-4">
+              Manage customer support tickets, respond to queries, and provide
+              excellent customer service. Track ticket status, view conversation
+              history, and resolve issues efficiently.
+            </p>
+            <div class="d-flex gap-3">
+              <button
+                class="btn btn-light btn-custom"
+                onclick="refreshDashboard()"
+              >
+                <i class="fas fa-sync-alt me-2"></i>Refresh Dashboard
+              </button>
+              <button
+                class="btn btn-outline-light btn-custom"
+                onclick="showDashboardHelp()"
+              >
+                <i class="fas fa-question-circle me-2"></i>Help Guide
+              </button>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="text-center">
+              <i
+                class="fas fa-ticket-alt"
+                style="font-size: 8rem; opacity: 0.3"
+              ></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card stats-card h-100 text-center">
+              <div class="card-body">
+                <div class="text-danger mb-3">
+                  <i class="fas fa-exclamation-triangle fa-3x"></i>
+                </div>
+                <h2 class="card-title text-danger" id="urgentTickets">0</h2>
+                <h6 class="card-subtitle mb-2 text-muted">Urgent Tickets</h6>
+                <p class="card-text small text-muted">
+                  Require immediate attention
+                </p>
+                <button
+                  class="btn btn-danger btn-sm btn-custom"
+                  onclick="filterByPriority('URGENT')"
+                >
+                  <i class="fas fa-eye me-2"></i>View Urgent
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card stats-card h-100 text-center">
+              <div class="card-body">
+                <div class="text-warning mb-3">
+                  <i class="fas fa-clock fa-3x"></i>
+                </div>
+                <h2 class="card-title text-warning" id="openTickets">0</h2>
+                <h6 class="card-subtitle mb-2 text-muted">Open Tickets</h6>
+                <p class="card-text small text-muted">Awaiting response</p>
+                <button
+                  class="btn btn-warning btn-sm btn-custom"
+                  onclick="filterByStatus('OPEN')"
+                >
+                  <i class="fas fa-list me-2"></i>View Open
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card stats-card h-100 text-center">
+              <div class="card-body">
+                <div class="text-info mb-3">
+                  <i class="fas fa-user-cog fa-3x"></i>
+                </div>
+                <h2 class="card-title text-info" id="assignedTickets">0</h2>
+                <h6 class="card-subtitle mb-2 text-muted">In Progress</h6>
+                <p class="card-text small text-muted">Being worked on</p>
+                <button
+                  class="btn btn-info btn-sm btn-custom"
+                  onclick="filterByStatus('IN_PROGRESS')"
+                >
+                  <i class="fas fa-user me-2"></i>View Active
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card stats-card h-100 text-center">
+              <div class="card-body">
+                <div class="text-success mb-3">
+                  <i class="fas fa-check-circle fa-3x"></i>
+                </div>
+                <h2 class="card-title text-success" id="resolvedTickets">0</h2>
+                <h6 class="card-subtitle mb-2 text-muted">Resolved Today</h6>
+                <p class="card-text small text-muted">Completed tickets</p>
+                <button
+                  class="btn btn-success btn-sm btn-custom"
+                  onclick="filterByStatus('RESOLVED')"
+                >
+                  <i class="fas fa-chart-line me-2"></i>View Stats
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="py-4">
+      <div class="container">
+        <div class="quick-actions">
+          <h4 class="section-title">
+            <i class="fas fa-bolt me-2"></i>Quick Actions
+          </h4>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <button
+                class="btn btn-primary btn-custom w-100"
+                onclick="showAllTickets()"
+              >
+                <i class="fas fa-list me-2"></i>View All Tickets
+              </button>
+            </div>
+            <div class="col-md-3 mb-3">
+              <button
+                class="btn btn-success btn-custom w-100"
+                onclick="showOpenTickets()"
+              >
+                <i class="fas fa-plus me-2"></i>New Tickets
+              </button>
+            </div>
+            <div class="col-md-3 mb-3">
+              <button
+                class="btn btn-warning btn-custom w-100"
+                onclick="showEscalatedTickets()"
+              >
+                <i class="fas fa-exclamation-triangle me-2"></i>Escalated
+              </button>
+            </div>
+            <div class="col-md-3 mb-3">
+              <button
+                class="btn btn-info btn-custom w-100"
+                onclick="exportTickets()"
+              >
+                <i class="fas fa-download me-2"></i>Export Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="py-4">
+      <div class="container">
+        <div class="filter-section">
+          <h4 class="section-title text-center">
+            <i class="fas fa-filter me-2"></i>Filter & Search Tickets
+          </h4>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label for="statusFilter" class="form-label">Status</label>
+              <select
+                class="form-select"
+                id="statusFilter"
+                onchange="filterTickets()"
+              >
+                <option value="">All Statuses</option>
+                <option value="OPEN">Open</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="RESOLVED">Resolved</option>
+                <option value="CLOSED">Closed</option>
+                <option value="ESCALATED">Escalated</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="priorityFilter" class="form-label">Priority</label>
+              <select
+                class="form-select"
+                id="priorityFilter"
+                onchange="filterTickets()"
+              >
+                <option value="">All Priorities</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="URGENT">Urgent</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="typeFilter" class="form-label">Type</label>
+              <select
+                class="form-select"
+                id="typeFilter"
+                onchange="filterTickets()"
+              >
+                <option value="">All Types</option>
+                <option value="GENERAL_INQUIRY">General Inquiry</option>
+                <option value="TECHNICAL_SUPPORT">Technical Support</option>
+                <option value="BILLING_ISSUE">Billing Issue</option>
+                <option value="COMPLAINT">Complaint</option>
+                <option value="FEATURE_REQUEST">Feature Request</option>
+                <option value="BUG_REPORT">Bug Report</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="searchInput" class="form-label">Search</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="searchInput"
+                  placeholder="Search tickets..."
+                  onkeyup="searchTickets()"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  onclick="searchTickets()"
+                >
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-3">
+            <button
+              class="btn btn-outline-secondary btn-custom"
+              onclick="clearFilters()"
+            >
+              <i class="fas fa-times me-2"></i>Clear Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tickets Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h4 class="section-title">
+              <i class="fas fa-ticket-alt me-2"></i>Support Tickets
+              <span class="badge bg-primary ms-2" id="ticketCount">0</span>
+            </h4>
+          </div>
+        </div>
+
+        <!-- Tickets Grid -->
+        <div class="row" id="ticketsContainer">
+          <!-- Dynamic content will be loaded here -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="row" id="emptyState" style="display: none">
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="fas fa-ticket-alt"></i>
+              <h4>No tickets found</h4>
+              <p>
+                Try adjusting your filters or check back later for new tickets.
+              </p>
+              <button
+                class="btn btn-primary btn-custom"
+                onclick="clearFilters()"
+              >
+                <i class="fas fa-refresh me-2"></i>Clear Filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="row" id="loadingState">
+          <div class="col-12 text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Loading tickets...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ticket Details Modal -->
+    <div class="modal fade" id="ticketDetailsModal" tabindex="-1">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">
+              <i class="fas fa-ticket-alt me-2"></i>Ticket Details
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="card">
+                  <div class="card-header">
+                    <h6 class="mb-0">Ticket Information</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row mb-3">
+                      <div class="col-sm-3"><strong>Subject:</strong></div>
+                      <div class="col-sm-9" id="ticketSubject">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-sm-3"><strong>Description:</strong></div>
+                      <div class="col-sm-9" id="ticketDescription">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-sm-3"><strong>Customer:</strong></div>
+                      <div class="col-sm-9" id="ticketCustomer">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-sm-3"><strong>Type:</strong></div>
+                      <div class="col-sm-9" id="ticketType">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-sm-3"><strong>Priority:</strong></div>
+                      <div class="col-sm-9" id="ticketPriority">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-sm-3"><strong>Status:</strong></div>
+                      <div class="col-sm-9" id="ticketStatus">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-sm-3"><strong>Assigned To:</strong></div>
+                      <div class="col-sm-9" id="ticketAssignedTo">-</div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-sm-3"><strong>Created:</strong></div>
+                      <div class="col-sm-9" id="ticketCreated">-</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card">
+                  <div class="card-header">
+                    <h6 class="mb-0">Quick Actions</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-grid gap-2">
+                      <button
+                        class="btn btn-primary"
+                        onclick="respondToTicket()"
+                      >
+                        <i class="fas fa-reply me-2"></i>Respond to Ticket
+                      </button>
+                      <button class="btn btn-success" onclick="closeTicket()">
+                        <i class="fas fa-check-circle me-2"></i>Close Ticket
+                      </button>
+                      <button
+                        class="btn btn-warning"
+                        onclick="escalateTicket()"
+                      >
+                        <i class="fas fa-exclamation-triangle me-2"></i>Escalate
+                        Ticket
+                      </button>
+                      <button class="btn btn-info" onclick="viewConversation()">
+                        <i class="fas fa-comments me-2"></i>View Conversation
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Respond to Ticket Modal -->
+    <div class="modal fade" id="respondTicketModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">
+              <i class="fas fa-reply me-2"></i>Respond to Ticket
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="responseMessage" class="form-label"
+                >Your Response</label
+              >
+              <textarea
+                class="form-control"
+                id="responseMessage"
+                rows="6"
+                placeholder="Type your response to the customer..."
+                required
+              ></textarea>
+              <div class="form-text">
+                This will automatically assign the ticket to you and set status
+                to "In Progress"
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="confirmRespondToTicket()"
+            >
+              Send Response
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Close Ticket Modal -->
+    <div class="modal fade" id="closeTicketModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">
+              <i class="fas fa-check-circle me-2"></i>Close Ticket
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="closingNotes" class="form-label"
+                >Closing Notes (Optional)</label
+              >
+              <textarea
+                class="form-control"
+                id="closingNotes"
+                rows="4"
+                placeholder="Add any final notes before closing the ticket..."
+              ></textarea>
+              <div class="form-text">
+                This will permanently close the ticket. The customer will be
+                notified.
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              onclick="confirmCloseTicket()"
+            >
+              Close Ticket
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escalate Ticket Modal -->
+    <div class="modal fade" id="escalateTicketModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title">
+              <i class="fas fa-exclamation-triangle me-2"></i>Escalate Ticket
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="escalationReason" class="form-label"
+                >Escalation Reason</label
+              >
+              <textarea
+                class="form-control"
+                id="escalationReason"
+                rows="4"
+                placeholder="Explain why this ticket needs to be escalated..."
+                required
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning"
+              onclick="confirmEscalateTicket()"
+            >
+              Escalate
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conversation View Modal -->
+    <div class="modal fade" id="conversationModal" tabindex="-1">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title">
+              <i class="fas fa-comments me-2"></i>Ticket Conversation
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="conversationContent" class="conversation-log">
+              <!-- Conversation will be loaded here -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="respondFromConversation()"
+            >
+              Add Response
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Global variables
+      let currentTicketId = null;
+      let currentPage = 0;
+      let pageSize = 20;
+      let currentFilters = {
+        status: "",
+        priority: "",
+        type: "",
+        search: "",
+      };
+
+      // Load dashboard data on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        loadDashboardStats();
+        loadTickets();
+        hideLoadingState();
+      });
+
+      // Load dashboard statistics
+      function loadDashboardStats() {
+        // This would typically make API calls to get real statistics
+        // For now, we'll use placeholder values
+        document.getElementById("urgentTickets").textContent = "0";
+        document.getElementById("openTickets").textContent = "0";
+        document.getElementById("assignedTickets").textContent = "0";
+        document.getElementById("resolvedTickets").textContent = "0";
+      }
+
+      // Load tickets
+      function loadTickets() {
+        showLoadingState();
+        const params = new URLSearchParams();
+        params.append("page", currentPage);
+        params.append("size", pageSize);
+
+        if (currentFilters.status)
+          params.append("status", currentFilters.status);
+        if (currentFilters.priority)
+          params.append("priority", currentFilters.priority);
+        if (currentFilters.type) params.append("type", currentFilters.type);
+        if (currentFilters.search)
+          params.append("search", currentFilters.search);
+
+        fetch(`/customer-service/api/queries?${params.toString()}`)
+          .then((response) => response.json())
+          .then((data) => {
+            populateTicketsGrid(data);
+            updateTicketCount(data.length);
+            hideLoadingState();
+          })
+          .catch((error) => {
+            console.error("Error loading tickets:", error);
+            showNotification("error", "Error", "Failed to load tickets");
+            hideLoadingState();
+          });
+      }
+
+      // Populate tickets grid
+      function populateTicketsGrid(tickets) {
+        const container = document.getElementById("ticketsContainer");
+        container.innerHTML = "";
+
+        if (!tickets || tickets.length === 0) {
+          showEmptyState();
+          return;
+        }
+
+        hideEmptyState();
+        tickets.forEach((ticket) => {
+          const ticketCard = createTicketCard(ticket);
+          container.appendChild(ticketCard);
+        });
+      }
+
+      // Create ticket card
+      function createTicketCard(ticket) {
+        const col = document.createElement("div");
+        col.className = "col-lg-4 col-md-6 mb-4";
+
+        const priorityClass = `priority-${ticket.priority.toLowerCase()}`;
+        const statusClass = `status-${ticket.status
+          .toLowerCase()
+          .replace("_", "-")}`;
+
+        col.innerHTML = `
+          <div class="card ticket-card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">#${ticket.id}</h6>
+              <div class="d-flex gap-1">
+                <span class="badge ${priorityClass}">${ticket.priority}</span>
+                <span class="badge ${statusClass}">${ticket.status}</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <h6 class="card-title">${ticket.subject}</h6>
+              <p class="card-text text-muted small">
+                ${
+                  ticket.description
+                    ? ticket.description.substring(0, 100) + "..."
+                    : "No description"
+                }
+              </p>
+              <div class="row small text-muted mb-3">
+                <div class="col-6">
+                  <i class="fas fa-user me-1"></i>${ticket.user}
+                </div>
+                <div class="col-6">
+                  <i class="fas fa-tag me-1"></i>${ticket.queryType}
+                </div>
+              </div>
+              <div class="row small text-muted mb-3">
+                <div class="col-6">
+                  <i class="fas fa-user-cog me-1"></i>${
+                    ticket.assignedTo || "Unassigned"
+                  }
+                </div>
+                <div class="col-6">
+                  <i class="fas fa-clock me-1"></i>${formatDate(
+                    ticket.createdAt
+                  )}
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent">
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary btn-sm flex-fill" onclick="viewTicket(${
+                  ticket.id
+                })" title="View Details">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-outline-success btn-sm flex-fill" onclick="quickRespond(${
+                  ticket.id
+                })" title="Quick Respond">
+                  <i class="fas fa-reply"></i>
+                </button>
+                <button class="btn btn-outline-warning btn-sm flex-fill" onclick="quickEscalate(${
+                  ticket.id
+                })" title="Quick Escalate">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        return col;
+      }
+
+      // Get priority color class
+      function getPriorityClass(priority) {
+        switch (priority) {
+          case "URGENT":
+            return "priority-urgent";
+          case "HIGH":
+            return "priority-high";
+          case "MEDIUM":
+            return "priority-medium";
+          case "LOW":
+            return "priority-low";
+          default:
+            return "priority-medium";
+        }
+      }
+
+      // Get status color class
+      function getStatusClass(status) {
+        switch (status) {
+          case "OPEN":
+            return "status-open";
+          case "IN_PROGRESS":
+            return "status-in-progress";
+          case "RESOLVED":
+            return "status-resolved";
+          case "CLOSED":
+            return "status-closed";
+          case "ESCALATED":
+            return "status-escalated";
+          default:
+            return "status-open";
+        }
+      }
+
+      // Format date
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+      }
+
+      // Filter tickets
+      function filterTickets() {
+        currentFilters.status = document.getElementById("statusFilter").value;
+        currentFilters.priority =
+          document.getElementById("priorityFilter").value;
+        currentFilters.type = document.getElementById("typeFilter").value;
+        currentPage = 0;
+        loadTickets();
+      }
+
+      // Search tickets
+      function searchTickets() {
+        currentFilters.search = document.getElementById("searchInput").value;
+        currentPage = 0;
+        loadTickets();
+      }
+
+      // Clear filters
+      function clearFilters() {
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("priorityFilter").value = "";
+        document.getElementById("typeFilter").value = "";
+        document.getElementById("searchInput").value = "";
+        currentFilters = { status: "", priority: "", type: "", search: "" };
+        currentPage = 0;
+        loadTickets();
+      }
+
+      // Quick filter functions
+      function filterByPriority(priority) {
+        document.getElementById("priorityFilter").value = priority;
+        filterTickets();
+      }
+
+      function filterByStatus(status) {
+        document.getElementById("statusFilter").value = status;
+        filterTickets();
+      }
+
+      function showAllTickets() {
+        clearFilters();
+      }
+
+      function showOpenTickets() {
+        filterByStatus("OPEN");
+      }
+
+      function showEscalatedTickets() {
+        filterByStatus("ESCALATED");
+      }
+
+      function exportTickets() {
+        showNotification(
+          "info",
+          "Export Feature",
+          "Ticket export functionality will be implemented soon."
+        );
+      }
+
+      // View ticket details
+      function viewTicket(ticketId) {
+        currentTicketId = ticketId;
+
+        fetch(`/customer-service/api/queries/${ticketId}`)
+          .then((response) => response.json())
+          .then((ticket) => {
+            document.getElementById("ticketSubject").textContent =
+              ticket.subject;
+            document.getElementById("ticketDescription").textContent =
+              ticket.description;
+            document.getElementById("ticketCustomer").textContent = ticket.user;
+            document.getElementById("ticketType").textContent =
+              ticket.queryType;
+            document.getElementById("ticketPriority").textContent =
+              ticket.priority;
+            document.getElementById("ticketStatus").textContent = ticket.status;
+            document.getElementById("ticketAssignedTo").textContent =
+              ticket.assignedTo || "Unassigned";
+            document.getElementById("ticketCreated").textContent = formatDate(
+              ticket.createdAt
+            );
+
+            new bootstrap.Modal(
+              document.getElementById("ticketDetailsModal")
+            ).show();
+          })
+          .catch((error) => {
+            console.error("Error loading ticket details:", error);
+            showNotification("error", "Error", "Failed to load ticket details");
+          });
+      }
+
+      // Quick respond
+      function quickRespond(ticketId) {
+        currentTicketId = ticketId;
+        new bootstrap.Modal(
+          document.getElementById("respondTicketModal")
+        ).show();
+      }
+
+      // Quick escalate
+      function quickEscalate(ticketId) {
+        currentTicketId = ticketId;
+        new bootstrap.Modal(
+          document.getElementById("escalateTicketModal")
+        ).show();
+      }
+
+      // Respond to ticket
+      function respondToTicket() {
+        new bootstrap.Modal(
+          document.getElementById("respondTicketModal")
+        ).show();
+      }
+
+      // Close ticket
+      function closeTicket() {
+        new bootstrap.Modal(document.getElementById("closeTicketModal")).show();
+      }
+
+      // Escalate ticket
+      function escalateTicket() {
+        new bootstrap.Modal(
+          document.getElementById("escalateTicketModal")
+        ).show();
+      }
+
+      // View conversation
+      function viewConversation() {
+        loadConversation();
+        new bootstrap.Modal(
+          document.getElementById("conversationModal")
+        ).show();
+      }
+
+      // Respond from conversation view
+      function respondFromConversation() {
+        bootstrap.Modal.getInstance(
+          document.getElementById("conversationModal")
+        ).hide();
+        new bootstrap.Modal(
+          document.getElementById("respondTicketModal")
+        ).show();
+      }
+
+      // Confirm respond to ticket
+      function confirmRespondToTicket() {
+        const responseMessage = document
+          .getElementById("responseMessage")
+          .value.trim();
+
+        if (!responseMessage) {
+          showNotification(
+            "warning",
+            "Warning",
+            "Please enter a response message"
+          );
+          return;
+        }
+
+        fetch(`/customer-service/api/queries/${currentTicketId}/respond`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `responseMessage=${encodeURIComponent(responseMessage)}`,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showNotification(
+                "success",
+                "Success",
+                "Response sent successfully"
+              );
+              bootstrap.Modal.getInstance(
+                document.getElementById("respondTicketModal")
+              ).hide();
+              bootstrap.Modal.getInstance(
+                document.getElementById("ticketDetailsModal")
+              ).hide();
+              loadTickets();
+              document.getElementById("responseMessage").value = "";
+            } else {
+              showNotification(
+                "error",
+                "Error",
+                data.error || "Failed to send response"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error sending response:", error);
+            showNotification("error", "Error", "Failed to send response");
+          });
+      }
+
+      // Confirm close ticket
+      function confirmCloseTicket() {
+        const closingNotes = document
+          .getElementById("closingNotes")
+          .value.trim();
+
+        fetch(`/customer-service/api/queries/${currentTicketId}/close`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `closingNotes=${encodeURIComponent(closingNotes)}`,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showNotification(
+                "success",
+                "Success",
+                "Ticket closed successfully"
+              );
+              bootstrap.Modal.getInstance(
+                document.getElementById("closeTicketModal")
+              ).hide();
+              bootstrap.Modal.getInstance(
+                document.getElementById("ticketDetailsModal")
+              ).hide();
+              loadTickets();
+              document.getElementById("closingNotes").value = "";
+            } else {
+              showNotification(
+                "error",
+                "Error",
+                data.error || "Failed to close ticket"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error closing ticket:", error);
+            showNotification("error", "Error", "Failed to close ticket");
+          });
+      }
+
+      // Confirm escalate ticket
+      function confirmEscalateTicket() {
+        const escalationReason = document
+          .getElementById("escalationReason")
+          .value.trim();
+
+        if (!escalationReason) {
+          showNotification(
+            "warning",
+            "Warning",
+            "Please enter escalation reason"
+          );
+          return;
+        }
+
+        fetch(`/customer-service/api/queries/${currentTicketId}/escalate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `escalationReason=${encodeURIComponent(escalationReason)}`,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showNotification(
+                "success",
+                "Success",
+                "Ticket escalated successfully"
+              );
+              bootstrap.Modal.getInstance(
+                document.getElementById("escalateTicketModal")
+              ).hide();
+              bootstrap.Modal.getInstance(
+                document.getElementById("ticketDetailsModal")
+              ).hide();
+              loadTickets();
+              document.getElementById("escalationReason").value = "";
+            } else {
+              showNotification(
+                "error",
+                "Error",
+                data.error || "Failed to escalate ticket"
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error escalating ticket:", error);
+            showNotification("error", "Error", "Failed to escalate ticket");
+          });
+      }
+
+      // Load conversation
+      function loadConversation() {
+        fetch(`/customer-service/api/queries/${currentTicketId}`)
+          .then((response) => response.json())
+          .then((ticket) => {
+            return fetch(
+              `/customer-service/api/queries/${currentTicketId}/conversations`
+            )
+              .then((response) => response.json())
+              .then((conversations) => {
+                const conversationDiv = document.getElementById(
+                  "conversationContent"
+                );
+
+                let conversationHtml = `
+                  <div class="conversation-item mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <h6 class="mb-0"><i class="fas fa-user text-primary me-2"></i>Customer</h6>
+                      <small class="text-muted">${formatDate(
+                        ticket.createdAt
+                      )}</small>
+                    </div>
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title">${ticket.subject}</h6>
+                        <p class="card-text mb-0">${ticket.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+
+                if (conversations && conversations.length > 0) {
+                  conversations.forEach((conversation) => {
+                    const messageType = conversation.messageType;
+                    const isUserMessage = messageType === "USER_MESSAGE";
+                    const isSupportResponse =
+                      messageType === "SUPPORT_RESPONSE";
+                    const isSystemNotification =
+                      messageType === "SYSTEM_NOTIFICATION";
+
+                    let iconClass, labelClass, bgClass, label;
+
+                    if (isUserMessage) {
+                      iconClass = "fas fa-user text-primary";
+                      labelClass = "text-primary";
+                      bgClass = "bg-light";
+                      label = "Customer";
+                    } else if (isSupportResponse) {
+                      iconClass = "fas fa-headset text-info";
+                      labelClass = "text-info";
+                      bgClass = "bg-info text-white";
+                      label = "Customer Service";
+                    } else {
+                      iconClass = "fas fa-cog text-warning";
+                      labelClass = "text-warning";
+                      bgClass = "bg-warning text-dark";
+                      label = "System";
+                    }
+
+                    conversationHtml += `
+                      <div class="conversation-item mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <h6 class="mb-0 ${labelClass}">
+                            <i class="${iconClass} me-2"></i>${label}
+                          </h6>
+                          <small class="text-muted">${formatDate(
+                            conversation.createdAt
+                          )}</small>
+                        </div>
+                        <div class="card ${bgClass}">
+                          <div class="card-body">
+                            <p class="card-text mb-0">${
+                              conversation.message
+                            }</p>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+                  });
+                } else {
+                  conversationHtml += `
+                    <div class="conversation-item mb-3">
+                      <div class="text-center text-muted py-4">
+                        <i class="fas fa-comments" style="font-size: 2rem; opacity: 0.3;"></i>
+                        <p class="mt-3 mb-0">No additional conversation yet</p>
+                      </div>
+                    </div>
+                  `;
+                }
+
+                conversationDiv.innerHTML = conversationHtml;
+              });
+          })
+          .catch((error) => {
+            console.error("Error loading conversation:", error);
+            document.getElementById("conversationContent").innerHTML =
+              '<div class="alert alert-danger">Failed to load conversation</div>';
+          });
+      }
+
+      // Update ticket count
+      function updateTicketCount(count) {
+        document.getElementById("ticketCount").textContent = count;
+      }
+
+      // Show/hide states
+      function showLoadingState() {
+        document.getElementById("loadingState").style.display = "block";
+        document.getElementById("emptyState").style.display = "none";
+        document.getElementById("ticketsContainer").style.display = "none";
+      }
+
+      function hideLoadingState() {
+        document.getElementById("loadingState").style.display = "none";
+        document.getElementById("ticketsContainer").style.display = "block";
+      }
+
+      function showEmptyState() {
+        document.getElementById("emptyState").style.display = "block";
+        document.getElementById("ticketsContainer").style.display = "none";
+      }
+
+      function hideEmptyState() {
+        document.getElementById("emptyState").style.display = "none";
+        document.getElementById("ticketsContainer").style.display = "block";
+      }
+
+      // Refresh dashboard
+      function refreshDashboard() {
+        loadDashboardStats();
+        loadTickets();
+        showNotification(
+          "success",
+          "Success",
+          "Dashboard refreshed successfully"
+        );
+      }
+
+      // Show dashboard help
+      function showDashboardHelp() {
+        showNotification(
+          "info",
+          "Dashboard Help",
+          "Customer Support Dashboard:\n• View and manage customer support tickets\n• Filter by status, priority, and type\n• Respond to tickets and view conversations\n• Close and escalate tickets\n• Track ticket statistics and progress"
+        );
+      }
+
+      // Show notification
+      function showNotification(type, title, message) {
+        const modal = document.createElement("div");
+        modal.className = "modal fade";
+        modal.innerHTML = `
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-${
+                type === "success"
+                  ? "success"
+                  : type === "error"
+                  ? "danger"
+                  : "info"
+              } text-white">
+                <h5 class="modal-title">
+                  <i class="fas fa-${
+                    type === "success"
+                      ? "check-circle"
+                      : type === "error"
+                      ? "exclamation-circle"
+                      : "info-circle"
+                  } me-2"></i>
+                  ${title}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <p>${message}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+        new bootstrap.Modal(modal).show();
+
+        modal.addEventListener("hidden.bs.modal", () => {
+          document.body.removeChild(modal);
+        });
+      }
+    </script>
+  </body>
+</html>
