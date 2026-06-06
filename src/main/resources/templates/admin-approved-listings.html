@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Approved Listings - Admin Panel</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/css/custom.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <i class="fas fa-car"></i> Vehicle Bidding System
+        </a>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+          <a class="nav-link" href="/admin/listings">Listings</a>
+          <a class="nav-link" href="/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-12">
+          <h1 class="mb-4">
+            <i class="fas fa-check-circle"></i> Approved Listings
+          </h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Make</th>
+                      <th>Model</th>
+                      <th>Year</th>
+                      <th>Mileage</th>
+                      <th>Condition</th>
+                      <th>Seller</th>
+                      <th>Approval Notes</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="listing : ${listings.content}">
+                      <td th:text="${listing.listingId}">1</td>
+                      <td th:text="${listing.make}">Toyota</td>
+                      <td th:text="${listing.model}">Camry</td>
+                      <td th:text="${listing.year}">2020</td>
+                      <td th:text="${listing.mileage}">50000</td>
+                      <td>
+                        <span
+                          class="badge bg-success"
+                          th:text="${listing.condition}"
+                          >Good</span
+                        >
+                      </td>
+                      <td th:text="${listing.seller.username}">seller1</td>
+                      <td th:text="${listing.inspectorNotes}">
+                        Approved for auction
+                      </td>
+                      <td>
+                        <button
+                          class="btn btn-sm btn-info"
+                          th:onclick="'viewListingDetails(' + ${listing.listingId} + ')'"
+                        >
+                          <i class="fas fa-eye"></i> View Details
+                        </button>
+                      </td>
+                    </tr>
+                    <tr th:if="${listings.content.isEmpty()}">
+                      <td colspan="9" class="text-center text-muted">
+                        No approved listings
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              <nav th:if="${listings.totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                  <li
+                    class="page-item"
+                    th:classappend="${currentPage == 0} ? 'disabled'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/listings/approved(page=${currentPage - 1})}"
+                      >Previous</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/listings/approved(page=${i})}"
+                      th:text="${i + 1}"
+                      >1</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/listings/approved(page=${currentPage + 1})}"
+                      >Next</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function viewListingDetails(listingId) {
+        window.open(`/listings/${listingId}`, "_blank");
+      }
+    </script>
+  </body>
+</html>

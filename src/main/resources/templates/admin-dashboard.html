@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Vehicle Bidding System</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/css/custom.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-12">
+          <h1 class="mb-4">
+            <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+            <small class="text-muted" th:text="' - ' + ${currentUser.role}">
+              - Role</small
+            >
+          </h1>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card bg-primary text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h4 th:text="${stats.totalUsers}">0</h4>
+                  <p class="mb-0">Total Users</p>
+                </div>
+                <div class="align-self-center">
+                  <i class="fas fa-users fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-warning text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h4 th:text="${stats.bannedUsers}">0</h4>
+                  <p class="mb-0">Banned Users</p>
+                </div>
+                <div class="align-self-center">
+                  <i class="fas fa-ban fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-info text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h4 th:text="${stats.pendingListings}">0</h4>
+                  <p class="mb-0">Pending Listings</p>
+                </div>
+                <div class="align-self-center">
+                  <i class="fas fa-clock fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-success text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h4 th:text="${stats.activeAuctions}">0</h4>
+                  <p class="mb-0">Active Auctions</p>
+                </div>
+                <div class="align-self-center">
+                  <i class="fas fa-gavel fa-2x"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h3>Quick Actions</h3>
+          <div class="row">
+            <!-- Listing Moderation - Visible to Admin Officer, IT Consultant, Vehicle Inspector -->
+            <div class="col-md-3 mb-3" th:if="${canModerateListings}">
+              <a
+                href="/admin/listings"
+                class="btn btn-outline-primary btn-lg w-100"
+              >
+                <i class="fas fa-list-alt"></i><br />
+                Moderate Listings
+              </a>
+            </div>
+
+            <!-- User Management - Visible to Admin Officer, IT Consultant -->
+            <div class="col-md-3 mb-3" th:if="${canManageUsers}">
+              <a
+                href="/admin/users"
+                class="btn btn-outline-warning btn-lg w-100"
+              >
+                <i class="fas fa-user-cog"></i><br />
+                Manage Users
+              </a>
+            </div>
+
+            <!-- Activity Logs - Visible to Admin Officer, IT Consultant -->
+            <div class="col-md-3 mb-3" th:if="${canViewSecurityLogs}">
+              <a
+                href="/admin/activity-logs"
+                class="btn btn-outline-info btn-lg w-100"
+              >
+                <i class="fas fa-history"></i><br />
+                View Activity Logs
+              </a>
+            </div>
+
+            <!-- Auction Management - Visible to Admin Officer, IT Consultant, Sales Manager -->
+            <div class="col-md-3 mb-3" th:if="${canManageAuctions}">
+              <a
+                href="/admin/auctions"
+                class="btn btn-outline-success btn-lg w-100"
+              >
+                <i class="fas fa-gavel"></i><br />
+                Manage Auctions
+              </a>
+            </div>
+
+            <!-- Reports - Visible to Admin Officer, IT Consultant, Customer Service -->
+            <div class="col-md-3 mb-3" th:if="${canAccessReports}">
+              <a
+                href="/admin/reports"
+                class="btn btn-outline-secondary btn-lg w-100"
+              >
+                <i class="fas fa-chart-bar"></i><br />
+                View Reports
+              </a>
+            </div>
+
+            <!-- View Auctions - Visible to all admin roles -->
+            <div class="col-md-3 mb-3">
+              <a href="/auctions" class="btn btn-outline-dark btn-lg w-100">
+                <i class="fas fa-eye"></i><br />
+                View Auctions
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role-specific Information -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5><i class="fas fa-info-circle"></i> Role Information</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>
+                    Your Role:
+                    <span class="badge bg-primary" th:text="${currentUser.role}"
+                      >Role</span
+                    >
+                  </h6>
+                  <p class="text-muted" th:switch="${currentUser.role}">
+                    <span th:case="ADMIN_OFFICER"
+                      >You have full administrative access to all system
+                      functions including user management, listing moderation,
+                      auction management, and system logs.</span
+                    >
+                    <span th:case="IT_CONSULTANT"
+                      >You have administrative access with focus on system
+                      security, user management, and technical oversight.</span
+                    >
+                    <span th:case="SALES_MANAGER"
+                      >You can manage auctions, view reports, and monitor sales
+                      activities.</span
+                    >
+                    <span th:case="CUSTOMER_SERVICE"
+                      >You can access reports, manage notifications, and assist
+                      with customer inquiries.</span
+                    >
+                    <span th:case="VEHICLE_INSPECTOR"
+                      >You can moderate vehicle listings, approve or reject
+                      listings, and add inspection notes.</span
+                    >
+                    <span th:case="USER"
+                      >You have standard user access to create listings and
+                      participate in auctions.</span
+                    >
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <h6>Available Permissions</h6>
+                  <ul class="list-unstyled">
+                    <li th:if="${canManageUsers}">
+                      <i class="fas fa-check text-success"></i> User Management
+                    </li>
+                    <li th:if="${canModerateListings}">
+                      <i class="fas fa-check text-success"></i> Listing
+                      Moderation
+                    </li>
+                    <li th:if="${canManageAuctions}">
+                      <i class="fas fa-check text-success"></i> Auction
+                      Management
+                    </li>
+                    <li th:if="${canAccessReports}">
+                      <i class="fas fa-check text-success"></i> Reports Access
+                    </li>
+                    <li th:if="${canViewSecurityLogs}">
+                      <i class="fas fa-check text-success"></i> Security Logs
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Overview -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5><i class="fas fa-chart-line"></i> System Overview</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>Platform Health</h6>
+                  <div class="progress mb-2">
+                    <div class="progress-bar bg-success" style="width: 85%">
+                      85%
+                    </div>
+                  </div>
+                  <small class="text-muted">System performance is good</small>
+                </div>
+                <div class="col-md-6">
+                  <h6>User Activity</h6>
+                  <div class="progress mb-2">
+                    <div class="progress-bar bg-info" style="width: 72%">
+                      72%
+                    </div>
+                  </div>
+                  <small class="text-muted">Active user engagement</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
+</html>
