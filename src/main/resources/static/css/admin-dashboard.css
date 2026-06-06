@@ -1,0 +1,480 @@
+/* Modern Admin Dashboard Styles */
+body {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding-top: 0;
+}
+
+/* Modern Dashboard Header */
+.dashboard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.dashboard-header .container {
+  position: relative;
+  z-index: 2;
+}
+
+.dashboard-title {
+  font-weight: 800;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+/* Modern Statistics Cards */
+.stat-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.stat-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card .card-body {
+  position: relative;
+  z-index: 2;
+}
+
+.stat-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.1);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-description {
+  font-size: 0.9rem;
+  color: #6c757d;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+/* Modern Action Buttons */
+.btn-modern {
+  border-radius: 25px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: none;
+}
+
+.btn-modern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-modern:hover::before {
+  left: 100%;
+}
+
+.btn-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary-modern {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-success-modern {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.btn-warning-modern {
+  background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+  color: white;
+}
+
+.btn-info-modern {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+}
+
+/* Modern Content Cards */
+.content-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.content-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.content-card .card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1.5rem 2rem;
+  border-radius: 20px 20px 0 0;
+}
+
+.content-card .card-header h5 {
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.content-card .card-body {
+  padding: 2rem;
+}
+
+/* Modern Tables */
+.table-modern {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.table-modern thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.table-modern thead th {
+  border: none;
+  padding: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.table-modern tbody tr {
+  transition: all 0.3s ease;
+}
+
+.table-modern tbody tr:hover {
+  background: rgba(102, 126, 234, 0.05);
+  transform: scale(1.01);
+}
+
+.table-modern tbody td {
+  padding: 1rem;
+  border-color: rgba(0, 0, 0, 0.05);
+  vertical-align: middle;
+}
+
+/* Modern Badges */
+.badge-modern {
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success-modern {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.badge-warning-modern {
+  background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+  color: white;
+}
+
+.badge-danger-modern {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+}
+
+.badge-info-modern {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+}
+
+/* Modern Modals */
+.modal-modern .modal-content {
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.modal-modern .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 20px 20px 0 0;
+  padding: 1.5rem 2rem;
+}
+
+.modal-modern .modal-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.modal-modern .modal-body {
+  padding: 2rem;
+}
+
+.modal-modern .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.modal-modern .btn-close:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Modern Forms */
+.form-modern .form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.form-modern .form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  background: white;
+}
+
+.form-modern .form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+/* Modern Alerts */
+.alert-modern {
+  border: none;
+  border-radius: 15px;
+  font-weight: 500;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.5rem;
+}
+
+.alert-success-modern {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+.alert-warning-modern {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  color: #856404;
+  border-left: 4px solid #ffc107;
+}
+
+.alert-danger-modern {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+.alert-info-modern {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  color: #0c5460;
+  border-left: 4px solid #17a2b8;
+}
+
+/* Modern Loading States */
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 10px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Modern Scroll Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 2rem;
+  }
+
+  .dashboard-subtitle {
+    font-size: 1rem;
+  }
+
+  .stat-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+  }
+
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .content-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .table-modern thead th,
+  .table-modern tbody td {
+    padding: 0.75rem;
+  }
+}
+
+/* Performance Optimizations */
+.stat-card,
+.content-card,
+.btn-modern {
+  will-change: transform;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
