@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle}">My Tickets - Lanka Auto Traders</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+
+    <style>
+      .ticket-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+      }
+
+      .ticket-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .ticket-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 20px;
+      }
+
+      .ticket-body {
+        padding: 25px;
+      }
+
+      .status-badge {
+        font-size: 0.8rem;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+
+      .status-open {
+        background-color: #e3f2fd;
+        color: #1976d2;
+      }
+      .status-in-progress {
+        background-color: #fff3e0;
+        color: #f57c00;
+      }
+      .status-resolved {
+        background-color: #e8f5e8;
+        color: #388e3c;
+      }
+      .status-closed {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
+      }
+
+      .priority-badge {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-weight: 600;
+      }
+
+      .priority-low {
+        background-color: #e8f5e8;
+        color: #388e3c;
+      }
+      .priority-medium {
+        background-color: #fff3e0;
+        color: #f57c00;
+      }
+      .priority-high {
+        background-color: #ffebee;
+        color: #d32f2f;
+      }
+      .priority-urgent {
+        background-color: #fce4ec;
+        color: #c2185b;
+      }
+
+      .ticket-meta {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 15px;
+      }
+
+      .ticket-actions {
+        margin-top: 20px;
+      }
+
+      .btn-ticket-action {
+        border-radius: 25px;
+        padding: 8px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-ticket-action:hover {
+        transform: translateY(-1px);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #dee2e6;
+      }
+
+      .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+      }
+
+      .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .filter-section {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+
+      .response-section {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 15px;
+      }
+
+      .response-text {
+        background-color: white;
+        border-radius: 8px;
+        padding: 15px;
+        border-left: 4px solid #667eea;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Fragment -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h1 class="hero-title">
+                <i class="bi bi-ticket-perforated me-3"></i>
+                My Support Tickets
+              </h1>
+              <p class="hero-subtitle">
+                Track and manage all your support requests in one place. View
+                ticket status, add responses, and stay updated on your
+                inquiries.
+              </p>
+            </div>
+            <div class="col-lg-4 text-end">
+              <a href="/support" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-circle me-2"></i>
+                New Ticket
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats Section -->
+      <section class="py-5">
+        <div class="container">
+          <div class="stats-card">
+            <div class="row text-center">
+              <div class="col-md-3">
+                <div class="stats-number" th:text="${ticketCount}">0</div>
+                <div>Total Tickets</div>
+              </div>
+              <div class="col-md-3">
+                <div
+                  class="stats-number"
+                  th:text="${#lists.size(tickets.?[status.name() == 'OPEN'])}"
+                >
+                  0
+                </div>
+                <div>Open</div>
+              </div>
+              <div class="col-md-3">
+                <div
+                  class="stats-number"
+                  th:text="${#lists.size(tickets.?[status.name() == 'IN_PROGRESS'])}"
+                >
+                  0
+                </div>
+                <div>In Progress</div>
+              </div>
+              <div class="col-md-3">
+                <div
+                  class="stats-number"
+                  th:text="${#lists.size(tickets.?[status.name() == 'RESOLVED'])}"
+                >
+                  0
+                </div>
+                <div>Resolved</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Section -->
+          <div class="filter-section">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <h5 class="mb-0">
+                  <i class="bi bi-funnel me-2"></i>
+                  Filter Tickets
+                </h5>
+              </div>
+              <div class="col-md-6">
+                <select class="form-select" id="statusFilter">
+                  <option value="">All Statuses</option>
+                  <option value="OPEN">Open</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="RESOLVED">Resolved</option>
+                  <option value="CLOSED">Closed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tickets List -->
+          <div
+            th:if="${tickets != null and !tickets.empty}"
+            class="tickets-list"
+          >
+            <div
+              th:each="ticket : ${tickets}"
+              class="ticket-card card"
+              th:data-status="${ticket.status.name()}"
+            >
+              <div class="ticket-header">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <h5 class="mb-1" th:text="${ticket.subject}">
+                      Ticket Subject
+                    </h5>
+                    <p class="mb-0 opacity-75">
+                      <i class="bi bi-hash me-1"></i>
+                      Ticket #<span th:text="${ticket.queryId}">12345</span>
+                    </p>
+                  </div>
+                  <div class="col-md-4 text-end">
+                    <span
+                      class="status-badge"
+                      th:classappend="'status-' + ${#strings.toLowerCase(ticket.status.name().replace('_', '-'))}"
+                      th:text="${ticket.status.name().replace('_', ' ')}"
+                      >Open</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="ticket-body">
+                <div class="row">
+                  <div class="col-md-8">
+                    <p
+                      class="ticket-description"
+                      th:text="${ticket.description}"
+                    >
+                      Ticket description goes here...
+                    </p>
+
+                    <!-- Response Section -->
+                    <div th:if="${false}" class="response-section">
+                      <h6 class="mb-3">
+                        <i class="bi bi-chat-dots me-2"></i>
+                        Support Response
+                      </h6>
+                      <div class="response-text" th:text="${ticket.response}">
+                        Support response will appear here...
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="ticket-meta">
+                      <div class="mb-2">
+                        <strong>Priority:</strong>
+                        <span
+                          class="priority-badge ms-2"
+                          th:classappend="'priority-' + ${#strings.toLowerCase(ticket.priority.name())}"
+                          th:text="${ticket.priority.name()}"
+                          >Medium</span
+                        >
+                      </div>
+
+                      <div class="mb-2">
+                        <strong>Type:</strong>
+                        <span
+                          class="ms-2"
+                          th:text="${ticket.queryType.name().replace('_', ' ')}"
+                          >General Inquiry</span
+                        >
+                      </div>
+
+                      <div class="mb-2">
+                        <strong>Created:</strong>
+                        <span
+                          class="ms-2"
+                          th:text="${#temporals.format(ticket.createdAt, 'MMM dd, yyyy HH:mm')}"
+                          >Jan 15, 2024 10:30</span
+                        >
+                      </div>
+
+                      <div th:if="${ticket.updatedAt != null}">
+                        <strong>Updated:</strong>
+                        <span
+                          class="ms-2"
+                          th:text="${#temporals.format(ticket.updatedAt, 'MMM dd, yyyy HH:mm')}"
+                          >Jan 16, 2024 14:20</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ticket Actions -->
+                <div class="ticket-actions">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <a
+                        th:href="@{'/tickets/' + ${ticket.queryId}}"
+                        class="btn btn-primary btn-ticket-action"
+                      >
+                        <i class="bi bi-eye me-1"></i>
+                        View Details
+                      </a>
+                    </div>
+
+                    <div class="col-md-6 text-end">
+                      <!-- Status change functionality removed - users can only view and close tickets -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div th:if="${tickets == null or tickets.empty}" class="empty-state">
+            <i class="bi bi-ticket-perforated"></i>
+            <h4>No Tickets Found</h4>
+            <p>You haven't submitted any support tickets yet.</p>
+            <a href="/support" class="btn btn-primary">
+              <i class="bi bi-plus-circle me-2"></i>
+              Create Your First Ticket
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+      // Filter tickets by status
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", function () {
+          const selectedStatus = this.value;
+          const ticketCards = document.querySelectorAll(".ticket-card");
+
+          ticketCards.forEach((card) => {
+            const cardStatus = card.getAttribute("data-status");
+            if (selectedStatus === "" || cardStatus === selectedStatus) {
+              card.style.display = "block";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        });
+
+      // Auto-refresh page every 30 seconds to show updates
+      setInterval(function () {
+        // Only refresh if no forms are being filled
+        const activeElement = document.activeElement;
+        if (
+          activeElement.tagName !== "INPUT" &&
+          activeElement.tagName !== "TEXTAREA"
+        ) {
+          location.reload();
+        }
+      }, 30000);
+
+      // Show success/error messages
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("success") === "true") {
+          // Show success message if redirected from successful update
+          const successMessage = document.createElement("div");
+          successMessage.className =
+            "alert alert-success alert-dismissible fade show position-fixed";
+          successMessage.style.top = "20px";
+          successMessage.style.right = "20px";
+          successMessage.style.zIndex = "9999";
+          successMessage.innerHTML = `
+                    <i class="bi bi-check-circle me-2"></i>
+                    Ticket updated successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+          document.body.appendChild(successMessage);
+
+          // Remove success parameter from URL
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
