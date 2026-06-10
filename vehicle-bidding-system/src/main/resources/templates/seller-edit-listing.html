@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Listing - Vehicle Bidding System</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-light">
+    <!-- Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container mt-5 pt-4" style="max-width: 900px">
+      <!-- Page Header -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="d-flex align-items-center mb-3">
+            <div class="me-3">
+              <i class="fas fa-edit text-primary" style="font-size: 2.5rem"></i>
+            </div>
+            <div>
+              <h1 class="h2 mb-1 text-dark">Edit Vehicle Listing</h1>
+              <p class="text-muted mb-0">Update your vehicle listing details</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert Messages -->
+      <div
+        th:if="${success}"
+        class="alert alert-success alert-dismissible fade show"
+        role="alert"
+      >
+        <i class="bi bi-check-circle me-2"></i>
+        <span th:text="${success}">Success message</span>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div
+        th:if="${error}"
+        class="alert alert-danger alert-dismissible fade show"
+        role="alert"
+      >
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <span th:text="${error}">Error message</span>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <!-- Main Form Card -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <form
+            th:action="@{'/seller/listings/edit/' + ${listing.listingId}}"
+            th:object="${listing}"
+            method="post"
+            enctype="multipart/form-data"
+            class="needs-validation"
+            novalidate
+          >
+            <!-- Hidden field to preserve listing ID -->
+            <input type="hidden" th:field="*{listingId}" />
+            <!-- Debug: Show listing ID -->
+            <div style="display: none">
+              <p>
+                DEBUG: Listing ID =
+                <span th:text="${listing.listingId}">null</span>
+              </p>
+              <p>
+                DEBUG: Form action =
+                <span
+                  th:text="@{'/seller/listings/edit/' + ${listing.listingId}}"
+                  >null</span
+                >
+              </p>
+            </div>
+            <!-- Basic Information Section -->
+            <div class="mb-4">
+              <h5 class="text-primary mb-3">
+                <i class="fas fa-info-circle me-2"></i>Basic Information
+              </h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">
+                    <i class="fas fa-car me-1 text-primary"></i>Make
+                  </label>
+                  <input
+                    class="form-control"
+                    th:field="*{make}"
+                    placeholder="e.g., Toyota"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide the vehicle make.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">
+                    <i class="fas fa-tag me-1 text-primary"></i>Model
+                  </label>
+                  <input
+                    class="form-control"
+                    th:field="*{model}"
+                    placeholder="e.g., Camry"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide the vehicle model.
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">
+                    <i class="fas fa-calendar me-1 text-primary"></i>Year
+                  </label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    th:field="*{year}"
+                    th:attr="max=${maxYear}"
+                    min="1990"
+                    max="2024"
+                    placeholder="2020"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide a valid year (1990-2024).
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">
+                    <i class="fas fa-tachometer-alt me-1 text-primary"></i
+                    >Mileage (km)
+                  </label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    th:field="*{mileage}"
+                    min="1"
+                    placeholder="50000"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide the vehicle mileage.
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">
+                    <i class="fas fa-star me-1 text-primary"></i>Condition
+                  </label>
+                  <select class="form-select" th:field="*{condition}" required>
+                    <option value="">Select Condition</option>
+                    <option value="EXCELLENT">Excellent</option>
+                    <option value="GOOD">Good</option>
+                    <option value="FAIR">Fair</option>
+                    <option value="POOR">Poor</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Please select the vehicle condition.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technical Specifications Section -->
+            <div class="mb-4">
+              <h5 class="text-primary mb-3">
+                <i class="fas fa-cogs me-2"></i>Technical Specifications
+              </h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">
+                    <i class="fas fa-gas-pump me-1 text-primary"></i>Fuel Type *
+                  </label>
+                  <select class="form-select" th:field="*{fuelType}" required>
+                    <option value="">Select Fuel Type</option>
+                    <option value="PETROL">Petrol</option>
+                    <option value="DIESEL">Diesel</option>
+                    <option value="HYBRID">Hybrid</option>
+                    <option value="ELECTRIC">Electric</option>
+                    <option value="CNG">CNG</option>
+                    <option value="LPG">LPG</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Please select the fuel type.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">
+                    <i class="fas fa-cog me-1 text-primary"></i>Transmission *
+                  </label>
+                  <select
+                    class="form-select"
+                    th:field="*{transmission}"
+                    required
+                  >
+                    <option value="">Select Transmission</option>
+                    <option value="MANUAL">Manual</option>
+                    <option value="AUTOMATIC">Automatic</option>
+                    <option value="CVT">CVT</option>
+                    <option value="SEMI_AUTOMATIC">Semi-Automatic</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Please select the transmission type.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description Section -->
+            <div class="mb-4">
+              <h5 class="text-primary mb-3">
+                <i class="fas fa-align-left me-2"></i>Description
+              </h5>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label fw-semibold">
+                    <i class="fas fa-file-alt me-1 text-primary"></i>Vehicle
+                    Description
+                  </label>
+                  <textarea
+                    class="form-control"
+                    th:field="*{description}"
+                    maxlength="1000"
+                    rows="4"
+                    placeholder="Describe your vehicle's features, condition, history, and any additional details..."
+                  ></textarea>
+                  <div class="form-text">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Provide detailed information about your vehicle to attract
+                    more buyers.
+                    <span id="charCount" class="text-muted"
+                      >0/1000 characters</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Images Section -->
+            <div class="mb-4">
+              <h5 class="text-primary mb-3">
+                <i class="fas fa-images me-2"></i>Vehicle Images
+                <small class="text-muted"
+                  >(Current images will be replaced)</small
+                >
+              </h5>
+
+              <!-- Current Images Display -->
+              <div
+                th:if="${imageUrls != null and !imageUrls.isEmpty()}"
+                class="mb-4"
+              >
+                <div class="card border-info">
+                  <div
+                    class="card-header bg-info text-white d-flex justify-content-between align-items-center"
+                  >
+                    <span
+                      ><i class="fas fa-eye me-2"></i>Current Images (<span
+                        th:text="${#lists.size(imageUrls)}"
+                        >0</span
+                      >)</span
+                    >
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-light"
+                      onclick="previewAllImages()"
+                    >
+                      <i class="fas fa-expand me-1"></i>View All
+                    </button>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-2" id="currentImages">
+                      <div
+                        th:each="imageUrl, iterStat : ${imageUrls}"
+                        class="col-md-3 col-sm-4 col-6"
+                      >
+                        <div class="position-relative">
+                          <img
+                            th:src="${imageUrl}"
+                            class="img-fluid rounded border"
+                            style="height: 80px; object-fit: cover; width: 100%"
+                            th:alt="'Image ' + ${iterStat.index + 1}"
+                            onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNSAzNUg1NVY0NUgyNVYzNVoiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTI1IDUwSDQ1VjYwSDI1VjUwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'; this.style.border='2px solid #dc3545';"
+                          />
+                          <div class="position-absolute top-0 end-0 p-1">
+                            <span
+                              class="badge bg-primary rounded-pill"
+                              th:text="${iterStat.index + 1}"
+                              >1</span
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- URL Input Section -->
+              <div class="mb-4">
+                <div class="card border-secondary">
+                  <div
+                    class="card-header bg-secondary text-white d-flex justify-content-between align-items-center"
+                  >
+                    <span
+                      ><i class="fas fa-link me-2"></i>Update Image URLs</span
+                    >
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-light"
+                      onclick="previewAllImages()"
+                    >
+                      <i class="fas fa-eye me-1"></i>Preview All
+                    </button>
+                  </div>
+                  <div class="card-body">
+                    <div id="images"></div>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary mt-2"
+                      id="addImage"
+                    >
+                      <i class="fas fa-plus me-1"></i>Add Image URL
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div
+              class="d-flex justify-content-between align-items-center pt-3 border-top"
+            >
+              <a href="/seller/listings" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Listings
+              </a>
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                id="updateButton"
+                disabled
+              >
+                <i class="fas fa-save me-2"></i>Update Listing
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div
+      class="modal fade"
+      id="imagePreviewModal"
+      tabindex="-1"
+      aria-labelledby="imagePreviewModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="imagePreviewModalLabel">
+              <i class="fas fa-images me-2"></i>Vehicle Images Preview
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="modalImageContainer" class="row g-3">
+              <!-- Images will be populated here -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      function makeImageRow(value = "") {
+        const row = document.createElement("div");
+        row.className = "input-group mb-2";
+        row.innerHTML = `
+          <input name="imageUrls" class="form-control" placeholder="https://.../image.jpg" value="${value}" oninput="validateUrl(this)" />
+          <button class="btn btn-outline-danger" type="button" title="Remove URL">
+            <i class="fas fa-trash"></i>
+          </button>
+        `;
+        row.querySelector("button").onclick = () => row.remove();
+        return row;
+      }
+
+      function validateUrl(input) {
+        const v = (input.value || "").trim().toLowerCase();
+        if (!v) {
+          input.classList.remove("is-invalid", "is-valid");
+          return;
+        }
+
+        const okExt =
+          v.endsWith(".jpg") ||
+          v.endsWith(".jpeg") ||
+          v.endsWith(".png") ||
+          v.endsWith(".gif") ||
+          v.endsWith(".webp");
+
+        if (!okExt) {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+          input.setCustomValidity("Invalid image type");
+        } else {
+          input.classList.remove("is-invalid");
+          input.classList.add("is-valid");
+          input.setCustomValidity("");
+        }
+      }
+
+      function validateYear(input) {
+        const year = parseInt(input.value);
+        const currentYear = new Date().getFullYear();
+
+        if (year > currentYear) {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+          input.setCustomValidity("Year cannot be in the future");
+        } else if (year < 1990) {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+          input.setCustomValidity("Year must be 1990 or later");
+        } else {
+          input.classList.remove("is-invalid");
+          input.classList.add("is-valid");
+          input.setCustomValidity("");
+        }
+      }
+
+      function validateDescription(input) {
+        const description = input.value;
+        const maxLength = 1000;
+
+        if (description.length > maxLength) {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+          input.setCustomValidity(
+            `Description cannot exceed ${maxLength} characters`
+          );
+        } else {
+          input.classList.remove("is-invalid");
+          input.classList.add("is-valid");
+          input.setCustomValidity("");
+        }
+
+        // Update character count
+        const charCount = document.getElementById("charCount");
+        if (charCount) {
+          charCount.textContent = `${description.length}/${maxLength} characters`;
+          if (description.length > maxLength) {
+            charCount.className = "text-danger";
+          } else if (description.length > maxLength * 0.8) {
+            charCount.className = "text-warning";
+          } else {
+            charCount.className = "text-muted";
+          }
+        }
+      }
+
+      function previewAllImages() {
+        const modalContainer = document.getElementById("modalImageContainer");
+        modalContainer.innerHTML = "";
+
+        // Get all image URLs from current images and form inputs
+        const allImages = [];
+
+        // Add existing images
+        const existing = /*[[${imageUrls}]]*/ [];
+        existing.forEach((url, index) => {
+          allImages.push({ url: url, type: "existing", index: index + 1 });
+        });
+
+        // Add new images from form inputs
+        document
+          .querySelectorAll('input[name="imageUrls"]')
+          .forEach((input, index) => {
+            if (
+              input.value &&
+              input.value.trim() &&
+              !input.classList.contains("is-invalid")
+            ) {
+              allImages.push({
+                url: input.value.trim(),
+                type: "new",
+                index: existing.length + index + 1,
+              });
+            }
+          });
+
+        if (allImages.length === 0) {
+          modalContainer.innerHTML =
+            '<div class="col-12 text-center text-muted"><i class="fas fa-images fa-3x mb-3"></i><p>No images to preview</p></div>';
+          return;
+        }
+
+        allImages.forEach((image, index) => {
+          const col = document.createElement("div");
+          col.className = "col-md-4 col-sm-6";
+          col.innerHTML = `
+            <div class="card h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="badge ${
+                  image.type === "existing" ? "bg-info" : "bg-success"
+                }">${image.type === "existing" ? "Current" : "New"}</span>
+                <span class="badge bg-primary">#${image.index}</span>
+              </div>
+              <div class="card-body p-2">
+                <img src="${
+                  image.url
+                }" class="img-fluid rounded" style="height: 200px; object-fit: cover; width: 100%;" 
+                     alt="Image ${image.index}" 
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik03NSA3NUgxMjVWMTI1SDc1Vjc1WiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNNzUgMTM1SDEwNVYxNTBINzVWMTM1WiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'; this.style.border='2px solid #dc3545';" />
+              </div>
+              <div class="card-footer">
+                <small class="text-muted text-truncate d-block" title="${
+                  image.url
+                }">${image.url}</small>
+              </div>
+            </div>
+          `;
+          modalContainer.appendChild(col);
+        });
+
+        // Show modal
+        const modal = new bootstrap.Modal(
+          document.getElementById("imagePreviewModal")
+        );
+        modal.show();
+      }
+
+      // Track form changes to enable/disable update button
+      let originalFormData = {};
+      let hasChanges = false;
+
+      function captureOriginalFormData() {
+        originalFormData = {};
+
+        // Capture basic form fields using actual rendered HTML attributes
+        const makeInput = document.querySelector('input[name="make"]');
+        const modelInput = document.querySelector('input[name="model"]');
+        const yearInput = document.querySelector('input[name="year"]');
+        const mileageInput = document.querySelector('input[name="mileage"]');
+        const conditionSelect = document.querySelector(
+          'select[name="condition"]'
+        );
+        const fuelTypeSelect = document.querySelector(
+          'select[name="fuelType"]'
+        );
+        const transmissionSelect = document.querySelector(
+          'select[name="transmission"]'
+        );
+        const descriptionTextarea = document.querySelector(
+          'textarea[name="description"]'
+        );
+
+        originalFormData.make = makeInput ? makeInput.value : "";
+        originalFormData.model = modelInput ? modelInput.value : "";
+        originalFormData.year = yearInput ? yearInput.value : "";
+        originalFormData.mileage = mileageInput ? mileageInput.value : "";
+        originalFormData.condition = conditionSelect
+          ? conditionSelect.value
+          : "";
+        originalFormData.fuelType = fuelTypeSelect ? fuelTypeSelect.value : "";
+        originalFormData.transmission = transmissionSelect
+          ? transmissionSelect.value
+          : "";
+        originalFormData.description = descriptionTextarea
+          ? descriptionTextarea.value
+          : "";
+
+        // Capture image URLs from dynamic inputs
+        const imageInputs = document.querySelectorAll(
+          'input[name="imageUrls"]'
+        );
+        const imageUrls = Array.from(imageInputs)
+          .map((input) => input.value.trim())
+          .filter((url) => url);
+        originalFormData.imageUrls = imageUrls;
+      }
+
+      function checkForChanges() {
+        const currentData = {};
+
+        // Capture current form field values using actual rendered HTML attributes
+        const makeInput = document.querySelector('input[name="make"]');
+        const modelInput = document.querySelector('input[name="model"]');
+        const yearInput = document.querySelector('input[name="year"]');
+        const mileageInput = document.querySelector('input[name="mileage"]');
+        const conditionSelect = document.querySelector(
+          'select[name="condition"]'
+        );
+        const fuelTypeSelect = document.querySelector(
+          'select[name="fuelType"]'
+        );
+        const transmissionSelect = document.querySelector(
+          'select[name="transmission"]'
+        );
+        const descriptionTextarea = document.querySelector(
+          'textarea[name="description"]'
+        );
+
+        currentData.make = makeInput ? makeInput.value : "";
+        currentData.model = modelInput ? modelInput.value : "";
+        currentData.year = yearInput ? yearInput.value : "";
+        currentData.mileage = mileageInput ? mileageInput.value : "";
+        currentData.condition = conditionSelect ? conditionSelect.value : "";
+        currentData.fuelType = fuelTypeSelect ? fuelTypeSelect.value : "";
+        currentData.transmission = transmissionSelect
+          ? transmissionSelect.value
+          : "";
+        currentData.description = descriptionTextarea
+          ? descriptionTextarea.value
+          : "";
+
+        // Capture current image URLs from dynamic inputs
+        const imageInputs = document.querySelectorAll(
+          'input[name="imageUrls"]'
+        );
+        const currentImageUrls = Array.from(imageInputs)
+          .map((input) => input.value.trim())
+          .filter((url) => url);
+        currentData.imageUrls = currentImageUrls;
+
+        // Compare with original data
+        hasChanges = false;
+
+        // Check basic fields
+        const fieldsToCheck = [
+          "make",
+          "model",
+          "year",
+          "mileage",
+          "condition",
+          "fuelType",
+          "transmission",
+          "description",
+        ];
+        for (let field of fieldsToCheck) {
+          if (originalFormData[field] !== currentData[field]) {
+            hasChanges = true;
+            console.log(
+              `Change detected in ${field}: "${originalFormData[field]}" -> "${currentData[field]}"`
+            );
+            break;
+          }
+        }
+
+        // Check image URLs if no other changes found
+        if (!hasChanges) {
+          const originalUrls = originalFormData.imageUrls || [];
+          const currentUrls = currentData.imageUrls || [];
+
+          if (originalUrls.length !== currentUrls.length) {
+            hasChanges = true;
+            console.log(
+              `Image count changed: ${originalUrls.length} -> ${currentUrls.length}`
+            );
+          } else {
+            for (let i = 0; i < originalUrls.length; i++) {
+              if (originalUrls[i] !== currentUrls[i]) {
+                hasChanges = true;
+                console.log(
+                  `Image URL changed at index ${i}: "${originalUrls[i]}" -> "${currentUrls[i]}"`
+                );
+                break;
+              }
+            }
+          }
+        }
+
+        // Update button state
+        const updateButton = document.getElementById("updateButton");
+        if (hasChanges) {
+          updateButton.disabled = false;
+          updateButton.classList.remove("btn-secondary");
+          updateButton.classList.add("btn-primary");
+        } else {
+          updateButton.disabled = true;
+          updateButton.classList.remove("btn-primary");
+          updateButton.classList.add("btn-secondary");
+        }
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("images");
+        const btnAdd = document.getElementById("addImage");
+        const yearInput = document.querySelector('input[name="year"]');
+        const descriptionInput = document.querySelector(
+          'textarea[name="description"]'
+        );
+        const form = document.querySelector(".needs-validation");
+
+        btnAdd.onclick = () => container.appendChild(makeImageRow());
+
+        // Add year validation
+        if (yearInput) {
+          yearInput.addEventListener("input", function () {
+            validateYear(this);
+            checkForChanges();
+          });
+        }
+
+        // Add description validation
+        if (descriptionInput) {
+          descriptionInput.addEventListener("input", function () {
+            validateDescription(this);
+            checkForChanges();
+          });
+          // Initialize character count
+          validateDescription(descriptionInput);
+        }
+
+        // Add change tracking to all form inputs
+        if (form) {
+          const formInputs = form.querySelectorAll("input, select, textarea");
+          formInputs.forEach((input) => {
+            input.addEventListener("input", checkForChanges);
+            input.addEventListener("change", checkForChanges);
+          });
+        }
+
+        // Add change tracking to dynamic image inputs
+        const addImageButton = document.getElementById("addImage");
+        if (addImageButton) {
+          const originalAddImageClick = addImageButton.onclick;
+          addImageButton.onclick = function () {
+            if (originalAddImageClick) originalAddImageClick();
+            // Add change tracking to new image input
+            setTimeout(() => {
+              const newImageInput = container.querySelector(
+                'input[name="imageUrls"]:last-of-type'
+              );
+              if (newImageInput) {
+                newImageInput.addEventListener("input", checkForChanges);
+                newImageInput.addEventListener("change", checkForChanges);
+              }
+            }, 10);
+          };
+        }
+
+        // Form validation
+        if (form) {
+          form.addEventListener("submit", function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add("was-validated");
+          });
+        }
+
+        // Preload existing images first
+        const existing = /*[[${imageUrls}]]*/ [];
+        if (existing && existing.length) {
+          existing.forEach((imageUrl) =>
+            container.appendChild(makeImageRow(imageUrl))
+          );
+        } else {
+          container.appendChild(makeImageRow());
+        }
+
+        // Initialize form data tracking after images are loaded
+        setTimeout(() => {
+          captureOriginalFormData();
+          console.log("Original form data captured:", originalFormData);
+          checkForChanges();
+        }, 100);
+      });
+    </script>
+  </body>
+</html>
