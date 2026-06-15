@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Vehicle Listing - VehicleBid</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="/css/custom.css" rel="stylesheet" />
+
+    <!-- Modern UI Styles -->
+    <style>
+      /* Hero Section */
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      /* Content Cards */
+      .content-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: none;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+      }
+
+      .content-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .content-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border: none;
+      }
+
+      .content-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .content-card-body {
+        padding: 2rem;
+      }
+
+      /* Form Controls */
+      .form-control,
+      .form-select,
+      .form-control:focus,
+      .form-select:focus {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        background: white;
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Buttons */
+      .btn-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+      }
+
+      .btn-outline-custom {
+        border: 2px solid #667eea;
+        color: #667eea;
+        background: transparent;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-outline-custom:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-success-custom {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-success-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        color: white;
+      }
+
+      .btn-primary-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+      }
+
+      /* Upload Cards */
+      .upload-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: none;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+      }
+
+      .upload-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      }
+
+      .upload-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border: none;
+      }
+
+      .upload-card-body {
+        padding: 1.5rem;
+      }
+
+      .upload-card-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+      }
+
+      /* Image Preview */
+      .image-preview-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .image-preview-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Alerts */
+      .alert-modern {
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid;
+      }
+
+      .alert-success-modern {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+        border-left-color: #28a745;
+      }
+
+      .alert-warning-modern {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        color: #856404;
+        border-left-color: #ffc107;
+      }
+
+      .alert-danger-modern {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        border-left-color: #dc3545;
+      }
+
+      .alert-info-modern {
+        background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+        color: #0c5460;
+        border-left-color: #17a2b8;
+      }
+
+      /* Form Sections */
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+
+      /* Modal Enhancements */
+      .modal-modern .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-modern .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        border: none;
+      }
+
+      .modal-modern .btn-close {
+        filter: invert(1);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 2rem;
+        }
+
+        .hero-subtitle {
+          font-size: 1rem;
+        }
+
+        .hero-actions {
+          flex-direction: column;
+        }
+
+        .hero-actions .btn {
+          width: 100%;
+        }
+
+        .content-card-body {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <!-- Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container mt-5 pt-4" style="max-width: 900px">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-content text-center">
+          <h1 class="hero-title">
+            <i class="bi bi-car-front me-3"></i>
+            Create Vehicle Listing
+          </h1>
+          <p class="hero-subtitle">
+            Add your vehicle to start selling and reach potential buyers
+          </p>
+          <div class="hero-actions justify-content-center">
+            <a href="/seller/listings" class="btn-outline-custom">
+              <i class="bi bi-arrow-left me-1"></i>Back to Listings
+            </a>
+            <a href="/dashboard" class="btn-custom">
+              <i class="bi bi-house me-1"></i>Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- Main Form Card -->
+      <div class="content-card">
+        <div class="content-card-header">
+          <h2 class="content-card-title">
+            <i class="bi bi-plus-circle me-2"></i>
+            Vehicle Listing Form
+          </h2>
+        </div>
+        <div class="content-card-body">
+          <form
+            th:action="@{/seller/listings/create}"
+            th:object="${listing}"
+            method="post"
+            enctype="multipart/form-data"
+            class="needs-validation"
+            novalidate
+          >
+            <!-- Basic Information Section -->
+            <div class="form-section">
+              <h5 class="form-section-title">
+                <i class="bi bi-info-circle me-2"></i>Basic Information
+              </h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="bi bi-car-front me-1"></i>Make
+                  </label>
+                  <input
+                    class="form-control"
+                    th:field="*{make}"
+                    placeholder="e.g., Toyota"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide the vehicle make.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="bi bi-tag me-1"></i>Model
+                  </label>
+                  <input
+                    class="form-control"
+                    th:field="*{model}"
+                    placeholder="e.g., Camry"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide the vehicle model.
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">
+                    <i class="bi bi-calendar me-1"></i>Year
+                  </label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    th:field="*{year}"
+                    th:attr="max=${maxYear}"
+                    min="1990"
+                    max="2024"
+                    placeholder="2020"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide a valid year (1990-2024).
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">
+                    <i class="bi bi-speedometer2 me-1"></i>Mileage (km)
+                  </label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    th:field="*{mileage}"
+                    min="1"
+                    placeholder="50000"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please provide the vehicle mileage.
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">
+                    <i class="bi bi-star me-1"></i>Condition
+                  </label>
+                  <select class="form-select" th:field="*{condition}" required>
+                    <option value="">Select Condition</option>
+                    <option value="EXCELLENT">Excellent</option>
+                    <option value="GOOD">Good</option>
+                    <option value="FAIR">Fair</option>
+                    <option value="POOR">Poor</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Please select the vehicle condition.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technical Specifications Section -->
+            <div class="form-section">
+              <h5 class="form-section-title">
+                <i class="bi bi-gear me-2"></i>Technical Specifications
+              </h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="bi bi-fuel-pump me-1"></i>Fuel Type *
+                  </label>
+                  <select class="form-select" th:field="*{fuelType}" required>
+                    <option value="">Select Fuel Type</option>
+                    <option value="PETROL">Petrol</option>
+                    <option value="DIESEL">Diesel</option>
+                    <option value="HYBRID">Hybrid</option>
+                    <option value="ELECTRIC">Electric</option>
+                    <option value="CNG">CNG</option>
+                    <option value="LPG">LPG</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Please select the fuel type.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">
+                    <i class="bi bi-gear-wide me-1"></i>Transmission *
+                  </label>
+                  <select
+                    class="form-select"
+                    th:field="*{transmission}"
+                    required
+                  >
+                    <option value="">Select Transmission</option>
+                    <option value="MANUAL">Manual</option>
+                    <option value="AUTOMATIC">Automatic</option>
+                    <option value="CVT">CVT</option>
+                    <option value="SEMI_AUTOMATIC">Semi-Automatic</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Please select the transmission type.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description Section -->
+            <div class="form-section">
+              <h5 class="form-section-title">
+                <i class="bi bi-text-paragraph me-2"></i>Description
+              </h5>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">
+                    <i class="bi bi-file-text me-1"></i>Vehicle Description
+                  </label>
+                  <textarea
+                    class="form-control"
+                    th:field="*{description}"
+                    maxlength="1000"
+                    rows="4"
+                    placeholder="Describe your vehicle's features, condition, history, and any additional details..."
+                  ></textarea>
+                  <div class="form-text">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Provide detailed information about your vehicle to attract
+                    more buyers.
+                    <span id="charCount" class="text-muted"
+                      >0/1000 characters</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Images Section -->
+            <div class="form-section">
+              <h5 class="form-section-title">
+                <i class="bi bi-images me-2"></i>Vehicle Images *
+                <small class="text-muted">(Minimum 3 images required)</small>
+              </h5>
+
+              <!-- File Upload Section -->
+              <div class="upload-card">
+                <div class="upload-card-header">
+                  <h6 class="mb-0">
+                    <i class="bi bi-cloud-upload me-2"></i>Upload Images
+                  </h6>
+                </div>
+                <div class="upload-card-body">
+                  <div id="fileUploads"></div>
+                  <button
+                    type="button"
+                    class="btn-outline-custom mt-2"
+                    id="addFileUpload"
+                  >
+                    <i class="bi bi-plus-circle me-1"></i>Add File Upload
+                  </button>
+                  <div class="form-text mt-2">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Upload images (JPG, JPEG, PNG, GIF, WebP). Maximum 5MB per
+                    file.
+                  </div>
+                </div>
+              </div>
+
+              <!-- URL Input Section -->
+              <div class="upload-card">
+                <div class="upload-card-header upload-card-secondary">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <h6 class="mb-0">
+                      <i class="bi bi-link-45deg me-2"></i>Or Add Image URLs
+                    </h6>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-light"
+                      onclick="previewAllImages()"
+                    >
+                      <i class="bi bi-eye me-1"></i>Preview All
+                    </button>
+                  </div>
+                </div>
+                <div class="upload-card-body">
+                  <div id="images"></div>
+                  <button
+                    type="button"
+                    class="btn-outline-custom mt-2"
+                    id="addImage"
+                  >
+                    <i class="bi bi-plus-circle me-1"></i>Add Image URL
+                  </button>
+                </div>
+              </div>
+
+              <!-- Image Count Display -->
+              <div
+                class="alert-modern alert-info-modern"
+                id="imageCountAlert"
+                style="display: none"
+              >
+                <i class="bi bi-info-circle me-2"></i>
+                <span id="imageCountText"
+                  >0 images selected. Minimum 3 required.</span
+                >
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div
+              class="d-flex justify-content-between align-items-center pt-4 border-top"
+            >
+              <a href="/seller/listings" class="btn-outline-custom">
+                <i class="bi bi-arrow-left me-1"></i>Back to Listings
+              </a>
+              <button type="submit" class="btn-primary-custom">
+                <i class="bi bi-plus-circle me-2"></i>Create Listing
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div
+      class="modal fade modal-modern"
+      id="imagePreviewModal"
+      tabindex="-1"
+      aria-labelledby="imagePreviewModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="imagePreviewModalLabel">
+              <i class="bi bi-images me-2"></i>Vehicle Images Preview
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="modalImageContainer" class="row g-3">
+              <!-- Images will be populated here -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn-outline-custom"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      let imageCount = 0;
+      const minImages = 3;
+
+      function makeImageRow(value = "") {
+        const row = document.createElement("div");
+        row.className = "input-group mb-2";
+        row.innerHTML = `
+          <input name="imageUrls" class="form-control" placeholder="https://.../image.jpg" value="${value}" oninput="validateUrl(this)" />
+          <button class="btn btn-outline-danger" type="button" title="Remove URL">
+            <i class="bi bi-trash"></i>
+          </button>
+        `;
+        row.querySelector("button").onclick = () => {
+          row.remove();
+          updateImageCount();
+        };
+        return row;
+      }
+
+      function makeFileUploadRow() {
+        const row = document.createElement("div");
+        row.className = "input-group mb-2";
+        row.innerHTML = `
+          <input type="file" name="imageFiles" class="form-control" accept="image/*" onchange="validateFiles(this)" />
+          <button class="btn btn-outline-danger" type="button" title="Remove File Upload">
+            <i class="bi bi-trash"></i>
+          </button>
+        `;
+        row.querySelector("button").onclick = () => {
+          row.remove();
+          updateImageCount();
+        };
+        return row;
+      }
+
+      function validateUrl(input) {
+        const v = (input.value || "").trim().toLowerCase();
+        if (!v) {
+          input.classList.remove("is-invalid", "is-valid");
+          updateImageCount();
+          return;
+        }
+
+        const okExt =
+          v.endsWith(".jpg") ||
+          v.endsWith(".jpeg") ||
+          v.endsWith(".png") ||
+          v.endsWith(".gif") ||
+          v.endsWith(".webp");
+
+        if (!okExt) {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+          input.setCustomValidity("Invalid image type");
+        } else {
+          input.classList.remove("is-invalid");
+          input.classList.add("is-valid");
+          input.setCustomValidity("");
+        }
+        updateImageCount();
+      }
+
+      function validateFiles(input) {
+        const files = input.files;
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        const allowedTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+
+        if (files.length === 0) {
+          updateImageCount();
+          return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+
+          // Check file size
+          if (file.size > maxSize) {
+            showAlert(
+              `File "${file.name}" is too large. Maximum size is 5MB.`,
+              "danger"
+            );
+            input.value = "";
+            updateImageCount();
+            return;
+          }
+
+          // Check file type
+          if (!allowedTypes.includes(file.type)) {
+            showAlert(
+              `File "${file.name}" is not a valid image type.`,
+              "danger"
+            );
+            input.value = "";
+            updateImageCount();
+            return;
+          }
+        }
+
+        // Show success message
+        showAlert(`Successfully selected ${files.length} file(s)`, "success");
+        updateImageCount();
+      }
+
+      function updateImageCount() {
+        let count = 0;
+
+        // Count file uploads
+        const fileInputs = document.querySelectorAll(
+          'input[name="imageFiles"]'
+        );
+        fileInputs.forEach((input) => {
+          if (input.files && input.files.length > 0) {
+            count += input.files.length;
+          }
+        });
+
+        // Count URL inputs
+        const urlInputs = document.querySelectorAll('input[name="imageUrls"]');
+        urlInputs.forEach((input) => {
+          if (
+            input.value &&
+            input.value.trim() &&
+            !input.classList.contains("is-invalid")
+          ) {
+            count++;
+          }
+        });
+
+        imageCount = count;
+        const alertDiv = document.getElementById("imageCountAlert");
+        const countText = document.getElementById("imageCountText");
+
+        if (count >= minImages) {
+          alertDiv.className = "alert-modern alert-success-modern";
+          countText.textContent = `${count} images selected. Minimum requirement met!`;
+        } else {
+          alertDiv.className = "alert-modern alert-warning-modern";
+          countText.textContent = `${count} images selected. Minimum ${minImages} required.`;
+        }
+
+        alertDiv.style.display = "block";
+      }
+
+      function validateImageCount() {
+        if (imageCount < minImages) {
+          showAlert(`Please add at least ${minImages} images.`, "danger");
+          return false;
+        }
+        return true;
+      }
+
+      function showAlert(message, type) {
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `alert-modern alert-${type}-modern alert-dismissible fade show mt-2`;
+        alertDiv.innerHTML = `
+          <i class="bi bi-${
+            type === "success" ? "check-circle" : "exclamation-triangle"
+          } me-2"></i>
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        const fileInput = document.getElementById("imageFiles");
+        if (fileInput && fileInput.parentNode) {
+          fileInput.parentNode.appendChild(alertDiv);
+        } else {
+          // Fallback to body if fileInput not found
+          document.body.appendChild(alertDiv);
+        }
+
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.remove();
+          }
+        }, 5000);
+      }
+
+      function validateYear(input) {
+        const year = parseInt(input.value);
+        const currentYear = new Date().getFullYear();
+
+        if (year > currentYear) {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+          input.setCustomValidity("Year cannot be in the future");
+        } else if (year < 1990) {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+          input.setCustomValidity("Year must be 1990 or later");
+        } else {
+          input.classList.remove("is-invalid");
+          input.classList.add("is-valid");
+          input.setCustomValidity("");
+        }
+      }
+
+      function validateDescription(input) {
+        const description = input.value;
+        const maxLength = 1000;
+
+        if (description.length > maxLength) {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+          input.setCustomValidity(
+            `Description cannot exceed ${maxLength} characters`
+          );
+        } else {
+          input.classList.remove("is-invalid");
+          input.classList.add("is-valid");
+          input.setCustomValidity("");
+        }
+
+        // Update character count
+        const charCount = document.getElementById("charCount");
+        if (charCount) {
+          charCount.textContent = `${description.length}/${maxLength} characters`;
+          if (description.length > maxLength) {
+            charCount.className = "text-danger";
+          } else if (description.length > maxLength * 0.8) {
+            charCount.className = "text-warning";
+          } else {
+            charCount.className = "text-muted";
+          }
+        }
+      }
+
+      function previewAllImages() {
+        const modalContainer = document.getElementById("modalImageContainer");
+        modalContainer.innerHTML = "";
+
+        // Get all image URLs from form inputs
+        const allImages = [];
+
+        // Add images from URL inputs
+        document
+          .querySelectorAll('input[name="imageUrls"]')
+          .forEach((input, index) => {
+            if (
+              input.value &&
+              input.value.trim() &&
+              !input.classList.contains("is-invalid")
+            ) {
+              allImages.push({
+                url: input.value.trim(),
+                type: "url",
+                index: index + 1,
+              });
+            }
+          });
+
+        // Add images from file inputs (create preview URLs)
+        document
+          .querySelectorAll('input[name="imageFiles"]')
+          .forEach((input, index) => {
+            if (input.files && input.files.length > 0) {
+              Array.from(input.files).forEach((file, fileIndex) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                  allImages.push({
+                    url: e.target.result,
+                    type: "file",
+                    index: allImages.length + 1,
+                  });
+                };
+                reader.readAsDataURL(file);
+              });
+            }
+          });
+
+        if (allImages.length === 0) {
+          modalContainer.innerHTML =
+            '<div class="col-12 text-center text-muted"><i class="bi bi-images" style="font-size: 3rem;" class="mb-3"></i><p>No images to preview</p></div>';
+          return;
+        }
+
+        // Wait a bit for file readers to complete, then show modal
+        setTimeout(() => {
+          allImages.forEach((image, index) => {
+            const col = document.createElement("div");
+            col.className = "col-md-4 col-sm-6";
+            col.innerHTML = `
+              <div class="image-preview-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <span class="badge ${
+                    image.type === "url" ? "bg-info" : "bg-success"
+                  }">${image.type === "url" ? "URL" : "File"}</span>
+                  <span class="badge bg-primary">#${image.index}</span>
+                </div>
+                <div class="card-body p-2">
+                  <img src="${
+                    image.url
+                  }" class="img-fluid rounded" style="height: 200px; object-fit: cover; width: 100%;" 
+                       alt="Image ${image.index}" 
+                       onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik03NSA3NUgxMjVWMTI1SDc1Vjc1WiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNNzUgMTM1SDEwNVYxNTBINzVWMTM1WiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'; this.style.border='2px solid #dc3545';" />
+                </div>
+                <div class="card-footer">
+                  <small class="text-muted text-truncate d-block" title="${
+                    image.url
+                  }">${
+              image.type === "url" ? image.url : "Uploaded file"
+            }</small>
+                </div>
+              </div>
+            `;
+            modalContainer.appendChild(col);
+          });
+
+          // Show modal
+          const modal = new bootstrap.Modal(
+            document.getElementById("imagePreviewModal")
+          );
+          modal.show();
+        }, 500);
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("images");
+        const fileUploadContainer = document.getElementById("fileUploads");
+        const btnAdd = document.getElementById("addImage");
+        const btnAddFile = document.getElementById("addFileUpload");
+        const yearInput = document.querySelector('input[th\\:field="*{year}"]');
+
+        btnAdd.onclick = () => {
+          container.appendChild(makeImageRow());
+          updateImageCount();
+        };
+
+        btnAddFile.onclick = () => {
+          fileUploadContainer.appendChild(makeFileUploadRow());
+        };
+
+        // Add year validation
+        if (yearInput) {
+          yearInput.addEventListener("input", function () {
+            validateYear(this);
+          });
+        }
+
+        // Add description validation
+        const descriptionInput = document.querySelector(
+          'textarea[th\\:field="*{description}"]'
+        );
+        if (descriptionInput) {
+          descriptionInput.addEventListener("input", function () {
+            validateDescription(this);
+          });
+          // Initialize character count on page load
+          validateDescription(descriptionInput);
+        }
+
+        // Form validation
+        const form = document.querySelector(".needs-validation");
+        form.addEventListener("submit", function (event) {
+          // Check image count
+          if (!validateImageCount()) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
+
+          // Check form validity
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        });
+
+        // Start with initial fields
+        container.appendChild(makeImageRow());
+        fileUploadContainer.appendChild(makeFileUploadRow());
+        updateImageCount();
+
+        // Add modern form interactions
+        const formControls = document.querySelectorAll(
+          ".form-control, .form-select"
+        );
+        formControls.forEach(function (control) {
+          control.addEventListener("focus", function () {
+            this.style.borderColor = "#667eea";
+            this.style.boxShadow = "0 0 0 0.2rem rgba(102, 126, 234, 0.25)";
+            this.style.background = "white";
+          });
+
+          control.addEventListener("blur", function () {
+            this.style.borderColor = "#e9ecef";
+            this.style.boxShadow = "none";
+            this.style.background = "#f8f9fa";
+          });
+        });
+
+        // Add hover effects to cards
+        const cards = document.querySelectorAll(".content-card, .upload-card");
+        cards.forEach(function (card) {
+          card.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-5px)";
+            this.style.boxShadow = "0 8px 30px rgba(0, 0, 0, 0.12)";
+          });
+
+          card.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0)";
+            this.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
