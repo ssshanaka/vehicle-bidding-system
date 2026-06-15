@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Officer Dashboard - Lanka Auto Traders</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="/css/custom.css" rel="stylesheet" />
+    <link href="/css/admin-dashboard.css" rel="stylesheet" />
+
+    <style>
+      /* Hero Section Styling */
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+      }
+
+      .hero-section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero-section p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+      }
+
+      /* Stat Card Styling */
+      .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      /* Content Card Styling */
+      .content-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+      }
+
+      .content-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1.5rem 2rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .content-card .card-body {
+        padding: 2rem;
+      }
+
+      /* Button Styling */
+      .btn-custom {
+        border-radius: 15px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+      }
+
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Table Styling */
+      .table-modern {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .table-modern thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .table-modern tbody tr {
+        transition: all 0.3s ease;
+      }
+
+      .table-modern tbody tr:hover {
+        background: rgba(102, 126, 234, 0.05);
+        transform: scale(1.01);
+      }
+
+      .table-modern tbody td {
+        padding: 0.75rem 0.5rem;
+        border-color: rgba(0, 0, 0, 0.05);
+        vertical-align: middle;
+        font-size: 0.9rem;
+      }
+
+      .table-modern tbody td small {
+        font-size: 0.8rem;
+        line-height: 1.2;
+      }
+
+      .table-modern .btn-group-vertical .btn {
+        margin-bottom: 2px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .table-modern .btn-group-vertical .btn:last-child {
+        margin-bottom: 0;
+      }
+
+      /* Badge Styling */
+      .badge-modern {
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-success-modern {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+      }
+
+      .badge-warning-modern {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        color: white;
+      }
+
+      .badge-danger-modern {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        color: white;
+      }
+
+      .badge-info-modern {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+      }
+
+      .badge-secondary-modern {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+      }
+
+      /* Modern Modal Styling */
+      .modal-modern .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .modal-modern .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px 20px 0 0;
+        border: none;
+        padding: 1.5rem 2rem;
+      }
+
+      .modal-modern .modal-header .modal-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-modern .modal-body {
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .modal-modern .modal-footer {
+        border: none;
+        padding: 1.5rem 2rem;
+        background: rgba(248, 249, 250, 0.95);
+        border-radius: 0 0 20px 20px;
+      }
+
+      .modal-modern .btn {
+        border-radius: 15px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .modal-modern .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-modern .form-control,
+      .modal-modern .form-select {
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .modal-modern .form-control:focus,
+      .modal-modern .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+
+      .modal-modern .alert {
+        border-radius: 15px;
+        border: none;
+        padding: 1rem 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h1>
+                <i class="bi bi-shield-check me-3"></i>
+                Admin Officer Dashboard
+              </h1>
+              <p>Platform Integrity & Moderation Center</p>
+              <div class="d-flex gap-3">
+                <button
+                  class="btn btn-light btn-custom"
+                  onclick="refreshDashboard()"
+                >
+                  <i class="bi bi-arrow-clockwise me-2"></i>Refresh Data
+                </button>
+                <button
+                  class="btn btn-outline-light btn-custom"
+                  onclick="exportData()"
+                >
+                  <i class="bi bi-download me-2"></i>Export Reports
+                </button>
+              </div>
+            </div>
+            <div class="col-lg-4 text-end">
+              <div class="badge bg-light text-dark fs-5 px-4 py-2">
+                <i class="bi bi-person-badge me-2"></i>ADMIN_OFFICER
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Metrics Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-number" id="totalUsers">0</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-person-x-fill"></i>
+            </div>
+            <div class="stat-number" id="bannedUsers">0</div>
+            <div class="stat-label">Banned Users</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-clock-fill"></i>
+            </div>
+            <div class="stat-number" id="pendingListings">0</div>
+            <div class="stat-label">Pending Listings</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-hammer"></i>
+            </div>
+            <div class="stat-number" id="activeAuctions">0</div>
+            <div class="stat-label">Active Auctions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="content-card mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="bi bi-gear me-2"></i>
+            Admin Management Tools
+          </h6>
+        </div>
+        <div class="card-body p-0">
+          <ul class="nav nav-tabs nav-fill" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active fw-semibold"
+                id="users-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#users"
+                type="button"
+                role="tab"
+              >
+                <i class="bi bi-people me-2"></i>User Management
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link fw-semibold"
+                id="logs-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#logs"
+                type="button"
+                role="tab"
+              >
+                <i class="bi bi-clock-history me-2"></i>Activity Logs
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="adminTabContent">
+        <!-- User Management Tab -->
+        <div class="tab-pane fade show active" id="users" role="tabpanel">
+          <div class="content-card">
+            <div class="card-header">
+              <h6 class="mb-0">
+                <i class="bi bi-people me-2"></i>User Management
+              </h6>
+            </div>
+            <div class="card-body">
+              <!-- Filter Controls -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-funnel me-1"></i>Filter by Role
+                  </label>
+                  <select class="form-select border-2" id="roleFilter">
+                    <option value="">All Roles</option>
+                    <option value="USER">User</option>
+                    <option value="SALES_MANAGER">Sales Manager</option>
+                    <option value="CUSTOMER_SERVICE">Customer Service</option>
+                    <option value="VEHICLE_INSPECTOR">Vehicle Inspector</option>
+                    <option value="ADMIN_OFFICER">Admin Officer</option>
+                    <option value="IT_CONSULTANT">IT Consultant</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-shield-check me-1"></i>Filter by Status
+                  </label>
+                  <select class="form-select border-2" id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="BANNED">Banned</option>
+                    <option value="LOCKED">Locked</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-search me-1"></i>Search Users
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control border-2"
+                    id="searchFilter"
+                    placeholder="Search by username or email..."
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">&nbsp;</label>
+                  <button
+                    class="btn btn-primary fw-semibold d-block w-100"
+                    onclick="refreshUsers()"
+                  >
+                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                  </button>
+                </div>
+              </div>
+
+              <!-- Users Table -->
+              <div class="table-responsive">
+                <table class="table table-modern" id="usersTable">
+                  <thead>
+                    <tr>
+                      <th><i class="bi bi-hash me-1"></i>User ID</th>
+                      <th><i class="bi bi-person me-1"></i>Username</th>
+                      <th><i class="bi bi-envelope me-1"></i>Email</th>
+                      <th><i class="bi bi-shield me-1"></i>Role</th>
+                      <th><i class="bi bi-check-circle me-1"></i>Status</th>
+                      <th>
+                        <i class="bi bi-exclamation-triangle me-1"></i>Failed
+                        Attempts
+                      </th>
+                      <th><i class="bi bi-clock me-1"></i>Last Login</th>
+                      <th><i class="bi bi-gear me-1"></i>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="usersTableBody">
+                    <!-- Dynamic content will be loaded here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Logs Tab -->
+        <div class="tab-pane fade" id="logs" role="tabpanel">
+          <div class="content-card">
+            <div class="card-header">
+              <h6 class="mb-0">
+                <i class="bi bi-clock-history me-2"></i>Activity Logs
+              </h6>
+            </div>
+            <div class="card-body">
+              <!-- Filter Controls -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-funnel me-1"></i>Filter by Action
+                  </label>
+                  <select class="form-select border-2" id="actionTypeFilter">
+                    <option value="">All Actions</option>
+                    <option value="APPROVE">Approve</option>
+                    <option value="REJECT">Reject</option>
+                    <option value="BAN">Ban</option>
+                    <option value="WARNING">Warning</option>
+                    <option value="UNAUTHORIZED">Unauthorized</option>
+                    <option value="START_AUCTION">Start Auction</option>
+                    <option value="EXTEND_AUCTION">Extend Auction</option>
+                    <option value="END_AUCTION">End Auction</option>
+                    <option value="CREATE_AUCTION">Create Auction</option>
+                    <option value="FLAG_REPORTING">Flag Reporting</option>
+                    <option value="AUTO_EXTEND_AUCTION">
+                      Auto Extend Auction
+                    </option>
+                    <option value="MANUAL_EXTEND_AUCTION">
+                      Manual Extend Auction
+                    </option>
+                    <option value="CLOSE_AUCTION">Close Auction</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-calendar me-1"></i>Filter by Date
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control border-2"
+                    id="dateFilter"
+                    placeholder="Filter by Date"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-search me-1"></i>Search Log ID
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control border-2"
+                    id="logIdSearch"
+                    placeholder="Search by Log ID..."
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">&nbsp;</label>
+                  <button
+                    class="btn btn-primary fw-semibold d-block w-100"
+                    onclick="refreshLogs()"
+                  >
+                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                  </button>
+                </div>
+              </div>
+
+              <!-- Logs Table -->
+              <div class="table-responsive">
+                <table class="table table-modern" id="logsTable">
+                  <thead>
+                    <tr>
+                      <th><i class="bi bi-hash me-1"></i>Log ID</th>
+                      <th><i class="bi bi-person-badge me-1"></i>Admin</th>
+                      <th><i class="bi bi-lightning me-1"></i>Action</th>
+                      <th><i class="bi bi-bullseye me-1"></i>Target</th>
+                      <th><i class="bi bi-chat-text me-1"></i>Reason</th>
+                      <th><i class="bi bi-clock me-1"></i>Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="logsTableBody">
+                    <!-- Dynamic content will be loaded here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- User Actions Modal -->
+    <div class="modal fade modal-modern" id="userActionsModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-gear me-2"></i>User Actions
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="userActionsContent">
+              <!-- Dynamic content will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ban User Modal -->
+    <div class="modal fade modal-modern" id="banUserModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-person-x me-2"></i>Ban User
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-warning border-0 shadow-sm">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              <strong>User:</strong> <span id="banUserInfo"></span>
+            </div>
+            <div class="mb-3">
+              <label for="banType" class="form-label fw-semibold">
+                <i class="bi bi-shield-exclamation me-1"></i>Ban Type
+              </label>
+              <select class="form-select border-2" id="banType">
+                <option value="temp">Temporary</option>
+                <option value="perm">Permanent</option>
+              </select>
+            </div>
+            <div class="mb-3" id="banDurationGroup">
+              <label for="banDuration" class="form-label fw-semibold">
+                <i class="bi bi-calendar me-1"></i>Duration (Days)
+              </label>
+              <input
+                type="number"
+                class="form-control border-2"
+                id="banDuration"
+                min="1"
+                max="365"
+                value="7"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="banReason" class="form-label fw-semibold">
+                <i class="bi bi-chat-text me-1"></i>Reason
+              </label>
+              <textarea
+                class="form-control border-2"
+                id="banReason"
+                rows="3"
+                placeholder="Enter reason for ban..."
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger fw-semibold"
+              onclick="banUser()"
+            >
+              <i class="bi bi-person-x me-1"></i>Ban User
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unban User Modal -->
+    <div class="modal fade modal-modern" id="unbanUserModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-person-check me-2"></i>Unban User
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-info border-0 shadow-sm">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>User:</strong> <span id="unbanUserInfo"></span>
+            </div>
+            <form id="unbanUserForm">
+              <div class="mb-3">
+                <label for="unbanReason" class="form-label fw-semibold">
+                  <i class="bi bi-chat-text me-1"></i>Reason
+                </label>
+                <textarea
+                  class="form-control border-2"
+                  id="unbanReason"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning fw-semibold"
+              onclick="unbanUser()"
+            >
+              <i class="bi bi-person-check me-1"></i>Unban User
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Role Modal -->
+    <div class="modal fade modal-modern" id="changeRoleModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-person-gear me-2"></i>Change User Role
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-info border-0 shadow-sm">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>User:</strong> <span id="changeRoleUserInfo"></span>
+            </div>
+            <form id="changeRoleForm">
+              <div class="mb-3">
+                <label for="newRole" class="form-label fw-semibold">
+                  <i class="bi bi-shield me-1"></i>New Role
+                </label>
+                <select class="form-select border-2" id="newRole" required>
+                  <option value="">Select a role</option>
+                  <option value="USER">User</option>
+                  <option value="SALES_MANAGER">Sales Manager</option>
+                  <option value="CUSTOMER_SERVICE">Customer Service</option>
+                  <option value="VEHICLE_INSPECTOR">Vehicle Inspector</option>
+                  <option value="ADMIN_OFFICER">Admin Officer</option>
+                  <option value="IT_CONSULTANT">IT Consultant</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="changeRoleReason" class="form-label fw-semibold">
+                  <i class="bi bi-chat-text me-1"></i>Reason
+                </label>
+                <textarea
+                  class="form-control border-2"
+                  id="changeRoleReason"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-info fw-semibold"
+              onclick="changeUserRole()"
+            >
+              <i class="bi bi-person-gear me-1"></i>Change Role
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal fade modal-modern" id="userDetailsModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-person-lines-fill me-2"></i>User Details
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="userDetailsContent">
+              <!-- User details will be populated here -->
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div
+      class="modal fade modal-modern"
+      id="successModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-check-circle-fill me-2"></i>Success
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex align-items-center">
+              <i
+                class="bi bi-check-circle-fill text-success me-3"
+                style="font-size: 2rem"
+              ></i>
+              <div id="successMessage" class="flex-grow-1">
+                <!-- Success message will be populated here -->
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-success fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-check me-1"></i>OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div
+      class="modal fade modal-modern"
+      id="errorModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Error
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex align-items-center">
+              <i
+                class="bi bi-exclamation-triangle-fill text-danger me-3"
+                style="font-size: 2rem"
+              ></i>
+              <div id="errorMessage" class="flex-grow-1">
+                <!-- Error message will be populated here -->
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-danger fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div
+      class="modal fade modal-modern"
+      id="confirmModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-question-circle-fill me-2"></i>Confirm Action
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex align-items-start">
+              <i
+                class="bi bi-question-circle-fill text-warning me-3 mt-1"
+                style="font-size: 1.5rem"
+              ></i>
+              <div id="confirmMessage" class="flex-grow-1">
+                <!-- Confirmation message will be populated here -->
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning fw-semibold"
+              id="confirmActionBtn"
+            >
+              <i class="bi bi-check-circle me-1"></i>Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Validation Error Modal -->
+    <div
+      class="modal fade"
+      id="validationModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-warning text-dark border-0">
+            <h5 class="modal-title fw-semibold">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Validation
+              Error
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex align-items-center">
+              <i
+                class="bi bi-exclamation-triangle-fill text-warning me-3"
+                style="font-size: 2rem"
+              ></i>
+              <div id="validationMessage" class="flex-grow-1">
+                <!-- Validation message will be populated here -->
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-warning fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-check-circle me-1"></i>OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Custom Styles for Admin Dashboard -->
+    <style>
+      /* Modern Card Styling */
+      .card {
+        border-radius: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      /* Button Styling */
+      .btn {
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      /* Badge Styling */
+      .badge {
+        border-radius: 20px;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+      }
+
+      /* Form Control Styling */
+      .form-control,
+      .form-select {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        border-color: #0d6efd;
+      }
+
+      /* Table Styling */
+      .table {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        font-weight: 600;
+      }
+
+      .table td {
+        border-color: #f8f9fa;
+        vertical-align: middle;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+      }
+
+      /* Modal Styling */
+      .modal-content {
+        border-radius: 15px;
+      }
+
+      .modal-header {
+        border-radius: 15px 15px 0 0;
+      }
+
+      /* Tab Styling */
+      .nav-tabs .nav-link {
+        border-radius: 10px 10px 0 0;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .nav-tabs .nav-link:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+      }
+
+      .nav-tabs .nav-link.active {
+        background-color: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+      }
+
+      /* Alert Styling */
+      .alert {
+        border-radius: 10px;
+        border: none;
+      }
+
+      /* Icon Animations */
+      .bi {
+        transition: all 0.3s ease;
+      }
+
+      .card:hover .bi {
+        transform: scale(1.1);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    </style>
+
+    <script>
+      let currentUserId = null;
+      let currentUsername = null;
+
+      // Modal helper functions
+      function showSuccessModal(message) {
+        document.getElementById("successMessage").textContent = message;
+        new bootstrap.Modal(document.getElementById("successModal")).show();
+      }
+
+      function showErrorModal(message) {
+        document.getElementById("errorMessage").textContent = message;
+        new bootstrap.Modal(document.getElementById("errorModal")).show();
+      }
+
+      function showValidationModal(message) {
+        document.getElementById("validationMessage").textContent = message;
+        new bootstrap.Modal(document.getElementById("validationModal")).show();
+      }
+
+      function showConfirmModal(message, onConfirm) {
+        document.getElementById("confirmMessage").textContent = message;
+        const confirmBtn = document.getElementById("confirmActionBtn");
+
+        // Remove any existing event listeners
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        // Add new event listener
+        newConfirmBtn.addEventListener("click", function () {
+          bootstrap.Modal.getInstance(
+            document.getElementById("confirmModal")
+          ).hide();
+          onConfirm();
+        });
+
+        new bootstrap.Modal(document.getElementById("confirmModal")).show();
+      }
+
+      // Load dashboard data on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        loadAdminMetrics();
+        loadUsers();
+        loadLogs();
+
+        // Add event listeners for filter controls
+        document
+          .getElementById("roleFilter")
+          .addEventListener("change", loadUsers);
+        document
+          .getElementById("statusFilter")
+          .addEventListener("change", loadUsers);
+        document
+          .getElementById("searchFilter")
+          .addEventListener("input", debounce(loadUsers, 500));
+
+        document
+          .getElementById("actionTypeFilter")
+          .addEventListener("change", loadLogs);
+        document
+          .getElementById("dateFilter")
+          .addEventListener("change", loadLogs);
+        document
+          .getElementById("logIdSearch")
+          .addEventListener("input", debounce(loadLogs, 500));
+      });
+
+      // Debounce function to limit API calls
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      async function loadAdminMetrics() {
+        try {
+          // Fetch real dashboard statistics from the backend
+          const response = await fetch("/admin/api/dashboard-stats");
+          if (response.ok) {
+            const stats = await response.json();
+            document.getElementById("totalUsers").textContent =
+              stats.totalUsers || 0;
+            document.getElementById("bannedUsers").textContent =
+              stats.bannedUsers || 0;
+            document.getElementById("pendingListings").textContent =
+              stats.pendingListings || 0;
+            document.getElementById("activeAuctions").textContent =
+              stats.activeAuctions || 0;
+          } else {
+            console.error("Failed to fetch dashboard stats");
+            // Fallback to default values
+            document.getElementById("totalUsers").textContent = "0";
+            document.getElementById("bannedUsers").textContent = "0";
+            document.getElementById("pendingListings").textContent = "0";
+            document.getElementById("activeAuctions").textContent = "0";
+          }
+        } catch (error) {
+          console.error("Error loading admin metrics:", error);
+          // Fallback to default values
+          document.getElementById("totalUsers").textContent = "0";
+          document.getElementById("bannedUsers").textContent = "0";
+          document.getElementById("pendingListings").textContent = "0";
+          document.getElementById("activeAuctions").textContent = "0";
+        }
+      }
+
+      async function loadUsers() {
+        try {
+          // Get filter values
+          const roleFilter = document.getElementById("roleFilter").value;
+          const statusFilter = document.getElementById("statusFilter").value;
+          const searchFilter = document.getElementById("searchFilter").value;
+
+          // Build query parameters
+          const params = new URLSearchParams();
+          if (roleFilter) params.append("role", roleFilter);
+          if (statusFilter) params.append("status", statusFilter);
+          if (searchFilter) params.append("search", searchFilter);
+
+          const response = await fetch(`/admin/api/users?${params}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch users");
+          }
+
+          const users = await response.json();
+
+          const tbody = document.getElementById("usersTableBody");
+          tbody.innerHTML = "";
+
+          users.forEach((user) => {
+            const row = document.createElement("tr");
+            const userId = user.userId || user.id; // Handle both field names
+            row.setAttribute("data-user-id", userId);
+            row.innerHTML = `
+                      <td>${userId}</td>
+                      <td>${user.username}</td>
+                      <td>${user.email}</td>
+                      <td><span class="badge badge-modern badge-${getRoleColor(
+                        user.role
+                      )}-modern">${user.role}</span></td>
+                      <td><span class="badge badge-modern badge-${getStatusColor(
+                        getUserStatus(user)
+                      )}-modern">${getUserStatus(user)}</span></td>
+                      <td>${user.failedAttempts || 0}</td>
+                      <td>${user.lastLogin || "Never"}</td>
+                      <td>
+                          <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="viewUserActions(${userId}, '${
+              user.username
+            }')">
+                              <i class="bi bi-gear me-1"></i> Actions
+                          </button>
+                      </td>
+                  `;
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error loading users:", error);
+          // Fallback to simulated data
+          loadUsersFallback();
+        }
+      }
+
+      function loadUsersFallback() {
+        // Simulate users data as fallback
+        const users = [
+          {
+            id: 1,
+            username: "user123",
+            email: "user123@email.com",
+            role: "USER",
+            isBanned: false,
+            lockoutUntil: null,
+            failedAttempts: 0,
+            lastLogin: "2024-01-15 14:30:00",
+          },
+          {
+            id: 2,
+            username: "banned_user",
+            email: "banned@email.com",
+            role: "USER",
+            isBanned: true,
+            lockoutUntil: null,
+            failedAttempts: 5,
+            lastLogin: "2024-01-10 09:15:00",
+          },
+          {
+            id: 3,
+            username: "locked_user",
+            email: "locked@email.com",
+            role: "USER",
+            isBanned: false,
+            lockoutUntil: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutes from now
+            failedAttempts: 3,
+            lastLogin: "2024-01-15 12:00:00",
+          },
+          {
+            id: 4,
+            username: "sales_mgr",
+            email: "sales@email.com",
+            role: "SALES_MANAGER",
+            isBanned: false,
+            lockoutUntil: null,
+            failedAttempts: 0,
+            lastLogin: "2024-01-15 16:45:00",
+          },
+        ];
+
+        const tbody = document.getElementById("usersTableBody");
+        tbody.innerHTML = "";
+
+        users.forEach((user) => {
+          const row = document.createElement("tr");
+          const userId = user.userId || user.id; // Handle both field names
+          row.setAttribute("data-user-id", userId);
+          row.innerHTML = `
+                    <td>${userId}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td><span class="badge badge-modern badge-${getRoleColor(
+                      user.role
+                    )}-modern">${user.role}</span></td>
+                    <td><span class="badge badge-modern badge-${getStatusColor(
+                      getUserStatus(user)
+                    )}-modern">${getUserStatus(user)}</span></td>
+                    <td>${user.failedAttempts}</td>
+                    <td>${user.lastLogin}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="viewUserActions(${userId}, '${
+            user.username
+          }')">
+                            <i class="bi bi-gear me-1"></i> Actions
+                        </button>
+                    </td>
+                `;
+          tbody.appendChild(row);
+        });
+      }
+
+      function getRoleColor(role) {
+        switch (role) {
+          case "ADMIN_OFFICER":
+            return "danger";
+          case "IT_CONSULTANT":
+            return "dark";
+          case "SALES_MANAGER":
+            return "primary";
+          case "CUSTOMER_SERVICE":
+            return "info";
+          case "VEHICLE_INSPECTOR":
+            return "warning";
+          case "USER":
+            return "secondary";
+          default:
+            return "light";
+        }
+      }
+
+      function getUserStatus(user) {
+        if (user.isBanned) {
+          return "BANNED";
+        } else if (
+          user.lockoutUntil &&
+          new Date(user.lockoutUntil) > new Date()
+        ) {
+          return "LOCKED";
+        } else {
+          return "ACTIVE";
+        }
+      }
+
+      function getStatusColor(status) {
+        switch (status) {
+          case "ACTIVE":
+            return "success";
+          case "BANNED":
+            return "danger";
+          case "LOCKED":
+            return "warning";
+          default:
+            return "secondary";
+        }
+      }
+
+      async function loadLogs() {
+        try {
+          // Get filter values
+          const actionTypeFilter =
+            document.getElementById("actionTypeFilter").value;
+          const dateFilter = document.getElementById("dateFilter").value;
+          const logIdSearch = document.getElementById("logIdSearch").value;
+
+          // Build query parameters
+          const params = new URLSearchParams();
+          if (actionTypeFilter) params.append("actionType", actionTypeFilter);
+          if (dateFilter) {
+            params.append("startDate", dateFilter + "T00:00:00");
+            params.append("endDate", dateFilter + "T23:59:59");
+          }
+          if (logIdSearch) params.append("logId", logIdSearch);
+
+          const response = await fetch(`/admin/api/activity-logs?${params}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch activity logs");
+          }
+
+          const logs = await response.json();
+
+          const tbody = document.getElementById("logsTableBody");
+          tbody.innerHTML = "";
+
+          logs.forEach((log) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                      <td>${log.logId || log.id}</td>
+                      <td>${
+                        log.admin && log.admin.username
+                          ? log.admin.username
+                          : "System"
+                      }</td>
+                      <td><span class="badge bg-${getActionColor(
+                        log.actionType
+                      )}">${log.actionType}</span></td>
+                      <td>${log.targetType} (ID: ${log.targetId})</td>
+                      <td>${log.reason || "No reason provided"}</td>
+                      <td>${new Date(log.timestamp).toLocaleString()}</td>
+                  `;
+            tbody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error loading activity logs:", error);
+          // Fallback to simulated data
+          loadLogsFallback();
+        }
+      }
+
+      function loadLogsFallback() {
+        // Simulate logs data as fallback
+        const logs = [
+          {
+            logId: 1,
+            admin: {
+              username: "admin_officer",
+            },
+            actionType: "BAN",
+            targetType: "User",
+            targetId: 2,
+            reason: "Violation of terms of service",
+            timestamp: "2024-01-15T10:30:00",
+          },
+          {
+            logId: 2,
+            admin: {
+              username: "vehicle_inspector",
+            },
+            actionType: "APPROVE",
+            targetType: "Vehicle Listing",
+            targetId: 15,
+            reason: "Listing meets all requirements",
+            timestamp: "2024-01-15T09:15:00",
+          },
+          {
+            logId: 3,
+            admin: null, // System action
+            actionType: "AUTO_EXTEND_AUCTION",
+            targetType: "Auction",
+            targetId: 8,
+            reason: "Auction automatically extended due to last-minute bidding",
+            timestamp: "2024-01-14T16:45:00",
+          },
+          {
+            logId: 4,
+            admin: {
+              username: "sales_manager",
+            },
+            actionType: "APPROVE",
+            targetType: "Auction",
+            targetId: 12,
+            reason: "Auction scheduled successfully",
+            timestamp: "2024-01-14T14:20:00",
+          },
+        ];
+
+        const tbody = document.getElementById("logsTableBody");
+        tbody.innerHTML = "";
+
+        logs.forEach((log) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${log.logId || log.id}</td>
+                    <td>${
+                      log.admin && log.admin.username
+                        ? log.admin.username
+                        : "System"
+                    }</td>
+                    <td><span class="badge bg-${getActionColor(
+                      log.actionType
+                    )}">${log.actionType}</span></td>
+                    <td>${log.targetType} (ID: ${log.targetId})</td>
+                    <td>${log.reason || "No reason provided"}</td>
+                    <td>${new Date(log.timestamp).toLocaleString()}</td>
+                `;
+          tbody.appendChild(row);
+        });
+      }
+
+      function getActionColor(action) {
+        switch (action) {
+          case "APPROVE":
+            return "success";
+          case "REJECT":
+            return "danger";
+          case "BAN":
+            return "danger";
+          case "WARNING":
+            return "warning";
+          case "UNAUTHORIZED":
+            return "dark";
+          case "AUTO_EXTEND_AUCTION":
+          case "MANUAL_EXTEND_AUCTION":
+            return "info";
+          case "START_AUCTION":
+          case "CREATE_AUCTION":
+            return "primary";
+          case "END_AUCTION":
+          case "CLOSE_AUCTION":
+            return "secondary";
+          case "FLAG_REPORTING":
+            return "warning";
+          default:
+            return "secondary";
+        }
+      }
+
+      function viewUserActions(userId, username) {
+        currentUserId = userId;
+        currentUsername = username;
+
+        const actionsContent = `
+                <div class="mb-3">
+                    <h6>Actions for User: ${username} (ID: ${userId})</h6>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-danger fw-semibold" id="banUserBtn">
+                        <i class="bi bi-person-x me-1"></i> Ban User
+                    </button>
+                    <button class="btn btn-warning fw-semibold" id="unbanUserBtn">
+                        <i class="bi bi-person-check me-1"></i> Unban User
+                    </button>
+                    <button class="btn btn-info fw-semibold" id="changeRoleBtn">
+                        <i class="bi bi-person-gear me-1"></i> Change Role
+                    </button>
+                    <button class="btn btn-secondary fw-semibold" id="viewDetailsBtn">
+                        <i class="bi bi-eye me-1"></i> View Details
+                    </button>
+                </div>
+            `;
+
+        const userActionsContent =
+          document.getElementById("userActionsContent");
+        if (userActionsContent) {
+          userActionsContent.innerHTML = actionsContent;
+
+          // Add event listeners after content is inserted
+          const banBtn = document.getElementById("banUserBtn");
+          const unbanBtn = document.getElementById("unbanUserBtn");
+          const changeRoleBtn = document.getElementById("changeRoleBtn");
+          const viewDetailsBtn = document.getElementById("viewDetailsBtn");
+
+          if (banBtn) {
+            banBtn.addEventListener("click", showBanModal);
+          }
+          if (unbanBtn) {
+            unbanBtn.addEventListener("click", showUnbanModal);
+          }
+          if (changeRoleBtn) {
+            changeRoleBtn.addEventListener("click", showChangeRoleModal);
+          }
+          if (viewDetailsBtn) {
+            viewDetailsBtn.addEventListener("click", showUserDetailsModal);
+          }
+        } else {
+          console.error("userActionsContent element not found");
+        }
+
+        const modal = document.getElementById("userActionsModal");
+        if (modal) {
+          new bootstrap.Modal(modal).show();
+        } else {
+          console.error("userActionsModal element not found");
+        }
+      }
+
+      function showBanModal() {
+        // Set the user info in the modal
+        const banUserInfo = document.getElementById("banUserInfo");
+        if (banUserInfo) {
+          banUserInfo.textContent = `${currentUsername} (ID: ${currentUserId})`;
+        } else {
+          console.error("banUserInfo element not found");
+        }
+
+        // Reset form
+        const banType = document.getElementById("banType");
+        const banDuration = document.getElementById("banDuration");
+        const banReason = document.getElementById("banReason");
+
+        if (banType) banType.value = "temp";
+        if (banDuration) banDuration.value = "7";
+        if (banReason) banReason.value = "";
+
+        // Show/hide duration field based on ban type
+        const durationGroup = document.getElementById("banDurationGroup");
+        if (durationGroup) {
+          durationGroup.style.display = "block";
+        }
+
+        // Add event listener for ban type change
+        if (banType) {
+          banType.addEventListener("change", function () {
+            if (this.value === "perm") {
+              if (durationGroup) durationGroup.style.display = "none";
+            } else {
+              if (durationGroup) durationGroup.style.display = "block";
+            }
+          });
+        }
+
+        const modal = document.getElementById("banUserModal");
+        if (modal) {
+          new bootstrap.Modal(modal).show();
+        } else {
+          console.error("banUserModal element not found");
+        }
+      }
+
+      async function banUser() {
+        if (!currentUserId) {
+          return;
+        }
+
+        const banType = document.getElementById("banType").value;
+        const banDuration = document.getElementById("banDuration").value;
+        const banReason = document.getElementById("banReason").value;
+
+        if (!banReason.trim()) {
+          alert("Please enter a reason for the ban.");
+          return;
+        }
+
+        if (confirm(`Are you sure you want to ban ${currentUsername}?`)) {
+          try {
+            const params = new URLSearchParams();
+            params.append("banType", banType);
+            if (banType === "temp") {
+              params.append("banDuration", banDuration);
+            }
+            params.append("reason", banReason);
+
+            const response = await fetch(`/admin/users/${currentUserId}/ban`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: params,
+            });
+
+            if (response.ok) {
+              alert("User banned successfully!");
+              // Close all modals
+              const banModal = bootstrap.Modal.getInstance(
+                document.getElementById("banUserModal")
+              );
+              const actionsModal = bootstrap.Modal.getInstance(
+                document.getElementById("userActionsModal")
+              );
+              if (banModal) banModal.hide();
+              if (actionsModal) actionsModal.hide();
+              // Refresh data
+              loadUsers();
+              loadAdminMetrics(); // Update dashboard stats
+            } else {
+              const error = await response.text();
+              alert("Error banning user: " + error);
+            }
+          } catch (error) {
+            console.error("Error banning user:", error);
+            alert("Error banning user. Please try again.");
+          }
+        }
+      }
+
+      function showUnbanModal() {
+        document.getElementById(
+          "unbanUserInfo"
+        ).textContent = `${currentUsername} (ID: ${currentUserId})`;
+        document.getElementById("unbanReason").value = "Unbanned by admin";
+        new bootstrap.Modal(document.getElementById("unbanUserModal")).show();
+      }
+
+      async function unbanUser() {
+        if (!currentUserId) return;
+
+        const reason = document.getElementById("unbanReason").value;
+        if (!reason.trim()) {
+          alert("Please enter a reason for unbanning.");
+          return;
+        }
+
+        if (confirm(`Are you sure you want to unban ${currentUsername}?`)) {
+          try {
+            const params = new URLSearchParams();
+            params.append("reason", reason);
+
+            const response = await fetch(
+              `/admin/users/${currentUserId}/unban`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: params,
+              }
+            );
+
+            if (response.ok) {
+              alert("User unbanned successfully!");
+              // Close all modals
+              const unbanModal = bootstrap.Modal.getInstance(
+                document.getElementById("unbanUserModal")
+              );
+              const actionsModal = bootstrap.Modal.getInstance(
+                document.getElementById("userActionsModal")
+              );
+              if (unbanModal) unbanModal.hide();
+              if (actionsModal) actionsModal.hide();
+              // Refresh data
+              loadUsers();
+              loadAdminMetrics(); // Update dashboard stats
+            } else {
+              const error = await response.text();
+              alert("Error unbanning user: " + error);
+            }
+          } catch (error) {
+            console.error("Error unbanning user:", error);
+            alert("Error unbanning user. Please try again.");
+          }
+        }
+      }
+
+      function showChangeRoleModal() {
+        document.getElementById(
+          "changeRoleUserInfo"
+        ).textContent = `${currentUsername} (ID: ${currentUserId})`;
+        document.getElementById("newRole").value = "";
+        document.getElementById("changeRoleReason").value =
+          "Role changed by admin";
+        new bootstrap.Modal(document.getElementById("changeRoleModal")).show();
+      }
+
+      async function changeUserRole() {
+        if (!currentUserId) return;
+
+        const newRole = document.getElementById("newRole").value;
+        const reason = document.getElementById("changeRoleReason").value;
+
+        if (!newRole) {
+          alert("Please select a new role.");
+          return;
+        }
+
+        if (!reason.trim()) {
+          alert("Please enter a reason for the role change.");
+          return;
+        }
+
+        if (
+          confirm(
+            `Are you sure you want to change ${currentUsername}'s role to ${newRole}?`
+          )
+        ) {
+          try {
+            const params = new URLSearchParams();
+            params.append("newRole", newRole);
+            params.append("reason", reason);
+
+            const response = await fetch(
+              `/admin/users/${currentUserId}/change-role`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: params,
+              }
+            );
+
+            if (response.ok) {
+              alert("User role changed successfully!");
+              // Close all modals
+              const changeRoleModal = bootstrap.Modal.getInstance(
+                document.getElementById("changeRoleModal")
+              );
+              const actionsModal = bootstrap.Modal.getInstance(
+                document.getElementById("userActionsModal")
+              );
+              if (changeRoleModal) changeRoleModal.hide();
+              if (actionsModal) actionsModal.hide();
+              // Refresh data
+              loadUsers();
+              loadAdminMetrics(); // Update dashboard stats
+            } else {
+              const error = await response.text();
+              alert("Error changing user role: " + error);
+            }
+          } catch (error) {
+            console.error("Error changing user role:", error);
+            alert("Error changing user role. Please try again.");
+          }
+        }
+      }
+
+      function showUserDetailsModal() {
+        // Find the user data from the current users list
+        const userRow = document.querySelector(
+          `tr[data-user-id="${currentUserId}"]`
+        );
+        if (userRow) {
+          const cells = userRow.querySelectorAll("td");
+          const userData = {
+            id: cells[0].textContent,
+            username: cells[1].textContent,
+            email: cells[2].textContent,
+            role: cells[3].textContent,
+            status: cells[4].textContent,
+            failedAttempts: cells[5].textContent,
+            lastLogin: cells[6].textContent,
+          };
+
+          document.getElementById("userDetailsContent").innerHTML = `
+            <div class="row">
+              <div class="col-md-6">
+                <strong>User ID:</strong> ${userData.id}<br>
+                <strong>Username:</strong> ${userData.username}<br>
+                <strong>Email:</strong> ${userData.email}<br>
+                <strong>Role:</strong> ${userData.role}
+              </div>
+              <div class="col-md-6">
+                <strong>Status:</strong> ${userData.status}<br>
+                <strong>Failed Attempts:</strong> ${userData.failedAttempts}<br>
+                <strong>Last Login:</strong> ${userData.lastLogin}
+              </div>
+            </div>
+          `;
+        } else {
+          document.getElementById("userDetailsContent").innerHTML = `
+            <div class="alert alert-warning">
+              User details not available. Please refresh the page and try again.
+            </div>
+          `;
+        }
+
+        new bootstrap.Modal(document.getElementById("userDetailsModal")).show();
+      }
+
+      function refreshUsers() {
+        loadUsers();
+      }
+
+      function refreshLogs() {
+        loadLogs();
+      }
+    </script>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

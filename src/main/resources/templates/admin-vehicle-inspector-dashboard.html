@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicle Inspector Dashboard - Vehicle Bidding System</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+    <!-- Admin Dashboard CSS -->
+    <link th:href="@{/css/admin-dashboard.css}" rel="stylesheet" />
+
+    <style>
+      /* Hero Section Styling */
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+      }
+
+      .hero-section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero-section p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+      }
+
+      /* Stat Card Styling */
+      .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .stat-sublabel {
+        color: #adb5bd;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+      }
+
+      /* Content Card Styling */
+      .content-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+      }
+
+      .content-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1.5rem 2rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .content-card .card-body {
+        padding: 2rem;
+      }
+
+      /* Button Styling */
+      .btn-custom {
+        border-radius: 15px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+      }
+
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Table Styling */
+      .table-modern {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .table-modern thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .table-modern tbody tr {
+        transition: all 0.3s ease;
+      }
+
+      .table-modern tbody tr:hover {
+        background: rgba(102, 126, 234, 0.05);
+        transform: scale(1.01);
+      }
+
+      .table-modern tbody td {
+        padding: 0.75rem 0.5rem;
+        border-color: rgba(0, 0, 0, 0.05);
+        vertical-align: middle;
+        font-size: 0.9rem;
+      }
+
+      .table-modern tbody td small {
+        font-size: 0.8rem;
+        line-height: 1.2;
+      }
+
+      .table-modern .btn-group-vertical .btn {
+        margin-bottom: 2px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .table-modern .btn-group-vertical .btn:last-child {
+        margin-bottom: 0;
+      }
+
+      /* Badge Styling */
+      .badge-modern {
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-success-modern {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+      }
+
+      .badge-warning-modern {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        color: white;
+      }
+
+      .badge-danger-modern {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        color: white;
+      }
+
+      .badge-info-modern {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+      }
+
+      .badge-secondary-modern {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+      }
+
+      /* Modern Modal Styling */
+      .modal-modern .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .modal-modern .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px 20px 0 0;
+        border: none;
+        padding: 1.5rem 2rem;
+      }
+
+      .modal-modern .modal-header .modal-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-modern .modal-body {
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .modal-modern .modal-footer {
+        border: none;
+        padding: 1.5rem 2rem;
+        background: rgba(248, 249, 250, 0.95);
+        border-radius: 0 0 20px 20px;
+      }
+
+      .modal-modern .btn {
+        border-radius: 15px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .modal-modern .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-modern .form-control,
+      .modal-modern .form-select {
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .modal-modern .form-control:focus,
+      .modal-modern .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+
+      .modal-modern .alert {
+        border-radius: 15px;
+        border: none;
+        padding: 1rem 1.5rem;
+      }
+
+      /* Fix modal backdrop scrolling issue */
+      .modal-backdrop {
+        display: none !important;
+      }
+
+      .modal {
+        z-index: 1050 !important;
+      }
+
+      /* Modal sizing and positioning */
+      .modal-dialog {
+        max-width: 50vw;
+        max-height: 70vh;
+        margin: 0 auto;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-dialog.modal-lg {
+        max-width: 60vw;
+        max-height: 75vh;
+      }
+
+      .modal-dialog.modal-xl {
+        max-width: 70vw;
+        max-height: 80vh;
+      }
+
+      .modal-content {
+        max-height: 70vh;
+        overflow-y: auto;
+        width: 100%;
+        border-radius: 20px;
+      }
+
+      .modal-dialog.modal-lg .modal-content {
+        max-height: 75vh;
+      }
+
+      .modal-dialog.modal-xl .modal-content {
+        max-height: 80vh;
+      }
+
+      /* Ensure modals are centered in viewport */
+      .modal.show .modal-dialog {
+        transform: translate(-50%, -50%);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+      }
+
+      /* Responsive modal sizing */
+      @media (max-width: 768px) {
+        .modal-dialog {
+          max-width: 90vw;
+          max-height: 80vh;
+        }
+
+        .modal-dialog.modal-lg {
+          max-width: 95vw;
+          max-height: 85vh;
+        }
+
+        .modal-dialog.modal-xl {
+          max-width: 95vw;
+          max-height: 90vh;
+        }
+      }
+
+      /* Ensure body remains scrollable when modals are open */
+      body.modal-open {
+        overflow: auto !important;
+        padding-right: 0 !important;
+      }
+
+      /* Custom scrollbar styling for better UX */
+      body::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      body::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+      }
+
+      body::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Dashboard Content -->
+    <div class="container-fluid py-4">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h1>
+                <i class="bi bi-clipboard-check me-3"></i>
+                Vehicle Inspector Dashboard
+              </h1>
+              <p>Listing Moderation & Quality Control Center</p>
+              <div class="d-flex gap-3">
+                <button
+                  class="btn btn-light btn-custom"
+                  onclick="loadListings()"
+                >
+                  <i class="bi bi-arrow-clockwise me-2"></i>Refresh Data
+                </button>
+                <button
+                  class="btn btn-outline-light btn-custom"
+                  onclick="showHelp()"
+                >
+                  <i class="bi bi-question-circle me-2"></i>Help
+                </button>
+              </div>
+            </div>
+            <div class="col-lg-4 text-end">
+              <div class="badge bg-light text-dark fs-5 px-4 py-2">
+                <i class="bi bi-person-badge me-2"></i>VEHICLE_INSPECTOR
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inspection Metrics Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-clock"></i>
+            </div>
+            <div class="stat-number" id="pendingListingsCount">0</div>
+            <div class="stat-label">Pending Listings</div>
+            <div class="stat-sublabel">Awaiting review</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-number" id="approvedToday">0</div>
+            <div class="stat-label">Approved Today</div>
+            <div class="stat-sublabel">Quality approved</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-x-circle"></i>
+            </div>
+            <div class="stat-number" id="rejectedToday">0</div>
+            <div class="stat-label">Rejected Today</div>
+            <div class="stat-sublabel">Failed inspection</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-clipboard-data"></i>
+            </div>
+            <div class="stat-number" id="totalInspected">0</div>
+            <div class="stat-label">Total Inspected</div>
+            <div class="stat-sublabel">All time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listing Moderation Section -->
+      <div class="row">
+        <div class="col-12">
+          <div class="content-card">
+            <div class="card-header">
+              <h5><i class="bi bi-list-ul"></i> Listing Moderation Queue</h5>
+            </div>
+            <div class="card-body">
+              <!-- Filter Controls -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <select class="form-select" id="statusFilter">
+                    <option value="PENDING">Pending</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="REJECTED">Rejected</option>
+                    <option value="">All Statuses</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="searchFilter"
+                    placeholder="Search by make/model..."
+                  />
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select" id="yearFilter">
+                    <option value="">All Years</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                    <option value="2017">2017</option>
+                    <option value="2016">2016</option>
+                    <option value="2015">2015</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <button
+                    class="btn btn-primary btn-custom"
+                    onclick="refreshListings()"
+                  >
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                  </button>
+                </div>
+              </div>
+
+              <!-- Listings Table -->
+              <div class="table-responsive">
+                <table class="table table-modern" id="listingsTable">
+                  <thead>
+                    <tr>
+                      <th>Listing ID</th>
+                      <th>Vehicle</th>
+                      <th>Year</th>
+                      <th>Mileage</th>
+                      <th>Condition</th>
+                      <th>Status</th>
+                      <th>Submitted</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="listingsTableBody">
+                    <!-- Dynamic content will be loaded here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vehicle Inspection Modal -->
+    <div class="modal fade modal-modern" id="listingDetailsModal" tabindex="-1">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-search me-2"></i>Vehicle Inspection & Validation
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-0">
+            <div class="row g-0">
+              <!-- Left Side - Vehicle Details -->
+              <div class="col-lg-8">
+                <!-- Vehicle Header -->
+                <div class="p-4 border-bottom">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <div>
+                      <h4 class="mb-1" id="inspectionVehicleTitle">
+                        Vehicle Details
+                      </h4>
+                      <p class="text-muted mb-0">
+                        <i class="bi bi-calendar me-1"></i>
+                        <span id="inspectionYear">Year</span> •
+                        <i class="bi bi-speedometer2 me-1"></i>
+                        <span id="inspectionMileage">Mileage</span> miles
+                      </p>
+                    </div>
+                    <div>
+                      <span class="badge fs-6" id="inspectionStatusBadge">
+                        <i
+                          class="bi bi-circle-fill me-1"
+                          style="font-size: 0.6rem"
+                        ></i>
+                        <span id="inspectionStatus">Status</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Image Gallery -->
+                <div class="p-4 border-bottom">
+                  <h6 class="mb-3">
+                    <i class="bi bi-images me-2"></i>Vehicle Images
+                  </h6>
+                  <div id="inspectionImageGallery">
+                    <!-- Dynamic images will be loaded here -->
+                  </div>
+                </div>
+
+                <!-- Vehicle Specifications -->
+                <div class="p-4 border-bottom">
+                  <h6 class="mb-3">
+                    <i class="bi bi-gear me-2"></i>Vehicle Specifications
+                  </h6>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-car-front text-primary me-2"></i>
+                        <div>
+                          <small class="text-muted">Make</small>
+                          <div class="fw-bold" id="inspectionMake">-</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-tag text-primary me-2"></i>
+                        <div>
+                          <small class="text-muted">Model</small>
+                          <div class="fw-bold" id="inspectionModel">-</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-star text-primary me-2"></i>
+                        <div>
+                          <small class="text-muted">Condition</small>
+                          <div class="fw-bold" id="inspectionCondition">-</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-fuel-pump text-primary me-2"></i>
+                        <div>
+                          <small class="text-muted">Fuel Type</small>
+                          <div class="fw-bold" id="inspectionFuelType">-</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-gear text-primary me-2"></i>
+                        <div>
+                          <small class="text-muted">Transmission</small>
+                          <div class="fw-bold" id="inspectionTransmission">
+                            -
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-person text-primary me-2"></i>
+                        <div>
+                          <small class="text-muted">Seller</small>
+                          <div class="fw-bold" id="inspectionSeller">-</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <div class="p-4">
+                  <h6 class="mb-3">
+                    <i class="bi bi-text-left me-2"></i>Description
+                  </h6>
+                  <div class="bg-light p-3 rounded" id="inspectionDescription">
+                    Vehicle description will appear here...
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Side - Inspection Tools -->
+              <div class="col-lg-4 bg-light">
+                <div class="p-4 h-100">
+                  <h5 class="mb-4">
+                    <i class="bi bi-clipboard-check me-2 text-primary"></i
+                    >Inspection Tools
+                  </h5>
+
+                  <!-- Validation Status -->
+                  <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                      <h6 class="mb-0">
+                        <i class="bi bi-shield-check me-2"></i>Validation Status
+                      </h6>
+                    </div>
+                    <div class="card-body">
+                      <div id="validationStatus">
+                        <div class="d-flex align-items-center mb-2">
+                          <i class="bi bi-check-circle text-success me-2"></i>
+                          <span>Images Present</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                          <i class="bi bi-check-circle text-success me-2"></i>
+                          <span>Complete Details</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                          <i class="bi bi-check-circle text-success me-2"></i>
+                          <span>Valid Description</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <i
+                            class="bi bi-exclamation-triangle text-warning me-2"
+                          ></i>
+                          <span>Pending Review</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Inspector Notes -->
+                  <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                      <h6 class="mb-0">
+                        <i class="bi bi-sticky me-2"></i>Inspector Notes
+                      </h6>
+                    </div>
+                    <div class="card-body">
+                      <textarea
+                        class="form-control"
+                        id="inspectorNotes"
+                        rows="4"
+                        placeholder="Add detailed inspection notes, findings, and recommendations..."
+                      ></textarea>
+                      <small class="text-muted mt-2 d-block">
+                        <i class="bi bi-info-circle me-1"></i>
+                        These notes will be visible to the seller and stored in
+                        the system.
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Current Status Info -->
+                  <div class="card mb-4" id="currentStatusCard">
+                    <div class="card-header bg-warning text-dark">
+                      <h6 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Current Status
+                      </h6>
+                    </div>
+                    <div class="card-body">
+                      <div id="currentStatusInfo">
+                        <p class="mb-2">
+                          <strong>Status:</strong>
+                          <span id="currentStatusText">Pending</span>
+                        </p>
+                        <p
+                          class="mb-0"
+                          id="rejectionReasonSection"
+                          style="display: none"
+                        >
+                          <strong>Rejection Reason:</strong>
+                          <span
+                            id="currentRejectionReason"
+                            class="text-danger"
+                          ></span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="d-grid gap-2">
+                    <button
+                      class="btn btn-success btn-lg"
+                      onclick="approveListing()"
+                      id="approveButton"
+                    >
+                      <i class="bi bi-check me-2"></i>Approve Listing
+                    </button>
+                    <button
+                      class="btn btn-danger btn-lg"
+                      onclick="showRejectModal()"
+                      id="rejectButton"
+                    >
+                      <i class="bi bi-x me-2"></i>Reject Listing
+                    </button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                      <i class="bi bi-x me-2"></i>Close Inspection
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal fade modal-modern" id="rejectModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-x-circle me-2"></i>Reject Listing
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="rejectionReason" class="form-label"
+                >Rejection Reason</label
+              >
+              <select class="form-select" id="rejectionReason">
+                <option value="">Select a reason...</option>
+                <option value="INSUFFICIENT_INFO">
+                  Insufficient Information
+                </option>
+                <option value="POOR_QUALITY_IMAGES">Poor Quality Images</option>
+                <option value="INVALID_YEAR">
+                  Invalid Year (Must be 1990 or newer)
+                </option>
+                <option value="SUSPICIOUS_LISTING">Suspicious Listing</option>
+                <option value="DUPLICATE_LISTING">Duplicate Listing</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="rejectionNotes" class="form-label"
+                >Additional Notes</label
+              >
+              <textarea
+                class="form-control"
+                id="rejectionNotes"
+                rows="3"
+                placeholder="Provide specific feedback for the seller..."
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="rejectListing()"
+            >
+              Reject Listing
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentListingId = null;
+
+      // Function to get JWT token from cookies
+      function getJwtToken() {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+          const [name, value] = cookie.trim().split("=");
+          if (name === "JWT") {
+            return value;
+          }
+        }
+        return null;
+      }
+
+      // Load dashboard data on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        loadInspectionMetrics();
+        loadListings();
+
+        // Fix modal scrolling issues
+        const modals = document.querySelectorAll(".modal");
+        modals.forEach((modal) => {
+          modal.addEventListener("show.bs.modal", function () {
+            // Ensure body remains scrollable
+            document.body.style.overflow = "auto";
+            document.body.style.paddingRight = "0";
+          });
+
+          modal.addEventListener("hidden.bs.modal", function () {
+            // Reset body styles when modal is closed
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
+          });
+        });
+      });
+
+      function loadInspectionMetrics() {
+        // Load real inspection metrics from database
+        const token = getJwtToken();
+
+        fetch("/admin/api/vehicle-inspector/metrics", {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include cookies for authentication
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("pendingListingsCount").textContent =
+              data.pendingListings || 0;
+            document.getElementById("approvedToday").textContent =
+              data.approvedToday || 0;
+            document.getElementById("rejectedToday").textContent =
+              data.rejectedToday || 0;
+            document.getElementById("totalInspected").textContent =
+              data.totalInspected || 0;
+          })
+          .catch((error) => {
+            console.error("Error loading metrics:", error);
+            // Fallback to 0 values
+            document.getElementById("pendingListingsCount").textContent = "0";
+            document.getElementById("approvedToday").textContent = "0";
+            document.getElementById("rejectedToday").textContent = "0";
+            document.getElementById("totalInspected").textContent = "0";
+          });
+      }
+
+      function loadListings() {
+        // Load real listings data from database
+        const statusFilter = document.getElementById("statusFilter").value;
+        const searchFilter = document.getElementById("searchFilter").value;
+        const yearFilter = document.getElementById("yearFilter").value;
+
+        let url = "/admin/api/vehicle-inspector/listings?";
+        const params = new URLSearchParams();
+
+        if (statusFilter) params.append("status", statusFilter);
+        if (searchFilter) params.append("search", searchFilter);
+        if (yearFilter) params.append("year", yearFilter);
+
+        url += params.toString();
+        console.log("Fetching URL:", url);
+
+        // Get JWT token from localStorage or cookies
+        const token = getJwtToken();
+
+        fetch(url, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include cookies for authentication
+        })
+          .then((response) => {
+            console.log("Response status:", response.status);
+            console.log("Response headers:", [...response.headers.entries()]);
+            if (!response.ok) {
+              return response.text().then((text) => {
+                console.log("Error response body:", text);
+                throw new Error(
+                  `HTTP error! status: ${response.status}, message: ${text}`
+                );
+              });
+            }
+            return response.json();
+          })
+          .then((listings) => {
+            console.log("Listings received:", listings);
+            const tbody = document.getElementById("listingsTableBody");
+            tbody.innerHTML = "";
+
+            if (!listings || listings.length === 0) {
+              tbody.innerHTML =
+                '<tr><td colspan="8" class="text-center">No listings found</td></tr>';
+              return;
+            }
+
+            listings.forEach((listing) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                        <td>${listing.listingId}</td>
+                        <td>${listing.make} ${listing.model}</td>
+                    <td>${listing.year}</td>
+                    <td>${listing.mileage.toLocaleString()} miles</td>
+                    <td><span class="badge badge-modern badge-${getConditionColor(
+                      listing.condition
+                    )}-modern">${listing.condition}</span></td>
+                    <td><span class="badge badge-modern badge-${getStatusColor(
+                      listing.status
+                    )}-modern">${listing.status}</span></td>
+                        <td>${formatDate(listing.listingId)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewListingDetails(${
+                          listing.listingId
+                        })">
+                            <i class="bi bi-eye"></i> Inspect
+                        </button>
+                        ${
+                          listing.status === "PENDING"
+                            ? `<button class="btn btn-sm btn-success" onclick="quickApprove(${listing.listingId})">
+                                <i class="bi bi-check"></i> Quick Approve
+                            </button>`
+                            : ""
+                        }
+                    </td>
+                `;
+              tbody.appendChild(row);
+            });
+          })
+          .catch((error) => {
+            console.error("Error loading listings:", error);
+            const tbody = document.getElementById("listingsTableBody");
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error loading listings: ${error.message}</td></tr>`;
+          });
+      }
+
+      function getConditionColor(condition) {
+        switch (condition) {
+          case "EXCELLENT":
+            return "success";
+          case "GOOD":
+            return "primary";
+          case "FAIR":
+            return "warning";
+          case "POOR":
+            return "danger";
+          default:
+            return "secondary";
+        }
+      }
+
+      function getStatusColor(status) {
+        switch (status) {
+          case "PENDING":
+            return "warning";
+          case "APPROVED":
+            return "success";
+          case "REJECTED":
+            return "danger";
+          default:
+            return "secondary";
+        }
+      }
+
+      function formatDate(listingId) {
+        // For now, return a placeholder. In a real implementation,
+        // you might want to include creation date in the listing data
+        return "Recently";
+      }
+
+      function viewListingDetails(listingId) {
+        currentListingId = listingId;
+
+        // Load real listing details from database
+        const token = getJwtToken();
+
+        fetch(`/admin/api/vehicle-inspector/listings/${listingId}`, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        })
+          .then((response) => response.json())
+          .then((listingDetails) => {
+            if (!listingDetails) {
+              showToast("error", "Listing not found");
+              return;
+            }
+
+            loadListingDetailsModal(listingDetails);
+          })
+          .catch((error) => {
+            console.error("Error loading listing details:", error);
+            showToast("error", "Error loading listing details");
+          });
+      }
+
+      function loadListingDetailsModal(listingDetails) {
+        // Update vehicle header
+        document.getElementById(
+          "inspectionVehicleTitle"
+        ).textContent = `${listingDetails.make} ${listingDetails.model}`;
+        document.getElementById("inspectionYear").textContent =
+          listingDetails.year;
+        document.getElementById("inspectionMileage").textContent =
+          listingDetails.mileage.toLocaleString();
+
+        // Update status badge
+        const statusBadge = document.getElementById("inspectionStatusBadge");
+        const statusText = document.getElementById("inspectionStatus");
+        statusText.textContent = listingDetails.status;
+
+        // Set status badge color
+        statusBadge.className = "badge fs-6";
+        if (listingDetails.status === "PENDING") {
+          statusBadge.classList.add("bg-warning");
+        } else if (listingDetails.status === "APPROVED") {
+          statusBadge.classList.add("bg-success");
+        } else if (listingDetails.status === "REJECTED") {
+          statusBadge.classList.add("bg-danger");
+        } else {
+          statusBadge.classList.add("bg-secondary");
+        }
+
+        // Load vehicle images with gallery
+        const imagesContainer = document.getElementById(
+          "inspectionImageGallery"
+        );
+        imagesContainer.innerHTML = "";
+
+        if (listingDetails.images && listingDetails.images.length > 0) {
+          // Main image
+          const mainImageDiv = document.createElement("div");
+          mainImageDiv.className = "position-relative mb-3";
+          mainImageDiv.innerHTML = `
+            <img src="${listingDetails.images[0].imageUrl}" 
+                 class="img-fluid rounded border" 
+                 style="height: 300px; object-fit: cover; width: 100%;"
+                 alt="Main Vehicle Image"
+                 onclick="openImageModal('${listingDetails.images[0].imageUrl}')">
+            <div class="position-absolute top-0 end-0 m-2">
+              <span class="badge bg-dark bg-opacity-75">
+                <i class="bi bi-images me-1"></i>${listingDetails.images.length} images
+              </span>
+            </div>
+          `;
+          imagesContainer.appendChild(mainImageDiv);
+
+          // Thumbnails if more than one image
+          if (listingDetails.images.length > 1) {
+            const thumbnailsDiv = document.createElement("div");
+            thumbnailsDiv.className = "d-flex gap-2 overflow-auto";
+            listingDetails.images.forEach((image, index) => {
+              const thumbnail = document.createElement("img");
+              thumbnail.src = image.imageUrl;
+              thumbnail.className = "thumbnail rounded border";
+              thumbnail.style.cssText =
+                "height: 60px; width: 60px; object-fit: cover; cursor: pointer; opacity: 0.7;";
+              thumbnail.alt = `Image ${index + 1}`;
+              thumbnail.onclick = () => {
+                // Update main image
+                const mainImg = mainImageDiv.querySelector("img");
+                mainImg.src = image.imageUrl;
+                mainImg.onclick = () => openImageModal(image.imageUrl);
+
+                // Update active thumbnail
+                thumbnailsDiv
+                  .querySelectorAll(".thumbnail")
+                  .forEach((t) => (t.style.opacity = "0.7"));
+                thumbnail.style.opacity = "1";
+              };
+              if (index === 0) thumbnail.style.opacity = "1";
+              thumbnailsDiv.appendChild(thumbnail);
+            });
+            imagesContainer.appendChild(thumbnailsDiv);
+          }
+        } else {
+          imagesContainer.innerHTML = `
+            <div class="text-center text-muted p-4">
+              <i class="bi bi-image fa-3x mb-3"></i>
+              <p class="mb-0">No images available for this listing</p>
+                </div>
+            `;
+        }
+
+        // Update vehicle specifications
+        document.getElementById("inspectionMake").textContent =
+          listingDetails.make || "-";
+        document.getElementById("inspectionModel").textContent =
+          listingDetails.model || "-";
+        document.getElementById(
+          "inspectionCondition"
+        ).innerHTML = `<span class="badge ${getConditionColor(
+          listingDetails.condition
+        )}">${listingDetails.condition}</span>`;
+        document.getElementById("inspectionFuelType").textContent =
+          listingDetails.fuelType || "Not specified";
+        document.getElementById("inspectionTransmission").textContent =
+          listingDetails.transmission || "Not specified";
+        document.getElementById("inspectionSeller").textContent =
+          listingDetails.sellerUsername || "Unknown";
+
+        // Update description
+        document.getElementById("inspectionDescription").textContent =
+          listingDetails.description || "No description provided";
+
+        // Update current status info
+        document.getElementById("currentStatusText").textContent =
+          listingDetails.status;
+
+        // Update status card header color
+        const statusCard = document.getElementById("currentStatusCard");
+        const statusHeader = statusCard.querySelector(".card-header");
+        statusHeader.className = "card-header text-white";
+        if (listingDetails.status === "PENDING") {
+          statusHeader.classList.add("bg-warning");
+        } else if (listingDetails.status === "APPROVED") {
+          statusHeader.classList.add("bg-success");
+        } else if (listingDetails.status === "REJECTED") {
+          statusHeader.classList.add("bg-danger");
+        } else {
+          statusHeader.classList.add("bg-secondary");
+        }
+
+        // Show rejection reason if applicable
+        const rejectionSection = document.getElementById(
+          "rejectionReasonSection"
+        );
+        const rejectionReason = document.getElementById(
+          "currentRejectionReason"
+        );
+        if (
+          listingDetails.status === "REJECTED" &&
+          listingDetails.rejectionReason
+        ) {
+          rejectionReason.textContent = listingDetails.rejectionReason;
+          rejectionSection.style.display = "block";
+        } else {
+          rejectionSection.style.display = "none";
+        }
+
+        // Update inspector notes if available
+        if (listingDetails.inspectorNotes) {
+          document.getElementById("inspectorNotes").value =
+            listingDetails.inspectorNotes;
+        } else {
+          document.getElementById("inspectorNotes").value = "";
+        }
+
+        // Update validation status based on listing data
+        updateValidationStatus(listingDetails);
+
+        // Show the modal
+        new bootstrap.Modal(
+          document.getElementById("listingDetailsModal")
+        ).show();
+      }
+
+      function updateValidationStatus(listingDetails) {
+        const validationStatus = document.getElementById("validationStatus");
+        const currentYear = new Date().getFullYear();
+        const isValidYear =
+          listingDetails.year >= 1990 && listingDetails.year <= currentYear;
+        const hasImages =
+          listingDetails.images && listingDetails.images.length > 0;
+        const hasDescription =
+          listingDetails.description &&
+          listingDetails.description.trim().length > 0;
+        const hasCompleteDetails =
+          listingDetails.make &&
+          listingDetails.model &&
+          listingDetails.condition;
+
+        validationStatus.innerHTML = `
+          <div class="d-flex align-items-center mb-2">
+            <i class="fas ${
+              hasImages
+                ? "fa-check-circle text-success"
+                : "fa-times-circle text-danger"
+            } me-2"></i>
+            <span>Images Present ${
+              hasImages ? `(${listingDetails.images.length})` : "(None)"
+            }</span>
+          </div>
+          <div class="d-flex align-items-center mb-2">
+            <i class="fas ${
+              hasCompleteDetails
+                ? "fa-check-circle text-success"
+                : "fa-times-circle text-danger"
+            } me-2"></i>
+            <span>Complete Details</span>
+          </div>
+          <div class="d-flex align-items-center mb-2">
+            <i class="fas ${
+              hasDescription
+                ? "fa-check-circle text-success"
+                : "fa-times-circle text-danger"
+            } me-2"></i>
+            <span>Valid Description</span>
+          </div>
+          <div class="d-flex align-items-center mb-2">
+            <i class="fas ${
+              isValidYear
+                ? "fa-check-circle text-success"
+                : "fa-times-circle text-danger"
+            } me-2"></i>
+            <span>Valid Year (${listingDetails.year})</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="fas ${
+              listingDetails.status === "PENDING"
+                ? "fa-exclamation-triangle text-warning"
+                : "fa-check-circle text-success"
+            } me-2"></i>
+            <span>${
+              listingDetails.status === "PENDING"
+                ? "Pending Review"
+                : "Status: " + listingDetails.status
+            }</span>
+          </div>
+        `;
+      }
+
+      function openImageModal(imageUrl) {
+        // Create or update image modal
+        let imageModal = document.getElementById("imageModal");
+        if (!imageModal) {
+          imageModal = document.createElement("div");
+          imageModal.id = "imageModal";
+          imageModal.className = "modal fade";
+          imageModal.innerHTML = `
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">
+                    <i class="bi bi-images me-2"></i>Vehicle Image
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                  <img id="modalImage" src="" class="img-fluid rounded" alt="Vehicle Image">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x me-1"></i>Close
+                  </button>
+                </div>
+              </div>
+                </div>
+            `;
+          document.body.appendChild(imageModal);
+        }
+
+        document.getElementById("modalImage").src = imageUrl;
+        new bootstrap.Modal(imageModal).show();
+      }
+
+      function getConditionColor(condition) {
+        switch (condition) {
+          case "EXCELLENT":
+            return "bg-success";
+          case "GOOD":
+            return "bg-info";
+          case "FAIR":
+            return "bg-warning";
+          case "POOR":
+            return "bg-danger";
+          default:
+            return "bg-secondary";
+        }
+      }
+
+      function approveListing() {
+        if (!currentListingId) return;
+
+        const notes = document.getElementById("inspectorNotes").value;
+
+        showConfirmation(
+          "Approve Listing",
+          "Are you sure you want to approve this listing?",
+          "Approve",
+          "btn-success",
+          function () {
+            showLoading("Approving listing...");
+            const formData = new FormData();
+            formData.append("reason", notes || "Approved by vehicle inspector");
+
+            const token = getJwtToken();
+
+            fetch(`/admin/listings/${currentListingId}/approve`, {
+              method: "POST",
+              headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+              },
+              body: formData,
+              credentials: "include",
+            })
+              .then((response) => {
+                hideLoading();
+                if (response.ok) {
+                  return response.text().then((result) => {
+                    showToast("success", "Listing approved successfully!");
+                    bootstrap.Modal.getInstance(
+                      document.getElementById("listingDetailsModal")
+                    ).hide();
+                    loadListings(); // Refresh the table
+                    loadInspectionMetrics(); // Refresh metrics
+                  });
+                } else {
+                  return response.text().then((result) => {
+                    showToast("error", "Error: " + result);
+                  });
+                }
+              })
+              .catch((error) => {
+                hideLoading();
+                console.error("Error approving listing:", error);
+                showToast("error", "Error approving listing");
+              });
+          }
+        );
+      }
+
+      function showRejectModal() {
+        new bootstrap.Modal(document.getElementById("rejectModal")).show();
+      }
+
+      function rejectListing() {
+        if (!currentListingId) return;
+
+        const reason = document.getElementById("rejectionReason").value;
+        const notes = document.getElementById("rejectionNotes").value;
+
+        if (!reason) {
+          showToast("warning", "Please select a rejection reason.");
+          return;
+        }
+
+        showConfirmation(
+          "Reject Listing",
+          "Are you sure you want to reject this listing?",
+          "Reject",
+          "btn-danger",
+          function () {
+            showLoading("Rejecting listing...");
+            const formData = new FormData();
+            formData.append("rejectionReason", reason);
+            formData.append("inspectorNotes", notes || "");
+
+            const token = getJwtToken();
+
+            fetch(`/admin/listings/${currentListingId}/reject`, {
+              method: "POST",
+              headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+              },
+              body: formData,
+              credentials: "include",
+            })
+              .then((response) => {
+                hideLoading();
+                if (response.ok) {
+                  return response.text().then((result) => {
+                    showToast("success", "Listing rejected successfully!");
+                    bootstrap.Modal.getInstance(
+                      document.getElementById("rejectModal")
+                    ).hide();
+                    bootstrap.Modal.getInstance(
+                      document.getElementById("listingDetailsModal")
+                    ).hide();
+                    loadListings(); // Refresh the table
+                    loadInspectionMetrics(); // Refresh metrics
+                  });
+                } else {
+                  return response.text().then((result) => {
+                    showToast("error", "Error: " + result);
+                  });
+                }
+              })
+              .catch((error) => {
+                hideLoading();
+                console.error("Error rejecting listing:", error);
+                showToast("error", "Error rejecting listing");
+              });
+          }
+        );
+      }
+
+      function quickApprove(listingId) {
+        showConfirmation(
+          "Quick Approve",
+          "Are you sure you want to quickly approve this listing?",
+          "Quick Approve",
+          "btn-success",
+          function () {
+            showLoading("Quick approving listing...");
+            const formData = new FormData();
+            formData.append("reason", "Quick approved by vehicle inspector");
+
+            const token = getJwtToken();
+
+            fetch(`/admin/listings/${listingId}/approve`, {
+              method: "POST",
+              headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+              },
+              body: formData,
+              credentials: "include",
+            })
+              .then((response) => {
+                hideLoading();
+                if (response.ok) {
+                  return response.text().then((result) => {
+                    showToast("success", "Listing approved successfully!");
+                    loadListings(); // Refresh the table
+                    loadInspectionMetrics(); // Refresh metrics
+                  });
+                } else {
+                  return response.text().then((result) => {
+                    showToast("error", "Error: " + result);
+                  });
+                }
+              })
+              .catch((error) => {
+                hideLoading();
+                console.error("Error approving listing:", error);
+                showToast("error", "Error approving listing");
+              });
+          }
+        );
+      }
+
+      function refreshListings() {
+        loadListings();
+      }
+
+      // UI Utility Functions
+      function showToast(type, message) {
+        const toastElement = document.getElementById(type + "Toast");
+        const messageElement = document.getElementById(type + "ToastMessage");
+
+        messageElement.textContent = message;
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+      }
+
+      function showLoading(message = "Processing your request...") {
+        document.getElementById("loadingMessage").textContent = message;
+        document.getElementById("loadingOverlay").classList.remove("d-none");
+      }
+
+      function hideLoading() {
+        document.getElementById("loadingOverlay").classList.add("d-none");
+      }
+
+      function showConfirmation(
+        title,
+        message,
+        confirmText,
+        confirmClass,
+        onConfirm
+      ) {
+        document.getElementById(
+          "confirmationModalTitle"
+        ).innerHTML = `<i class="bi bi-question-circle me-2"></i>${title}`;
+        document.getElementById("confirmationModalMessage").textContent =
+          message;
+
+        const confirmBtn = document.getElementById(
+          "confirmationModalConfirmBtn"
+        );
+        confirmBtn.textContent = confirmText;
+        confirmBtn.className = `btn ${confirmClass}`;
+
+        // Remove existing event listeners
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        // Add new event listener
+        newConfirmBtn.addEventListener("click", function () {
+          bootstrap.Modal.getInstance(
+            document.getElementById("confirmationModal")
+          ).hide();
+          onConfirm();
+        });
+
+        new bootstrap.Modal(
+          document.getElementById("confirmationModal")
+        ).show();
+      }
+
+      // Add event listeners for filter controls
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add event listeners for filter controls
+        document
+          .getElementById("statusFilter")
+          .addEventListener("change", loadListings);
+        document
+          .getElementById("searchFilter")
+          .addEventListener("input", function () {
+            // Debounce search input
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(loadListings, 500);
+          });
+        document
+          .getElementById("yearFilter")
+          .addEventListener("change", loadListings);
+      });
+    </script>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmationModalTitle">
+              <i class="fas fa-question-circle me-2"></i>Confirm Action
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex align-items-center">
+              <div class="me-3">
+                <i
+                  class="fas fa-exclamation-triangle text-warning"
+                  style="font-size: 2rem"
+                ></i>
+              </div>
+              <div>
+                <p class="mb-0" id="confirmationModalMessage">
+                  Are you sure you want to perform this action?
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <i class="fas fa-times me-1"></i>Cancel
+            </button>
+            <button type="button" class="btn" id="confirmationModalConfirmBtn">
+              <i class="fas fa-check me-1"></i>Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div
+      class="toast-container position-fixed top-0 end-0 p-3"
+      style="z-index: 11000"
+    >
+      <div id="successToast" class="toast" role="alert">
+        <div class="toast-header bg-success text-white">
+          <i class="fas fa-check-circle me-2"></i>
+          <strong class="me-auto">Success</strong>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="toast"
+          ></button>
+        </div>
+        <div class="toast-body" id="successToastMessage">
+          Operation completed successfully!
+        </div>
+      </div>
+
+      <div id="errorToast" class="toast" role="alert">
+        <div class="toast-header bg-danger text-white">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <strong class="me-auto">Error</strong>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="toast"
+          ></button>
+        </div>
+        <div class="toast-body" id="errorToastMessage">
+          An error occurred while processing your request.
+        </div>
+      </div>
+
+      <div id="warningToast" class="toast" role="alert">
+        <div class="toast-header bg-warning text-dark">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <strong class="me-auto">Warning</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+          ></button>
+        </div>
+        <div class="toast-body" id="warningToastMessage">
+          Please check your input and try again.
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div
+      id="loadingOverlay"
+      class="position-fixed top-0 start-0 w-100 h-100 d-none"
+      style="z-index: 9999; background-color: rgba(0, 0, 0, 0.5)"
+    >
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <div class="text-center text-white">
+          <div
+            class="spinner-border mb-3"
+            role="status"
+            style="width: 3rem; height: 3rem"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <h5 id="loadingMessage">Processing your request...</h5>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

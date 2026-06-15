@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle}">Support Ticket - Lanka Auto Traders</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+
+    <style>
+      .support-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 120px 0 80px 0;
+        margin-top: 56px;
+      }
+
+      .support-form-section {
+        padding: 80px 0;
+        background-color: #f8f9fa;
+      }
+
+      .support-form-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        border: none;
+      }
+
+      .form-section {
+        margin-bottom: 40px;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border-left: 4px solid #667eea;
+      }
+
+      .form-section h5 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+      }
+
+      .form-section h5 i {
+        margin-right: 10px;
+        color: #667eea;
+      }
+
+      .form-control,
+      .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+      }
+
+      .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 25px;
+        padding: 15px 40px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-cancel {
+        background: #6c757d;
+        border: none;
+        border-radius: 25px;
+        padding: 15px 40px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+
+      .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+      }
+
+      .priority-high {
+        color: #dc3545;
+        font-weight: 600;
+      }
+
+      .priority-medium {
+        color: #ffc107;
+        font-weight: 600;
+      }
+
+      .priority-low {
+        color: #28a745;
+        font-weight: 600;
+      }
+
+      .category-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        margin-right: 15px;
+      }
+
+      .info-section {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 60px 0;
+      }
+
+      .info-card {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .info-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .success-message {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .success-message i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .character-count {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-align: right;
+        margin-top: 5px;
+      }
+
+      .required {
+        color: #dc3545;
+      }
+
+      .help-text {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 5px;
+      }
+
+      .form-floating {
+        position: relative;
+      }
+
+      .form-floating .form-control {
+        height: calc(3.5rem + 2px);
+        line-height: 1.25;
+      }
+
+      .form-floating label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        padding: 1rem 0.75rem;
+        pointer-events: none;
+        border: 1px solid transparent;
+        transform-origin: 0 0;
+        transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+      }
+
+      .form-floating .form-control:focus ~ label,
+      .form-floating .form-control:not(:placeholder-shown) ~ label {
+        opacity: 0.65;
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Hero Section -->
+    <section class="support-hero">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-4">
+              <i class="bi bi-ticket-perforated me-3"></i>Create Support Ticket
+            </h1>
+            <p class="lead mb-4">
+              Need help? Create a support ticket and our team will assist you
+              promptly.
+            </p>
+            <div class="mt-4">
+              <a href="/help" class="btn btn-outline-light btn-lg me-3">
+                <i class="bi bi-question-circle me-2"></i>
+                Help Center
+              </a>
+              <a href="/tickets" class="btn btn-light btn-lg">
+                <i class="bi bi-ticket-perforated me-2"></i>
+                My Tickets
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="container mt-4">
+      <div class="success-message">
+        <i class="bi bi-check-circle-fill"></i>
+        <h4>Ticket Submitted Successfully!</h4>
+        <p th:text="${successMessage}" class="mb-0"></p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div th:if="${errorMessage}" class="container mt-4">
+      <div
+        class="alert alert-danger"
+        style="
+          background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+          color: white;
+          border: none;
+          border-radius: 15px;
+          text-align: center;
+        "
+      >
+        <i
+          class="bi bi-exclamation-triangle-fill"
+          style="font-size: 2rem; margin-bottom: 10px"
+        ></i>
+        <h4>Error</h4>
+        <p th:text="${errorMessage}" class="mb-0"></p>
+      </div>
+    </div>
+
+    <!-- Authentication Required Message -->
+    <div th:unless="${isAuthenticated}" class="container mt-4">
+      <div
+        class="alert alert-warning"
+        style="
+          background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+          color: white;
+          border: none;
+          border-radius: 15px;
+          text-align: center;
+        "
+      >
+        <i
+          class="bi bi-lock-fill"
+          style="font-size: 2rem; margin-bottom: 10px"
+        ></i>
+        <h4>Authentication Required</h4>
+        <p class="mb-3">You must be logged in to submit a support ticket.</p>
+        <div class="d-flex gap-3 justify-content-center">
+          <a href="/login" class="btn btn-light btn-lg">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+          </a>
+          <a href="/register" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-person-plus me-2"></i>Register
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support Form Section -->
+    <section class="support-form-section" th:if="${isAuthenticated}">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <div class="support-form-card">
+              <form th:action="@{/support}" method="post" id="supportForm">
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                  <h5><i class="bi bi-person"></i>Personal Information</h5>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="name" class="form-label">
+                        Display Name <span class="required">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        required
+                        th:value="${currentUser != null ? currentUser.getDisplayName() : ''}"
+                        th:readonly="${currentUser != null}"
+                        placeholder="Enter your display name"
+                      />
+                      <div th:if="${currentUser != null}" class="help-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        This information is automatically filled from your
+                        profile
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="email" class="form-label">
+                        Email Address <span class="required">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        required
+                        th:value="${currentUser != null ? currentUser.getEmail() : ''}"
+                        th:readonly="${currentUser != null}"
+                        placeholder="Enter your email address"
+                      />
+                      <div th:if="${currentUser != null}" class="help-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        This information is automatically filled from your
+                        profile
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ticket Details Section -->
+                <div class="form-section">
+                  <h5><i class="bi bi-ticket-perforated"></i>Ticket Details</h5>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="subject" class="form-label">
+                        Subject <span class="required">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="subject"
+                        name="subject"
+                        required
+                        placeholder="Brief description of your issue"
+                        maxlength="100"
+                      />
+                      <div class="character-count">
+                        <span id="subjectCount">0</span>/100 characters
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="category" class="form-label">
+                        Category <span class="required">*</span>
+                      </label>
+                      <select
+                        class="form-select"
+                        id="category"
+                        name="category"
+                        required
+                      >
+                        <option value="">Select a category</option>
+                        <option value="account">Account Issues</option>
+                        <option value="bidding">Bidding Problems</option>
+                        <option value="payment">Payment & Billing</option>
+                        <option value="listing">Vehicle Listing</option>
+                        <option value="technical">Technical Support</option>
+                        <option value="general">General Inquiry</option>
+                        <option value="complaint">Complaint</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="priority" class="form-label">
+                        Priority Level <span class="required">*</span>
+                      </label>
+                      <select
+                        class="form-select"
+                        id="priority"
+                        name="priority"
+                        required
+                      >
+                        <option value="">Select priority</option>
+                        <option value="low">Low - General inquiry</option>
+                        <option value="medium">Medium - Minor issue</option>
+                        <option value="high">High - Urgent issue</option>
+                        <option value="critical">Critical - System down</option>
+                      </select>
+                      <div class="help-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Higher priority tickets are handled first
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Message Section -->
+                <div class="form-section">
+                  <h5><i class="bi bi-chat-text"></i>Detailed Description</h5>
+                  <div class="mb-3">
+                    <label for="message" class="form-label">
+                      Message <span class="required">*</span>
+                    </label>
+                    <textarea
+                      class="form-control"
+                      id="message"
+                      name="message"
+                      rows="8"
+                      required
+                      placeholder="Please provide detailed information about your issue. Include any error messages, steps to reproduce the problem, and what you were trying to do when the issue occurred."
+                      maxlength="2000"
+                    ></textarea>
+                    <div class="character-count">
+                      <span id="messageCount">0</span>/2000 characters
+                    </div>
+                    <div class="help-text">
+                      <i class="bi bi-lightbulb me-1"></i>
+                      The more details you provide, the faster we can help you
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <button type="submit" class="btn btn-submit">
+                      <i class="bi bi-send me-2"></i>Submit Ticket
+                    </button>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <button
+                      type="button"
+                      class="btn btn-cancel"
+                      onclick="clearForm()"
+                    >
+                      <i class="bi bi-arrow-clockwise me-2"></i>Clear Form
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Information Section -->
+    <section class="info-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h2 class="text-center mb-5">
+              <i class="bi bi-info-circle me-3"></i>What Happens Next?
+            </h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 mb-4">
+            <div class="info-card">
+              <i
+                class="bi bi-check-circle"
+                style="font-size: 3rem; color: #28a745; margin-bottom: 20px"
+              ></i>
+              <h5>Ticket Created</h5>
+              <p>
+                Your ticket is submitted and assigned a unique reference number
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="info-card">
+              <i
+                class="bi bi-person-check"
+                style="font-size: 3rem; color: #17a2b8; margin-bottom: 20px"
+              ></i>
+              <h5>Team Review</h5>
+              <p>
+                Our support team reviews your ticket and assigns it to the
+                appropriate specialist
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="info-card">
+              <i
+                class="bi bi-chat-dots"
+                style="font-size: 3rem; color: #ffc107; margin-bottom: 20px"
+              ></i>
+              <h5>Response</h5>
+              <p>
+                You'll receive a response via email within 2 hours during
+                business hours
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="info-card">
+              <i
+                class="bi bi-check2-all"
+                style="font-size: 3rem; color: #28a745; margin-bottom: 20px"
+              ></i>
+              <h5>Resolution</h5>
+              <p>We work with you to resolve the issue and close the ticket</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="row mt-5">
+          <div class="col-lg-8 mx-auto">
+            <div class="text-center">
+              <h4 class="mb-4">Need Immediate Assistance?</h4>
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <div class="d-flex align-items-center justify-content-center">
+                    <i
+                      class="bi bi-telephone-fill me-3"
+                      style="font-size: 1.5rem; color: #ffc107"
+                    ></i>
+                    <div>
+                      <h6 class="mb-0">Phone</h6>
+                      <p class="mb-0">+94 11 458 7746</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <div class="d-flex align-items-center justify-content-center">
+                    <i
+                      class="bi bi-envelope-fill me-3"
+                      style="font-size: 1.5rem; color: #ffc107"
+                    ></i>
+                    <div>
+                      <h6 class="mb-0">Email</h6>
+                      <p class="mb-0">support@lankaautotraders.lk</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <div class="d-flex align-items-center justify-content-center">
+                    <i
+                      class="bi bi-clock-fill me-3"
+                      style="font-size: 1.5rem; color: #ffc107"
+                    ></i>
+                    <div>
+                      <h6 class="mb-0">Hours</h6>
+                      <p class="mb-0">Mon-Fri, 9AM-6PM</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Support Form JavaScript -->
+    <script>
+      // Character count for subject
+      document.getElementById("subject").addEventListener("input", function () {
+        const count = this.value.length;
+        document.getElementById("subjectCount").textContent = count;
+
+        if (count > 80) {
+          document.getElementById("subjectCount").style.color = "#dc3545";
+        } else if (count > 60) {
+          document.getElementById("subjectCount").style.color = "#ffc107";
+        } else {
+          document.getElementById("subjectCount").style.color = "#6c757d";
+        }
+      });
+
+      // Character count for message
+      document.getElementById("message").addEventListener("input", function () {
+        const count = this.value.length;
+        document.getElementById("messageCount").textContent = count;
+
+        if (count > 1800) {
+          document.getElementById("messageCount").style.color = "#dc3545";
+        } else if (count > 1500) {
+          document.getElementById("messageCount").style.color = "#ffc107";
+        } else {
+          document.getElementById("messageCount").style.color = "#6c757d";
+        }
+      });
+
+      // Clear form function
+      function clearForm() {
+        if (
+          confirm(
+            "Are you sure you want to clear the form? All entered data will be lost."
+          )
+        ) {
+          document.getElementById("supportForm").reset();
+          document.getElementById("subjectCount").textContent = "0";
+          document.getElementById("messageCount").textContent = "0";
+          document.getElementById("subjectCount").style.color = "#6c757d";
+          document.getElementById("messageCount").style.color = "#6c757d";
+        }
+      }
+
+      // Form validation
+      document
+        .getElementById("supportForm")
+        .addEventListener("submit", function (e) {
+          const subject = document.getElementById("subject").value.trim();
+          const message = document.getElementById("message").value.trim();
+          const category = document.getElementById("category").value;
+          const priority = document.getElementById("priority").value;
+          const name = document.getElementById("name").value.trim();
+          const email = document.getElementById("email").value.trim();
+
+          if (
+            !name ||
+            !email ||
+            !subject ||
+            !message ||
+            !category ||
+            !priority
+          ) {
+            e.preventDefault();
+            alert("Please fill in all required fields.");
+            return;
+          }
+
+          if (subject.length < 10) {
+            e.preventDefault();
+            alert(
+              "Please provide a more descriptive subject (at least 10 characters)."
+            );
+            return;
+          }
+
+          if (message.length < 20) {
+            e.preventDefault();
+            alert(
+              "Please provide a more detailed description (at least 20 characters)."
+            );
+            return;
+          }
+
+          // Show loading state
+          const submitBtn = document.querySelector(".btn-submit");
+          const originalText = submitBtn.innerHTML;
+          submitBtn.innerHTML =
+            '<i class="bi bi-hourglass-split me-2"></i>Submitting...';
+          submitBtn.disabled = true;
+        });
+
+      // Auto-save form data to localStorage
+      const formFields = [
+        "name",
+        "email",
+        "subject",
+        "category",
+        "priority",
+        "message",
+      ];
+
+      formFields.forEach((fieldId) => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          // Load saved data
+          const savedValue = localStorage.getItem(`support_form_${fieldId}`);
+          if (savedValue) {
+            field.value = savedValue;
+            // Trigger character count updates
+            if (fieldId === "subject" || fieldId === "message") {
+              field.dispatchEvent(new Event("input"));
+            }
+          }
+
+          // Save data on input
+          field.addEventListener("input", function () {
+            localStorage.setItem(`support_form_${fieldId}`, this.value);
+          });
+        }
+      });
+
+      // Clear saved data on successful submission
+      if (window.location.search.includes("success=true")) {
+        formFields.forEach((fieldId) => {
+          localStorage.removeItem(`support_form_${fieldId}`);
+        });
+      }
+
+      // Priority color coding
+      document
+        .getElementById("priority")
+        .addEventListener("change", function () {
+          const selectedOption = this.options[this.selectedIndex];
+          if (selectedOption.value) {
+            selectedOption.className = `priority-${selectedOption.value}`;
+          }
+        });
+
+      // Category icon updates
+      document
+        .getElementById("category")
+        .addEventListener("change", function () {
+          const categoryIcons = {
+            account: "bi-person",
+            bidding: "bi-hammer",
+            payment: "bi-credit-card",
+            listing: "bi-car-front",
+            technical: "bi-gear",
+            general: "bi-question-circle",
+            complaint: "bi-exclamation-triangle",
+            other: "bi-three-dots",
+          };
+
+          const icon = categoryIcons[this.value];
+          if (icon) {
+            // You could add visual feedback here if needed
+            console.log(`Selected category: ${this.value} with icon: ${icon}`);
+          }
+        });
+    </script>
+  </body>
+</html>

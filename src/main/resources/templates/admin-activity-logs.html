@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity Logs - Admin Panel</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/css/custom.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <i class="fas fa-car"></i> Vehicle Bidding System
+        </a>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+          <a class="nav-link" href="/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-12">
+          <h1 class="mb-4"><i class="fas fa-history"></i> Activity Logs</h1>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <form method="get" action="/admin/activity-logs">
+                <div class="row">
+                  <div class="col-md-3">
+                    <label for="actionType" class="form-label"
+                      >Action Type</label
+                    >
+                    <select
+                      class="form-select"
+                      id="actionType"
+                      name="actionType"
+                    >
+                      <option value="">All Actions</option>
+                      <option
+                        th:each="actionType : ${actionTypes}"
+                        th:value="${actionType.name()}"
+                        th:text="${actionType.name()}"
+                      >
+                        APPROVE
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input
+                      type="datetime-local"
+                      class="form-control"
+                      id="startDate"
+                      name="startDate"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input
+                      type="datetime-local"
+                      class="form-control"
+                      id="endDate"
+                      name="endDate"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <div>
+                      <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-filter"></i> Filter
+                      </button>
+                      <a
+                        href="/admin/activity-logs"
+                        class="btn btn-outline-secondary"
+                      >
+                        <i class="fas fa-refresh"></i> Clear
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Logs Table -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5><i class="fas fa-list"></i> Activity Logs</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Log ID</th>
+                      <th>Action Type</th>
+                      <th>Admin</th>
+                      <th>Target</th>
+                      <th>Target Type</th>
+                      <th>Timestamp</th>
+                      <th>Reason</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="log : ${logs.content}">
+                      <td th:text="${log.logId}">1</td>
+                      <td>
+                        <span
+                          class="badge"
+                          th:class="${log.actionType.name() == 'APPROVE' ? 'bg-success' : 
+                                                           log.actionType.name() == 'REJECT' ? 'bg-danger' : 
+                                                           log.actionType.name() == 'BAN' ? 'bg-warning' : 'bg-info'}"
+                          th:text="${log.actionType.name()}"
+                          >APPROVE</span
+                        >
+                      </td>
+                      <td th:text="${log.admin.username}">admin1</td>
+                      <td th:text="${log.targetId}">123</td>
+                      <td th:text="${log.targetType}">VEHICLE_LISTING</td>
+                      <td
+                        th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm:ss')}"
+                      >
+                        2024-01-01 12:00:00
+                      </td>
+                      <td th:text="${log.reason}">Approved for quality</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(logs.content)}">
+                      <td colspan="7" class="text-center text-muted">
+                        No activity logs found
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              <nav th:if="${logs.totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                  <li
+                    class="page-item"
+                    th:classappend="${logs.number == 0 ? 'disabled' : ''}"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/activity-logs(page=${logs.number - 1})}"
+                      >Previous</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    th:each="i : ${#numbers.sequence(0, logs.totalPages - 1)}"
+                    th:classappend="${i == logs.number ? 'active' : ''}"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/activity-logs(page=${i})}"
+                      th:text="${i + 1}"
+                      >1</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    th:classappend="${logs.number == logs.totalPages - 1 ? 'disabled' : ''}"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/activity-logs(page=${logs.number + 1})}"
+                      >Next</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Statistics -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h5><i class="fas fa-chart-bar"></i> Activity Summary</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <h4
+                      class="text-success"
+                      th:text="${#lists.size(logs.content)}"
+                    >
+                      0
+                    </h4>
+                    <p class="text-muted">Total Logs</p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <h4
+                      class="text-primary"
+                      th:text="${#lists.size(logs.content)}"
+                    >
+                      0
+                    </h4>
+                    <p class="text-muted">This Page</p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <h4 class="text-info" th:text="${logs.totalElements}">0</h4>
+                    <p class="text-muted">Total Records</p>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center">
+                    <h4 class="text-warning" th:text="${logs.totalPages}">0</h4>
+                    <p class="text-muted">Total Pages</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Set default date range to last 30 days
+      document.addEventListener("DOMContentLoaded", function () {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 30);
+
+        document.getElementById("endDate").value = endDate
+          .toISOString()
+          .slice(0, 16);
+        document.getElementById("startDate").value = startDate
+          .toISOString()
+          .slice(0, 16);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2575 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Manager Dashboard - Vehicle Bidding System</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+    <link th:href="@{/css/admin-dashboard.css}" rel="stylesheet" />
+
+    <style>
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 120px 0 100px 0;
+        margin-top: 56px;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.2;
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        height: 100%;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      }
+
+      .stat-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover .stat-icon {
+        transform: scale(1.1);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+      }
+
+      .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .content-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .content-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .content-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1.5rem 2rem;
+        border-radius: 20px 20px 0 0;
+      }
+
+      .content-card .card-header h6 {
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin: 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .content-card .card-body {
+        padding: 2rem;
+      }
+
+      .btn-custom {
+        border-radius: 25px;
+        padding: 10px 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .table-modern {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .table-modern thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .table-modern thead th {
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+      }
+
+      .table-modern tbody tr {
+        transition: all 0.3s ease;
+      }
+
+      .table-modern tbody tr:hover {
+        background: rgba(102, 126, 234, 0.05);
+        transform: scale(1.01);
+      }
+
+      .table-modern tbody td {
+        padding: 0.75rem 0.5rem;
+        border-color: rgba(0, 0, 0, 0.05);
+        vertical-align: middle;
+        font-size: 0.9rem;
+      }
+
+      .table-modern tbody td small {
+        font-size: 0.8rem;
+        line-height: 1.2;
+      }
+
+      .table-modern .btn-group-vertical .btn {
+        margin-bottom: 2px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .table-modern .btn-group-vertical .btn:last-child {
+        margin-bottom: 0;
+      }
+
+      .badge-modern {
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-success-modern {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+      }
+
+      .badge-warning-modern {
+        background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+        color: white;
+      }
+
+      .badge-danger-modern {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+      }
+
+      .badge-info-modern {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+      }
+
+      .badge-secondary-modern {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+      }
+
+      /* Modern Modal Styling */
+      .modal-modern .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .modal-modern .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px 20px 0 0;
+        border: none;
+        padding: 1.5rem 2rem;
+      }
+
+      .modal-modern .modal-header .modal-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-modern .modal-body {
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .modal-modern .modal-footer {
+        border: none;
+        padding: 1.5rem 2rem;
+        background: rgba(248, 249, 250, 0.95);
+        border-radius: 0 0 20px 20px;
+      }
+
+      .modal-modern .btn {
+        border-radius: 15px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .modal-modern .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-modern .form-control,
+      .modal-modern .form-select {
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .modal-modern .form-control:focus,
+      .modal-modern .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+
+      .modal-modern .alert {
+        border-radius: 15px;
+        border: none;
+        padding: 1rem 1.5rem;
+      }
+
+      /* Listing Details Modal Styles */
+      .listing-image-gallery {
+        position: relative;
+      }
+      .listing-main-image {
+        height: 300px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      .listing-main-image:hover {
+        transform: scale(1.02);
+      }
+      .listing-thumbnail {
+        height: 60px;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+      }
+      .listing-thumbnail:hover,
+      .listing-thumbnail.active {
+        opacity: 1;
+      }
+      .listing-detail-card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      }
+      .listing-detail-section {
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      .listing-detail-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+      }
+      .listing-detail-value {
+        color: #212529;
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+      }
+      .listing-description-text {
+        line-height: 1.6;
+        color: #495057;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-4">
+              <i class="bi bi-graph-up"></i> Sales Manager Dashboard
+            </h1>
+            <p class="lead mb-4">
+              Comprehensive auction management and sales oversight tools.
+              Monitor live auctions, schedule new events, and analyze
+              performance metrics to drive sales success.
+            </p>
+            <div class="d-flex gap-3">
+              <button
+                class="btn btn-light btn-custom"
+                onclick="refreshAuctions()"
+              >
+                <i class="bi bi-arrow-clockwise"></i> Refresh Data
+              </button>
+              <button
+                class="btn btn-outline-light btn-custom"
+                onclick="showCreateAuctionModal()"
+              >
+                <i class="bi bi-plus-circle"></i> Schedule Auction
+              </button>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="text-center">
+              <i
+                class="bi bi-graph-up"
+                style="font-size: 15rem; opacity: 0.3"
+              ></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-5">
+      <!-- Overview Metrics Section -->
+      <div class="row mb-5">
+        <div class="col-md-3 mb-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-hammer"></i>
+            </div>
+            <div class="stat-number" id="activeAuctionsCount">0</div>
+            <div class="stat-label">Active Auctions</div>
+            <p class="text-muted mb-0">Currently running</p>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-clock"></i>
+            </div>
+            <div class="stat-number" id="pendingApprovals">0</div>
+            <div class="stat-label">Pending Approvals</div>
+            <p class="text-muted mb-0">Awaiting review</p>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-bar-chart"></i>
+            </div>
+            <div class="stat-number" id="auctionReports">0</div>
+            <div class="stat-label">Auction Reports</div>
+            <p class="text-muted mb-0">Generated reports</p>
+          </div>
+        </div>
+        <div class="col-md-3 mb-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="stat-number" id="scheduledAuctions">0</div>
+            <div class="stat-label">Scheduled Auctions</div>
+            <p class="text-muted mb-0">Future auctions</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="row">
+        <!-- Left Column - Auction Management -->
+        <div class="col-lg-8">
+          <div class="content-card">
+            <div class="card-header">
+              <div class="d-flex justify-content-between align-items-center">
+                <h6><i class="bi bi-hammer me-2"></i>Auction Management</h6>
+                <div class="btn-group" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-light btn-sm fw-semibold"
+                    onclick="showCreateAuctionModal()"
+                  >
+                    <i class="bi bi-plus-circle me-1"></i>Schedule Auction
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-light btn-sm fw-semibold"
+                    onclick="exportAuctions()"
+                  >
+                    <i class="bi bi-download me-1"></i>Export CSV
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-light btn-sm fw-semibold"
+                    onclick="refreshAuctions()"
+                  >
+                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Enhanced Filter Controls -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-funnel me-1"></i>Status Filter
+                  </label>
+                  <select class="form-select border-2" id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="CLOSED">Closed</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-calendar me-1"></i>Date Range
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control border-2"
+                    id="dateFilter"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">
+                    <i class="bi bi-search me-1"></i>Search Vehicle
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control border-2"
+                    id="searchFilter"
+                    placeholder="Search by make/model..."
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">&nbsp;</label>
+                  <button
+                    class="btn btn-primary w-100 fw-semibold"
+                    onclick="applyFilters()"
+                  >
+                    <i class="bi bi-funnel me-1"></i>Filter
+                  </button>
+                </div>
+              </div>
+
+              <!-- Enhanced Auctions Table -->
+              <div class="table-responsive">
+                <table class="table table-modern" id="auctionsTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 8%">
+                        <i class="bi bi-hash me-1"></i>ID
+                      </th>
+                      <th style="width: 20%">
+                        <i class="bi bi-car-front me-1"></i>Vehicle
+                      </th>
+                      <th style="width: 15%">
+                        <i class="bi bi-calendar-event me-1"></i>Start
+                      </th>
+                      <th style="width: 15%">
+                        <i class="bi bi-calendar-x me-1"></i>End
+                      </th>
+                      <th style="width: 10%">
+                        <i class="bi bi-info-circle me-1"></i>Status
+                      </th>
+                      <th style="width: 12%">
+                        <i class="bi bi-currency-dollar me-1"></i>Bid
+                      </th>
+                      <th style="width: 8%">
+                        <i class="bi bi-people me-1"></i>Bidders
+                      </th>
+                      <th style="width: 10%">
+                        <i class="bi bi-clock me-1"></i>Remaining
+                      </th>
+                      <th style="width: 12%">
+                        <i class="bi bi-gear me-1"></i>Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="auctionsTableBody">
+                    <!-- Dynamic content will be loaded here -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              <nav aria-label="Auction pagination">
+                <ul
+                  class="pagination justify-content-center"
+                  id="auctionPagination"
+                >
+                  <!-- Pagination will be generated here -->
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Notifications & Analytics -->
+        <div class="col-lg-4">
+          <!-- Real-time Auction Monitor -->
+          <div class="content-card mb-4">
+            <div class="card-header">
+              <h6><i class="bi bi-tv me-2"></i>Live Auction Monitor</h6>
+            </div>
+            <div class="card-body" style="max-height: 200px; overflow-y: auto">
+              <div id="liveAuctions">
+                <!-- Real-time auction updates will be loaded here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Starts -->
+          <div class="content-card mb-4">
+            <div class="card-header">
+              <h6><i class="bi bi-clock me-2"></i>Upcoming Starts</h6>
+            </div>
+            <div class="card-body" style="max-height: 200px; overflow-y: auto">
+              <div id="upcomingStarts">
+                <!-- Upcoming auction starts will be loaded here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Recently Closed -->
+          <div class="content-card">
+            <div class="card-header">
+              <h6><i class="bi bi-flag-checkered me-2"></i>Recently Closed</h6>
+            </div>
+            <div class="card-body" style="max-height: 200px; overflow-y: auto">
+              <div id="recentlyClosed">
+                <!-- Recently closed auctions will be loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bid History Modal -->
+    <div class="modal fade modal-modern" id="bidHistoryModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-clock-history me-2"></i>Bid History Timeline
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover" id="bidHistoryTable">
+                <thead class="table-info">
+                  <tr>
+                    <th class="fw-semibold">
+                      <i class="bi bi-person me-1"></i>Bidder
+                    </th>
+                    <th class="fw-semibold">
+                      <i class="bi bi-currency-dollar me-1"></i>Amount
+                    </th>
+                    <th class="fw-semibold">
+                      <i class="bi bi-clock me-1"></i>Time
+                    </th>
+                    <th class="fw-semibold">
+                      <i class="bi bi-info-circle me-1"></i>Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="bidHistoryTableBody">
+                  <!-- Dynamic content will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auction Extension Modal -->
+    <div class="modal fade modal-modern" id="extendAuctionModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-clock me-2"></i>Extend Auction
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="extendAuctionForm">
+              <input type="hidden" id="extendAuctionId" />
+              <div class="mb-3">
+                <label for="extensionDuration" class="form-label fw-semibold">
+                  <i class="bi bi-clock me-1"></i>Extension Duration (minutes)
+                </label>
+                <select
+                  class="form-select border-2"
+                  id="extensionDuration"
+                  required
+                >
+                  <option value="15">15 minutes</option>
+                  <option value="30" selected>30 minutes</option>
+                  <option value="60">1 hour</option>
+                  <option value="120">2 hours</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="extensionReason" class="form-label fw-semibold">
+                  <i class="bi bi-chat-text me-1"></i>Reason for Extension
+                </label>
+                <textarea
+                  class="form-control border-2"
+                  id="extensionReason"
+                  rows="3"
+                  placeholder="Enter reason for extending this auction..."
+                  required
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning fw-semibold"
+              onclick="confirmExtendAuction()"
+            >
+              <i class="bi bi-clock me-1"></i>Extend Auction
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- End Auction Modal -->
+    <div class="modal fade modal-modern" id="endAuctionModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-stop-circle me-2"></i>End Auction
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="endAuctionForm">
+              <input type="hidden" id="endAuctionId" />
+              <div class="alert alert-warning border-0 shadow-sm">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Warning:</strong> This action will immediately end the
+                auction. This cannot be undone.
+              </div>
+              <div class="mb-3">
+                <label for="endReason" class="form-label fw-semibold">
+                  <i class="bi bi-chat-text me-1"></i>Reason for Ending
+                </label>
+                <textarea
+                  class="form-control border-2"
+                  id="endReason"
+                  rows="3"
+                  placeholder="Enter reason for ending this auction..."
+                  required
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger fw-semibold"
+              onclick="confirmEndAuction()"
+            >
+              <i class="bi bi-stop-circle me-1"></i>End Auction
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Auction Modal -->
+    <div class="modal fade modal-modern" id="createAuctionModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-plus-circle me-2"></i>Schedule New Auction
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="createAuctionForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="vehicleListing" class="form-label fw-semibold">
+                      <i class="bi bi-car-front me-1"></i>Vehicle Listing
+                    </label>
+                    <div class="input-group">
+                      <select
+                        class="form-select border-2"
+                        id="vehicleListing"
+                        required
+                      >
+                        <option value="">Select approved vehicle...</option>
+                      </select>
+                      <button
+                        type="button"
+                        class="btn btn-outline-info fw-semibold"
+                        id="viewListingBtn"
+                        onclick="viewSelectedListing()"
+                        disabled
+                        title="View listing details"
+                      >
+                        <i class="bi bi-eye me-1"></i>View Listing
+                      </button>
+                    </div>
+                    <div class="form-text">
+                      Only approved vehicles are available for auction
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="auctionDuration" class="form-label fw-semibold">
+                      <i class="bi bi-clock me-1"></i>Auction Duration (hours)
+                    </label>
+                    <select
+                      class="form-select border-2"
+                      id="auctionDuration"
+                      required
+                    >
+                      <option value="1">1 hour</option>
+                      <option value="2">2 hours</option>
+                      <option value="4" selected>4 hours</option>
+                      <option value="8">8 hours</option>
+                      <option value="24">24 hours</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="startDate" class="form-label fw-semibold">
+                      <i class="bi bi-calendar-event me-1"></i>Start Date
+                    </label>
+                    <input
+                      type="date"
+                      class="form-control border-2"
+                      id="startDate"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="startTime" class="form-label fw-semibold">
+                      <i class="bi bi-clock me-1"></i>Start Time
+                    </label>
+                    <input
+                      type="time"
+                      class="form-control border-2"
+                      id="startTime"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="extensionDuration" class="form-label fw-semibold">
+                  <i class="bi bi-clock-history me-1"></i>Auto-Extension
+                  Duration (seconds)
+                </label>
+                <select
+                  class="form-select border-2"
+                  id="extensionDuration"
+                  required
+                >
+                  <option value="30" selected>30 seconds</option>
+                  <option value="60">60 seconds</option>
+                  <option value="120">2 minutes</option>
+                </select>
+                <div class="form-text">
+                  Auction will auto-extend if a bid is placed in the final
+                  moments
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="auctionNotes" class="form-label fw-semibold">
+                  <i class="bi bi-chat-text me-1"></i>Notes (Optional)
+                </label>
+                <textarea
+                  class="form-control border-2"
+                  id="auctionNotes"
+                  rows="3"
+                  placeholder="Any special notes for this auction..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-success fw-semibold"
+              onclick="confirmCreateAuction()"
+            >
+              <i class="bi bi-plus-circle me-1"></i>Schedule Auction
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post-Auction Details Modal -->
+    <div class="modal fade modal-modern" id="postAuctionModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-flag-checkered me-2"></i>Post-Auction Details
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="postAuctionContent">
+              <!-- Dynamic content will be loaded here -->
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-outline-primary fw-semibold"
+              onclick="flagForReporting()"
+            >
+              <i class="bi bi-flag me-1"></i>Flag for Reporting
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Custom Styles for Sales Manager Dashboard -->
+    <style>
+      /* Modern Card Styling */
+      .card {
+        border-radius: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      /* Button Styling */
+      .btn {
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      /* Badge Styling */
+      .badge {
+        border-radius: 20px;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+      }
+
+      /* Form Control Styling */
+      .form-control,
+      .form-select {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        border-color: #0d6efd;
+      }
+
+      /* Table Styling */
+      .table {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        font-weight: 600;
+      }
+
+      .table td {
+        border-color: #f8f9fa;
+        vertical-align: middle;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+      }
+
+      /* Modal Styling */
+      .modal-content {
+        border-radius: 15px;
+      }
+
+      .modal-header {
+        border-radius: 15px 15px 0 0;
+      }
+
+      /* Alert Styling */
+      .alert {
+        border-radius: 10px;
+        border: none;
+      }
+
+      /* Icon Animations */
+      .bi {
+        transition: all 0.3s ease;
+      }
+
+      .card:hover .bi {
+        transform: scale(1.1);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      /* Pagination Styling */
+      .pagination .page-link {
+        border-radius: 10px;
+        margin: 0 2px;
+        border: none;
+        color: #0d6efd;
+        font-weight: 500;
+      }
+
+      .pagination .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+      }
+
+      .pagination .page-link:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+        transform: translateY(-1px);
+      }
+    </style>
+
+    <script>
+      // Global variables
+      let currentPage = 1;
+      let totalPages = 1;
+      let currentFilters = {};
+
+      // Load dashboard data on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        loadSalesMetrics();
+        loadAuctions();
+        loadLiveAuctions();
+        loadUpcomingStarts();
+        loadRecentlyClosed();
+        loadApprovedVehicles();
+
+        // Set up auto-refresh every 30 seconds
+        setInterval(() => {
+          loadSalesMetrics();
+          loadLiveAuctions();
+          loadUpcomingStarts();
+          loadRecentlyClosed();
+        }, 30000);
+
+        // Set up real-time updates every 5 seconds for active auctions
+        setInterval(() => {
+          updateActiveAuctionTimers();
+        }, 5000);
+      });
+
+      // Load sales metrics from API
+      async function loadSalesMetrics() {
+        try {
+          const response = await fetch("/api/sales-manager/metrics");
+          const data = await response.json();
+
+          document.getElementById("activeAuctionsCount").textContent =
+            data.activeAuctions || 0;
+          document.getElementById("pendingApprovals").textContent =
+            data.pendingApprovals || 0;
+          document.getElementById("auctionReports").textContent =
+            data.auctionReports || 0;
+          document.getElementById("scheduledAuctions").textContent =
+            data.scheduledAuctions || 0;
+        } catch (error) {
+          console.error("Error loading metrics:", error);
+          // Set to 0 if API fails
+          document.getElementById("activeAuctionsCount").textContent = "0";
+          document.getElementById("pendingApprovals").textContent = "0";
+          document.getElementById("auctionReports").textContent = "0";
+          document.getElementById("scheduledAuctions").textContent = "0";
+        }
+      }
+
+      // Load auctions with pagination and filtering
+      async function loadAuctions(page = 1) {
+        try {
+          const params = new URLSearchParams({
+            page: page - 1, // Backend uses 0-based pagination
+            size: 10,
+            ...currentFilters,
+          });
+
+          const response = await fetch(`/api/sales-manager/auctions?${params}`);
+          console.log("API Response:", response);
+          const data = await response.json();
+          console.log("API Data:", data);
+          currentPage = page;
+          totalPages = data.totalPages || 1;
+          console.log("Total Pages:", totalPages);
+          console.log("Auctions Content:", data.content);
+          renderAuctionsTable(data.content || []);
+          renderPagination();
+        } catch (error) {
+          console.error("Error loading auctions:", error);
+          // Show empty state if API fails
+          renderAuctionsTable([]);
+        }
+      }
+
+      // Render auctions table
+      function renderAuctionsTable(auctions) {
+        console.log("Rendering auctions table with data:", auctions);
+        const tbody = document.getElementById("auctionsTableBody");
+        console.log("Table body element:", tbody);
+        tbody.innerHTML = "";
+
+        if (auctions.length === 0) {
+          console.log("No auctions found, showing empty state");
+          tbody.innerHTML =
+            '<tr><td colspan="9" class="text-center text-muted">No auctions found</td></tr>';
+          return;
+        }
+
+        console.log(`Rendering ${auctions.length} auctions`);
+
+        auctions.forEach((auction) => {
+          const row = document.createElement("tr");
+          row.setAttribute("data-auction-id", auction.auctionId);
+          row.innerHTML = `
+            <td><strong>#${auction.auctionId}</strong></td>
+            <td>
+              <div>
+                <strong>${auction.listing.make} ${
+            auction.listing.model
+          }</strong><br>
+                <small class="text-muted">${auction.listing.year}</small>
+              </div>
+            </td>
+            <td><small>${formatDate(auction.startTime)}<br>${formatTime(
+            auction.startTime
+          )}</small></td>
+            <td><small>${formatDate(auction.endTime)}<br>${formatTime(
+            auction.endTime
+          )}</small></td>
+            <td><span class="badge badge-modern badge-${getStatusColor(
+              auction.status
+            )}-modern">${auction.status}</span></td>
+            <td><strong>$${
+              auction.highestBid ? auction.highestBid.toLocaleString() : "0"
+            }</strong></td>
+            <td><span class="badge badge-modern badge-info-modern">${
+              auction.bidderCount || 0
+            }</span></td>
+            <td>${getTimeRemaining(auction.endTime, auction.status)}</td>
+            <td>
+              <div class="btn-group-vertical btn-group-sm" role="group">
+                <button class="btn btn-outline-primary btn-sm" onclick="viewBidHistory(${
+                  auction.auctionId
+                })" title="View Bid History">
+                  <i class="bi bi-clock-history"></i>
+                </button>
+                ${
+                  auction.status === "PENDING"
+                    ? `<button class="btn btn-success btn-sm" onclick="startAuction(${auction.auctionId})" title="Start Auction">
+                        <i class="bi bi-play-circle"></i>
+                      </button>`
+                    : ""
+                }
+                ${
+                  auction.status === "ACTIVE"
+                    ? `<button class="btn btn-warning btn-sm" onclick="extendAuction(${auction.auctionId})" title="Extend Auction">
+                         <i class="bi bi-clock"></i>
+                       </button>
+                       <button class="btn btn-danger btn-sm" onclick="endAuction(${auction.auctionId})" title="End Auction">
+                         <i class="bi bi-stop-circle"></i>
+                    </button>`
+                    : ""
+                }
+                ${
+                  auction.status === "CLOSED"
+                    ? `<button class="btn btn-info btn-sm" onclick="showPostAuctionDetails(${auction.auctionId})" title="View Post-Auction Details">
+                         <i class="bi bi-flag-checkered"></i>
+                       </button>`
+                    : ""
+                }
+              </div>
+            </td>
+                `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // Render pagination
+      function renderPagination() {
+        const pagination = document.getElementById("auctionPagination");
+        pagination.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        // Previous button
+        const prevLi = document.createElement("li");
+        prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
+        prevLi.innerHTML = `<a class="page-link" href="#" onclick="loadAuctions(${
+          currentPage - 1
+        })">Previous</a>`;
+        pagination.appendChild(prevLi);
+
+        // Page numbers
+        for (
+          let i = Math.max(1, currentPage - 2);
+          i <= Math.min(totalPages, currentPage + 2);
+          i++
+        ) {
+          const li = document.createElement("li");
+          li.className = `page-item ${i === currentPage ? "active" : ""}`;
+          li.innerHTML = `<a class="page-link" href="#" onclick="loadAuctions(${i})">${i}</a>`;
+          pagination.appendChild(li);
+        }
+
+        // Next button
+        const nextLi = document.createElement("li");
+        nextLi.className = `page-item ${
+          currentPage === totalPages ? "disabled" : ""
+        }`;
+        nextLi.innerHTML = `<a class="page-link" href="#" onclick="loadAuctions(${
+          currentPage + 1
+        })">Next</a>`;
+        pagination.appendChild(nextLi);
+      }
+
+      // Load upcoming starts
+      async function loadUpcomingStarts() {
+        try {
+          const response = await fetch("/api/sales-manager/upcoming-starts");
+          const upcoming = await response.json();
+
+          const upcomingStarts = document.getElementById("upcomingStarts");
+          if (upcoming.length === 0) {
+            upcomingStarts.innerHTML =
+              '<div class="text-muted text-center">No upcoming auctions</div>';
+            return;
+          }
+
+          upcomingStarts.innerHTML = upcoming
+            .map(
+              (auction) => `
+            <div class="d-flex align-items-start mb-2">
+              <div class="flex-shrink-0">
+                <i class="bi bi-clock text-warning"></i>
+              </div>
+              <div class="flex-grow-1 ms-2">
+                <div class="fw-bold">${auction.listing.make} ${
+                auction.listing.model
+              }</div>
+                <div class="small text-muted">Starts: ${formatDateTime(
+                  auction.startTime
+                )}</div>
+                <div class="small text-muted">Time remaining: ${getTimeRemaining(
+                  auction.startTime,
+                  "PENDING"
+                )}</div>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error loading upcoming starts:", error);
+          document.getElementById("upcomingStarts").innerHTML =
+            '<div class="text-muted text-center">Failed to load upcoming starts</div>';
+        }
+      }
+
+      // Load recently closed
+      async function loadRecentlyClosed() {
+        try {
+          const response = await fetch("/api/sales-manager/recently-closed");
+          const recent = await response.json();
+
+          const recentlyClosed = document.getElementById("recentlyClosed");
+          if (recent.length === 0) {
+            recentlyClosed.innerHTML =
+              '<div class="text-muted text-center">No recently closed auctions</div>';
+            return;
+          }
+
+          recentlyClosed.innerHTML = recent
+            .map(
+              (auction) => `
+            <div class="d-flex align-items-start mb-2">
+              <div class="flex-shrink-0">
+                <i class="bi bi-flag-checkered text-success"></i>
+              </div>
+              <div class="flex-grow-1 ms-2">
+                <div class="fw-bold">${auction.listing.make} ${
+                auction.listing.model
+              }</div>
+                <div class="small text-muted">Closed: ${formatDateTime(
+                  auction.endTime
+                )}</div>
+                <div class="small text-muted">Winner: ${
+                  auction.winnerUsername || "No winner"
+                }</div>
+                <div class="small text-muted">Final bid: $${
+                  auction.highestBid ? auction.highestBid.toLocaleString() : "0"
+                }</div>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error loading recently closed:", error);
+          document.getElementById("recentlyClosed").innerHTML =
+            '<div class="text-muted text-center">Failed to load recently closed</div>';
+        }
+      }
+
+      // Auction management functions
+      let currentAuctionId = null;
+      let currentAuctionData = null;
+
+      function startAuction(auctionId) {
+        // Find the auction data from the current table
+        const auctionRow = document.querySelector(
+          `tr[data-auction-id="${auctionId}"]`
+        );
+        if (!auctionRow) {
+          showAlert("Auction data not found", "danger");
+          return;
+        }
+
+        // Get auction data from the row
+        const vehicleInfo = auctionRow.querySelector(
+          "td:nth-child(2) strong"
+        ).textContent;
+        const scheduledStart =
+          auctionRow.querySelector("td:nth-child(3)").textContent;
+
+        // Store current auction data
+        currentAuctionId = auctionId;
+        currentAuctionData = {
+          vehicleInfo: vehicleInfo,
+          scheduledStart: scheduledStart,
+        };
+
+        // Populate modal
+        document.getElementById("manualStartVehicleInfo").textContent =
+          vehicleInfo;
+        document.getElementById("manualStartScheduledTime").textContent =
+          scheduledStart;
+        document.getElementById("manualStartCurrentTime").textContent =
+          new Date().toLocaleString();
+
+        // Show confirmation modal
+        new bootstrap.Modal(
+          document.getElementById("manualStartConfirmationModal")
+        ).show();
+      }
+
+      function confirmManualStart() {
+        if (!currentAuctionId) return;
+
+        fetch(`/api/sales-manager/auctions/${currentAuctionId}/start`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showAlert("Auction started successfully!", "success");
+              loadAuctions(currentPage);
+              loadSalesMetrics();
+              loadUpcomingStarts();
+              // Close modal
+              bootstrap.Modal.getInstance(
+                document.getElementById("manualStartConfirmationModal")
+              ).hide();
+            } else {
+              showAlert("Failed to start auction: " + data.message, "danger");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showAlert("Error starting auction", "danger");
+          });
+      }
+
+      function extendAuction(auctionId) {
+        document.getElementById("extendAuctionId").value = auctionId;
+        new bootstrap.Modal(
+          document.getElementById("extendAuctionModal")
+        ).show();
+      }
+
+      function confirmExtendAuction() {
+        const auctionId = document.getElementById("extendAuctionId").value;
+        const duration = document.getElementById("extensionDuration").value;
+        const reason = document.getElementById("extensionReason").value;
+
+        if (!reason.trim()) {
+          showAlert("Please provide a reason for the extension", "warning");
+          return;
+        }
+
+        fetch(`/api/sales-manager/auctions/${auctionId}/extend`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            duration: parseInt(duration),
+            reason: reason,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showAlert("Auction extended successfully!", "success");
+              bootstrap.Modal.getInstance(
+                document.getElementById("extendAuctionModal")
+              ).hide();
+              loadAuctions(currentPage);
+              loadSalesMetrics();
+            } else {
+              showAlert("Failed to extend auction: " + data.message, "danger");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showAlert("Error extending auction", "danger");
+          });
+      }
+
+      function endAuction(auctionId) {
+        // Find the auction data from the current table
+        const auctionRow = document.querySelector(
+          `tr[data-auction-id="${auctionId}"]`
+        );
+        if (!auctionRow) {
+          showAlert("Auction data not found", "danger");
+          return;
+        }
+
+        // Get auction data from the row
+        const vehicleInfo = auctionRow.querySelector(
+          "td:nth-child(2) strong"
+        ).textContent;
+        const scheduledEnd =
+          auctionRow.querySelector("td:nth-child(4)").textContent;
+        const currentBid = auctionRow.querySelector(
+          "td:nth-child(6) strong"
+        ).textContent;
+
+        // Store current auction data
+        currentAuctionId = auctionId;
+        currentAuctionData = {
+          vehicleInfo: vehicleInfo,
+          scheduledEnd: scheduledEnd,
+          currentBid: currentBid,
+        };
+
+        // Populate modal
+        document.getElementById("manualCloseVehicleInfo").textContent =
+          vehicleInfo;
+        document.getElementById("manualCloseScheduledTime").textContent =
+          scheduledEnd;
+        document.getElementById("manualCloseCurrentTime").textContent =
+          new Date().toLocaleString();
+        document.getElementById("manualCloseCurrentBid").textContent =
+          currentBid;
+        document.getElementById("manualCloseReason").value = "";
+
+        // Show confirmation modal
+        new bootstrap.Modal(
+          document.getElementById("manualCloseConfirmationModal")
+        ).show();
+      }
+
+      function confirmManualClose() {
+        if (!currentAuctionId) return;
+
+        const reason = document
+          .getElementById("manualCloseReason")
+          .value.trim();
+        if (!reason) {
+          showAlert(
+            "Please provide a reason for closing the auction",
+            "warning"
+          );
+          return;
+        }
+
+        fetch(`/api/sales-manager/auctions/${currentAuctionId}/end`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reason: reason,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showAlert("Auction closed successfully!", "success");
+              loadAuctions(currentPage);
+              loadSalesMetrics();
+              loadRecentlyClosed();
+              // Close modal
+              bootstrap.Modal.getInstance(
+                document.getElementById("manualCloseConfirmationModal")
+              ).hide();
+            } else {
+              showAlert("Failed to close auction: " + data.message, "danger");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showAlert("Error closing auction", "danger");
+          });
+      }
+
+      function confirmEndAuction() {
+        const auctionId = document.getElementById("endAuctionId").value;
+        const reason = document.getElementById("endReason").value;
+
+        if (!reason.trim()) {
+          showAlert(
+            "Please provide a reason for ending the auction",
+            "warning"
+          );
+          return;
+        }
+
+        fetch(`/api/sales-manager/auctions/${auctionId}/end`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reason: reason,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showAlert("Auction ended successfully!", "success");
+              bootstrap.Modal.getInstance(
+                document.getElementById("endAuctionModal")
+              ).hide();
+              loadAuctions(currentPage);
+              loadSalesMetrics();
+            } else {
+              showAlert("Failed to end auction: " + data.message, "danger");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showAlert("Error ending auction", "danger");
+          });
+      }
+
+      function viewBidHistory(auctionId) {
+        fetch(`/api/sales-manager/auctions/${auctionId}/bids`)
+          .then((response) => response.json())
+          .then((bids) => {
+            const tbody = document.getElementById("bidHistoryTableBody");
+            tbody.innerHTML = "";
+
+            if (bids.length === 0) {
+              tbody.innerHTML =
+                '<tr><td colspan="4" class="text-center text-muted">No bids placed yet</td></tr>';
+            } else {
+              bids.forEach((bid, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td>${bid.bidder.username}</td>
+                <td><strong>$${bid.amount.toLocaleString()}</strong></td>
+                <td>${formatDateTime(bid.timestamp)}</td>
+                <td><span class="badge badge-modern badge-${
+                  index === 0 ? "success" : "secondary"
+                }-modern">${index === 0 ? "Highest" : "Outbid"}</span></td>
+              `;
+                tbody.appendChild(row);
+              });
+            }
+
+            new bootstrap.Modal(
+              document.getElementById("bidHistoryModal")
+            ).show();
+          })
+          .catch((error) => {
+            console.error("Error loading bid history:", error);
+            showAlert("Error loading bid history", "danger");
+          });
+      }
+
+      // Filter and search functions
+      function applyFilters() {
+        currentFilters = {
+          status: document.getElementById("statusFilter").value,
+          date: document.getElementById("dateFilter").value,
+          search: document.getElementById("searchFilter").value,
+        };
+
+        // Remove empty filters
+        Object.keys(currentFilters).forEach((key) => {
+          if (!currentFilters[key]) {
+            delete currentFilters[key];
+          }
+        });
+
+        loadAuctions(1);
+      }
+
+      function exportAuctions() {
+        const params = new URLSearchParams(currentFilters);
+        window.open(`/api/sales-manager/auctions/export?${params}`, "_blank");
+      }
+
+      function refreshAuctions() {
+        loadAuctions(currentPage);
+        loadSalesMetrics();
+      }
+
+      // Utility functions
+      function getStatusColor(status) {
+        switch (status) {
+          case "ACTIVE":
+            return "success";
+          case "PENDING":
+            return "warning";
+          case "CLOSED":
+            return "secondary";
+          default:
+            return "primary";
+        }
+      }
+
+      function formatDateTime(dateTime) {
+        return new Date(dateTime).toLocaleString();
+      }
+
+      function formatDate(dateTime) {
+        return new Date(dateTime).toLocaleDateString();
+      }
+
+      function formatTime(dateTime) {
+        return new Date(dateTime).toLocaleTimeString();
+      }
+
+      function formatDuration(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+      }
+
+      function getTimeRemaining(endTime, status) {
+        if (status !== "ACTIVE") return status;
+
+        const now = new Date();
+        const end = new Date(endTime);
+        const diff = end - now;
+
+        if (diff <= 0) return "Ended";
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        return `${hours}h ${minutes}m`;
+      }
+
+      function showAlert(message, type) {
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText =
+          "top: 20px; right: 20px; z-index: 9999; min-width: 300px;";
+        alertDiv.innerHTML = `
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+          }
+        }, 5000);
+      }
+
+      // Load approved vehicles for auction creation
+      async function loadApprovedVehicles() {
+        try {
+          const response = await fetch("/api/sales-manager/approved-vehicles");
+          const vehicles = await response.json();
+
+          const select = document.getElementById("vehicleListing");
+          select.innerHTML =
+            '<option value="">Select approved vehicle...</option>';
+
+          vehicles.forEach((vehicle) => {
+            const option = document.createElement("option");
+            option.value = vehicle.listingId;
+            option.textContent = `${vehicle.year} ${vehicle.make} ${
+              vehicle.model
+            } - ${vehicle.mileage.toLocaleString()} miles`;
+            select.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error loading approved vehicles:", error);
+        }
+      }
+
+      // Enable/disable View Listing button based on selection
+      document.addEventListener("DOMContentLoaded", function () {
+        const vehicleSelect = document.getElementById("vehicleListing");
+        const viewBtn = document.getElementById("viewListingBtn");
+
+        if (vehicleSelect && viewBtn) {
+          vehicleSelect.addEventListener("change", function () {
+            viewBtn.disabled = !this.value;
+          });
+        }
+      });
+
+      // View selected listing details
+      async function viewSelectedListing() {
+        const vehicleSelect = document.getElementById("vehicleListing");
+        const listingId = vehicleSelect.value;
+
+        if (!listingId) {
+          showAlert("Please select a vehicle listing first", "warning");
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `/api/sales-manager/approved-vehicles/${listingId}`
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch listing details");
+          }
+
+          const listing = await response.json();
+          displayListingDetails(listing);
+
+          // Show the modal
+          new bootstrap.Modal(
+            document.getElementById("viewListingModal")
+          ).show();
+        } catch (error) {
+          console.error("Error loading listing details:", error);
+          showAlert("Failed to load listing details", "danger");
+        }
+      }
+
+      // Display listing details in the modal
+      function displayListingDetails(listing) {
+        const content = document.getElementById("listingDetailsContent");
+
+        // Get status and condition badge classes
+        const getStatusBadgeClass = (status) => {
+          switch (status) {
+            case "PENDING":
+              return "bg-warning";
+            case "APPROVED":
+              return "bg-success";
+            case "REJECTED":
+              return "bg-danger";
+            default:
+              return "bg-secondary";
+          }
+        };
+
+        const getConditionBadgeClass = (condition) => {
+          switch (condition) {
+            case "EXCELLENT":
+              return "bg-success";
+            case "GOOD":
+              return "bg-info";
+            case "FAIR":
+              return "bg-warning";
+            default:
+              return "bg-secondary";
+          }
+        };
+
+        // Handle images
+        const hasImages = listing.images && listing.images.length > 0;
+        const mainImageUrl = hasImages
+          ? listing.images[0].imageUrl
+          : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTAgMTUwSDQ1MFYyNTBIMjUwVjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+YXRoIGQ9Ik0yNTAgMjc1SDM3NVYzMjVIMjUwVjI3NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg==";
+
+        content.innerHTML = `
+          <!-- Page Header -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4 class="mb-1">
+                <i class="bi bi-car-front text-primary me-2"></i>
+                ${listing.year} ${listing.make} ${listing.model}
+              </h4>
+              <p class="text-muted mb-0">
+                <i class="bi bi-calendar me-1"></i>
+                ${listing.year} •
+                <i class="bi bi-speedometer2 me-1"></i>
+                ${listing.mileage.toLocaleString()} miles
+              </p>
+            </div>
+            <div>
+              <span class="badge ${getStatusBadgeClass(listing.status)}">
+                <i class="bi bi-circle-fill me-1" style="font-size: 0.6rem"></i>
+                ${listing.status}
+              </span>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Image Gallery -->
+            <div class="col-lg-8 mb-4">
+              <div class="card listing-detail-card">
+                <div class="card-body p-0">
+                  <div class="listing-image-gallery">
+                    <!-- Main Image -->
+                    <div class="position-relative">
+                      <img
+                        id="listingMainImage"
+                        src="${mainImageUrl}"
+                        class="card-img-top listing-main-image w-100"
+                        alt="Vehicle Image"
+                        onclick="openListingImageModal()"
+                        onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDgwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTAgMTUwSDQ1MFYyNTBIMjUwVjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+YXRoIGQ9Ik0yNTAgMjc1SDM3NVYzMjVIMjUwVjI3NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg=='; this.style.border='2px solid #dc3545';"
+                      />
+                      <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-dark bg-opacity-75">
+                          <i class="bi bi-images me-1"></i>
+                          ${hasImages ? listing.images.length : 0} images
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Thumbnail Gallery -->
+                    ${
+                      hasImages
+                        ? `
+                    <div class="p-3">
+                      <div class="d-flex gap-2 overflow-auto">
+                        ${listing.images
+                          .map(
+                            (image, index) => `
+                          <img
+                            src="${image.imageUrl}"
+                            onclick="changeListingMainImage('${
+                              image.imageUrl
+                            }', this)"
+                            class="listing-thumbnail rounded border ${
+                              index === 0 ? "active" : ""
+                            }"
+                            style="min-width: 60px"
+                            alt="Image ${index + 1}"
+                            onerror="this.style.display='none';"
+                          />
+                        `
+                          )
+                          .join("")}
+                      </div>
+                    </div>
+                    `
+                        : `
+                    <!-- No Images Message -->
+                    <div class="p-4 text-center text-muted">
+                      <i class="bi bi-image" style="font-size: 3rem;"></i>
+                      <p class="mb-0">No images available for this listing</p>
+                    </div>
+                    `
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vehicle Details -->
+            <div class="col-lg-4 mb-4">
+              <div class="card listing-detail-card h-100">
+                <div class="card-header bg-primary text-white">
+                  <h6 class="card-title mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Vehicle Information
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <!-- Basic Details -->
+                  <div class="listing-detail-section">
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <div class="listing-detail-label">
+                          <i class="bi bi-car-front me-1 text-primary"></i>Make
+                        </div>
+                        <div class="listing-detail-value">${listing.make}</div>
+                      </div>
+                      <div class="col-6">
+                        <div class="listing-detail-label">
+                          <i class="bi bi-tag me-1 text-primary"></i>Model
+                        </div>
+                        <div class="listing-detail-value">${listing.model}</div>
+                      </div>
+                      <div class="col-6">
+                        <div class="listing-detail-label">
+                          <i class="bi bi-calendar me-1 text-primary"></i>Year
+                        </div>
+                        <div class="listing-detail-value">${listing.year}</div>
+                      </div>
+                      <div class="col-6">
+                        <div class="listing-detail-label">
+                          <i class="bi bi-speedometer2 me-1 text-primary"></i>Mileage
+                        </div>
+                        <div class="listing-detail-value">${listing.mileage.toLocaleString()} miles</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Condition & Specifications -->
+                  <div class="listing-detail-section">
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <div class="listing-detail-label">
+                          <i class="bi bi-star me-1 text-primary"></i>Condition
+                        </div>
+                        <div class="listing-detail-value">
+                          <span class="badge ${getConditionBadgeClass(
+                            listing.condition
+                          )}">${listing.condition}</span>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="listing-detail-label">
+                          <i class="bi bi-fuel-pump me-1 text-primary"></i>Fuel Type
+                        </div>
+                        <div class="listing-detail-value">${
+                          listing.fuelType
+                        }</div>
+                      </div>
+                      <div class="col-12">
+                        <div class="listing-detail-label">
+                          <i class="bi bi-gear me-1 text-primary"></i>Transmission
+                        </div>
+                        <div class="listing-detail-value">${
+                          listing.transmission
+                        }</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Seller Information -->
+                  <div class="listing-detail-section">
+                    <div class="listing-detail-label">
+                      <i class="bi bi-person me-1 text-primary"></i>Seller Information
+                    </div>
+                    <div class="listing-detail-value">
+                      <strong>ID:</strong> ${listing.sellerId}<br>
+                      <strong>Username:</strong> ${listing.sellerUsername}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description Section -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card listing-detail-card">
+                <div class="card-header bg-secondary text-white">
+                  <h6 class="card-title mb-0">
+                    <i class="bi bi-text-left me-2"></i>Description
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="listing-description-text">
+                    ${listing.description || "No description provided"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inspector Notes Section -->
+          ${
+            listing.inspectorNotes
+              ? `
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                  <h6 class="card-title mb-0">
+                    <i class="bi bi-clipboard-check me-2"></i>Inspector Notes
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="listing-description-text">${listing.inspectorNotes}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          `
+              : ""
+          }
+
+          <!-- Rejection Reason Section -->
+          ${
+            listing.rejectionReason
+              ? `
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                  <h6 class="card-title mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Rejection Reason
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="listing-description-text">${listing.rejectionReason}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          `
+              : ""
+          }
+        `;
+      }
+
+      // Change main image when thumbnail is clicked
+      function changeListingMainImage(imageUrl, thumbnailElement) {
+        document.getElementById("listingMainImage").src = imageUrl;
+
+        // Update active thumbnail
+        document.querySelectorAll(".listing-thumbnail").forEach((thumb) => {
+          thumb.classList.remove("active");
+        });
+        thumbnailElement.classList.add("active");
+      }
+
+      // Open image modal for listing details
+      function openListingImageModal() {
+        const mainImage = document.getElementById("listingMainImage");
+        const modalImage = document.getElementById("modalListingImage");
+        modalImage.src = mainImage.src;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("listingImageModal")
+        );
+        modal.show();
+      }
+
+      // Load live auction monitoring
+      async function loadLiveAuctions() {
+        try {
+          const response = await fetch("/api/sales-manager/live-auctions");
+          const auctions = await response.json();
+
+          const container = document.getElementById("liveAuctions");
+          container.innerHTML = "";
+
+          if (auctions.length === 0) {
+            container.innerHTML =
+              '<div class="text-muted text-center">No active auctions</div>';
+            return;
+          }
+
+          auctions.forEach((auction) => {
+            const div = document.createElement("div");
+            div.className = "border-bottom pb-2 mb-2";
+            div.innerHTML = `
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>#${auction.auctionId}</strong><br>
+                  <small class="text-muted">${auction.listing.make} ${
+              auction.listing.model
+            }</small>
+                </div>
+                <div class="text-end">
+                  <div class="badge badge-modern badge-success-modern" id="timer-${
+                    auction.auctionId
+                  }">${getTimeRemaining(auction.endTime, "ACTIVE")}</div><br>
+                  <small class="text-success">$${
+                    auction.highestBid
+                      ? auction.highestBid.toLocaleString()
+                      : "0"
+                  }</small>
+                </div>
+              </div>
+            `;
+            container.appendChild(div);
+          });
+        } catch (error) {
+          console.error("Error loading live auctions:", error);
+        }
+      }
+
+      // Update active auction timers
+      function updateActiveAuctionTimers() {
+        const timers = document.querySelectorAll('[id^="timer-"]');
+        timers.forEach((timer) => {
+          const auctionId = timer.id.replace("timer-", "");
+          // This would be updated with real-time data
+          // For now, we'll just refresh the display
+        });
+      }
+
+      // Show create auction modal
+      function showCreateAuctionModal() {
+        // Set default start date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById("startDate").value = tomorrow
+          .toISOString()
+          .split("T")[0];
+
+        // Set default start time to 9 AM
+        document.getElementById("startTime").value = "09:00";
+
+        new bootstrap.Modal(
+          document.getElementById("createAuctionModal")
+        ).show();
+      }
+
+      // Confirm create auction
+      function confirmCreateAuction() {
+        const listingId = document.getElementById("vehicleListing").value;
+        const duration = parseInt(
+          document.getElementById("auctionDuration").value
+        );
+        const startDate = document.getElementById("startDate").value;
+        const startTime = document.getElementById("startTime").value;
+        const extensionDuration = parseInt(
+          document.getElementById("extensionDuration").value
+        );
+        const notes = document.getElementById("auctionNotes").value;
+
+        if (!listingId) {
+          showAlert("Please select a vehicle listing", "warning");
+          return;
+        }
+
+        // Create datetime in local timezone without UTC conversion issues
+        const startDateTime = new Date(`${startDate}T${startTime}:00`);
+        const endDateTime = new Date(
+          startDateTime.getTime() + duration * 60 * 60 * 1000
+        );
+
+        // Format datetime to preserve local timezone
+        const formatLocalDateTime = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          const hours = String(date.getHours()).padStart(2, "0");
+          const minutes = String(date.getMinutes()).padStart(2, "0");
+          const seconds = String(date.getSeconds()).padStart(2, "0");
+          return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        };
+
+        fetch("/api/sales-manager/auctions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            listingId: parseInt(listingId),
+            startTime: formatLocalDateTime(startDateTime),
+            endTime: formatLocalDateTime(endDateTime),
+            extensionDuration: extensionDuration,
+            notes: notes,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("This is THEN block");
+            if (data.success) {
+              showAlert("Auction scheduled successfully!", "success");
+              bootstrap.Modal.getInstance(
+                document.getElementById("createAuctionModal")
+              ).hide();
+              loadAuctions(currentPage);
+              loadSalesMetrics();
+            } else {
+              showAlert(
+                "Failed to schedule auction: " + data.message,
+                "danger"
+              );
+            }
+          })
+          .catch((error) => {
+            console.log("This is CATCH block");
+            console.error("Error:", error);
+            showAlert("Error scheduling auction", "danger");
+          });
+      }
+
+      // Show post-auction details
+      function showPostAuctionDetails(auctionId) {
+        fetch(`/api/sales-manager/auctions/${auctionId}/post-auction`)
+          .then((response) => response.json())
+          .then((data) => {
+            const content = document.getElementById("postAuctionContent");
+            content.innerHTML = `
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Vehicle Details</h6>
+                <p><strong>${data.listing.make} ${
+              data.listing.model
+            }</strong><br>
+                ${
+                  data.listing.year
+                } • ${data.listing.mileage.toLocaleString()} miles</p>
+              </div>
+              <div class="col-md-6">
+                <h6>Auction Results</h6>
+                <p><strong>Final Bid:</strong> $${
+                  data.highestBid ? data.highestBid.toLocaleString() : "0"
+                }<br>
+                <strong>Total Bids:</strong> ${data.totalBids}<br>
+                <strong>Participants:</strong> ${data.participantCount}</p>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6>Winner Information</h6>
+                ${
+                  data.winner
+                    ? `
+                  <p><strong>Winner:</strong> ${data.winner.username}<br>
+                  <strong>Email:</strong> ${data.winner.email}<br>
+                  <strong>Bid Amount:</strong> $${data.highestBid.toLocaleString()}</p>
+                `
+                    : '<p class="text-muted">No winner - auction ended without bids</p>'
+                }
+              </div>
+            </div>
+          `;
+
+            // Store auction ID for flagging
+            document
+              .getElementById("postAuctionModal")
+              .setAttribute("data-auction-id", auctionId);
+
+            new bootstrap.Modal(
+              document.getElementById("postAuctionModal")
+            ).show();
+          })
+          .catch((error) => {
+            console.error("Error loading post-auction details:", error);
+            showAlert("Error loading auction details", "danger");
+          });
+      }
+
+      // Flag auction for reporting
+      function flagForReporting() {
+        const auctionId = document
+          .getElementById("postAuctionModal")
+          .getAttribute("data-auction-id");
+
+        fetch(`/api/sales-manager/auctions/${auctionId}/flag-reporting`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              showAlert(
+                "Auction flagged for reporting successfully!",
+                "success"
+              );
+              bootstrap.Modal.getInstance(
+                document.getElementById("postAuctionModal")
+              ).hide();
+            } else {
+              showAlert("Failed to flag auction: " + data.message, "danger");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showAlert("Error flagging auction", "danger");
+          });
+      }
+    </script>
+
+    <!-- Manual Start Auction Confirmation Modal -->
+    <div
+      class="modal fade modal-modern"
+      id="manualStartConfirmationModal"
+      tabindex="-1"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-exclamation-triangle"></i> Manual Start
+              Confirmation
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-warning">
+              <i class="bi bi-clock"></i>
+              <strong>Starting auction before scheduled time</strong>
+            </div>
+            <p>
+              You are about to manually start this auction before its scheduled
+              time:
+            </p>
+            <div class="card">
+              <div class="card-body">
+                <h6 id="manualStartVehicleInfo" class="card-title">
+                  Vehicle Information
+                </h6>
+                <p class="card-text">
+                  <strong>Scheduled Start:</strong>
+                  <span id="manualStartScheduledTime"></span><br />
+                  <strong>Current Time:</strong>
+                  <span id="manualStartCurrentTime"></span>
+                </p>
+              </div>
+            </div>
+            <p class="text-muted">
+              <i class="bi bi-info-circle"></i>
+              This action will immediately make the auction live and available
+              for bidding.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x"></i> Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              onclick="confirmManualStart()"
+            >
+              <i class="bi bi-play"></i> Start Auction
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Close Auction Confirmation Modal -->
+    <div
+      class="modal fade modal-modern"
+      id="manualCloseConfirmationModal"
+      tabindex="-1"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-exclamation-triangle"></i> Manual Close
+              Confirmation
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger">
+              <i class="bi bi-stop"></i>
+              <strong>Closing auction before scheduled end time</strong>
+            </div>
+            <p>
+              You are about to manually close this auction before its scheduled
+              end time:
+            </p>
+            <div class="card">
+              <div class="card-body">
+                <h6 id="manualCloseVehicleInfo" class="card-title">
+                  Vehicle Information
+                </h6>
+                <p class="card-text">
+                  <strong>Scheduled End:</strong>
+                  <span id="manualCloseScheduledTime"></span><br />
+                  <strong>Current Time:</strong>
+                  <span id="manualCloseCurrentTime"></span><br />
+                  <strong>Current Highest Bid:</strong>
+                  <span id="manualCloseCurrentBid"></span>
+                </p>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="manualCloseReason" class="form-label"
+                >Reason for manual closure:</label
+              >
+              <textarea
+                class="form-control"
+                id="manualCloseReason"
+                rows="3"
+                placeholder="Enter reason for closing auction early (e.g., technical issues, dispute resolution, etc.)"
+              ></textarea>
+            </div>
+            <p class="text-muted">
+              <i class="bi bi-info-circle"></i>
+              This action will immediately end the auction and declare the
+              current highest bidder as the winner.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x"></i> Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="confirmManualClose()"
+            >
+              <i class="bi bi-stop"></i> Close Auction
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Listing Details Modal -->
+    <div class="modal fade modal-modern" id="viewListingModal" tabindex="-1">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-car-front"></i> Vehicle Listing Details
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="listingDetailsContent">
+              <!-- Dynamic content will be loaded here -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x"></i> Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Modal for Listing Details -->
+    <div
+      class="modal fade modal-modern"
+      id="listingImageModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-images me-2"></i>Vehicle Images
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body text-center">
+            <img
+              id="modalListingImage"
+              src=""
+              class="img-fluid rounded"
+              alt="Vehicle Image"
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x me-1"></i>Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

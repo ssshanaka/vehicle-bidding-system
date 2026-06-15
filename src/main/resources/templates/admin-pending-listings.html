@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pending Listings - Admin Panel</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/css/custom.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <i class="fas fa-car"></i> Vehicle Bidding System
+        </a>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+          <a class="nav-link" href="/admin/listings">Listings</a>
+          <a class="nav-link" href="/logout">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-12">
+          <h1 class="mb-4"><i class="fas fa-clock"></i> Pending Listings</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Make</th>
+                      <th>Model</th>
+                      <th>Year</th>
+                      <th>Mileage</th>
+                      <th>Condition</th>
+                      <th>Seller</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="listing : ${listings.content}">
+                      <td th:text="${listing.listingId}">1</td>
+                      <td th:text="${listing.make}">Toyota</td>
+                      <td th:text="${listing.model}">Camry</td>
+                      <td th:text="${listing.year}">2020</td>
+                      <td th:text="${listing.mileage}">50000</td>
+                      <td>
+                        <span
+                          class="badge bg-info"
+                          th:text="${listing.condition}"
+                          >Good</span
+                        >
+                      </td>
+                      <td th:text="${listing.seller.username}">seller1</td>
+                      <td>
+                        <button
+                          class="btn btn-sm btn-info me-2"
+                          th:onclick="'viewListingDetails(' + ${listing.listingId} + ')'"
+                        >
+                          <i class="fas fa-eye"></i> View Details
+                        </button>
+                        <button
+                          class="btn btn-sm btn-success me-2"
+                          th:onclick="'approveListing(' + ${listing.listingId} + ')'"
+                        >
+                          <i class="fas fa-check"></i> Approve
+                        </button>
+                        <button
+                          class="btn btn-sm btn-danger"
+                          th:onclick="'rejectListing(' + ${listing.listingId} + ')'"
+                        >
+                          <i class="fas fa-times"></i> Reject
+                        </button>
+                      </td>
+                    </tr>
+                    <tr th:if="${listings.content.isEmpty()}">
+                      <td colspan="8" class="text-center text-muted">
+                        No pending listings
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              <nav th:if="${listings.totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                  <li
+                    class="page-item"
+                    th:classappend="${currentPage == 0} ? 'disabled'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/listings/pending(page=${currentPage - 1})}"
+                      >Previous</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/listings/pending(page=${i})}"
+                      th:text="${i + 1}"
+                      >1</a
+                    >
+                  </li>
+                  <li
+                    class="page-item"
+                    th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/admin/listings/pending(page=${currentPage + 1})}"
+                      >Next</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approve Modal -->
+    <div class="modal fade" id="approveModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Approve Listing</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="approveForm">
+              <div class="mb-3">
+                <label for="approveReason" class="form-label"
+                  >Approval Notes</label
+                >
+                <textarea
+                  class="form-control"
+                  id="approveReason"
+                  rows="3"
+                  placeholder="Enter any notes about the approval..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              onclick="confirmApprove()"
+            >
+              Approve
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal fade" id="rejectModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Reject Listing</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="rejectForm">
+              <div class="mb-3">
+                <label for="rejectionReason" class="form-label"
+                  >Rejection Reason *</label
+                >
+                <textarea
+                  class="form-control"
+                  id="rejectionReason"
+                  rows="3"
+                  placeholder="Enter the reason for rejection..."
+                  required
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="inspectorNotes" class="form-label"
+                  >Inspector Notes</label
+                >
+                <textarea
+                  class="form-control"
+                  id="inspectorNotes"
+                  rows="3"
+                  placeholder="Enter any additional notes..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="confirmReject()"
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentListingId = null;
+
+      function approveListing(listingId) {
+        currentListingId = listingId;
+        document.getElementById("approveForm").reset();
+        new bootstrap.Modal(document.getElementById("approveModal")).show();
+      }
+
+      function rejectListing(listingId) {
+        currentListingId = listingId;
+        document.getElementById("rejectForm").reset();
+        new bootstrap.Modal(document.getElementById("rejectModal")).show();
+      }
+
+      function confirmApprove() {
+        const reason = document.getElementById("approveReason").value;
+
+        fetch(`/admin/listings/${currentListingId}/approve`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `reason=${encodeURIComponent(reason)}`,
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error("Network response was not ok");
+            }
+          })
+          .then((data) => {
+            location.reload();
+          })
+          .catch((error) => {
+            alert("Error: " + error);
+          });
+      }
+
+      function confirmReject() {
+        const rejectionReason =
+          document.getElementById("rejectionReason").value;
+        const inspectorNotes = document.getElementById("inspectorNotes").value;
+
+        if (!rejectionReason.trim()) {
+          alert("Rejection reason is required");
+          return;
+        }
+
+        fetch(`/admin/listings/${currentListingId}/reject`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `rejectionReason=${encodeURIComponent(
+            rejectionReason
+          )}&inspectorNotes=${encodeURIComponent(inspectorNotes)}`,
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error("Network response was not ok");
+            }
+          })
+          .then((data) => {
+            location.reload();
+          })
+          .catch((error) => {
+            alert("Error: " + error);
+          });
+      }
+
+      function viewListingDetails(listingId) {
+        window.open(`/listings/${listingId}`, "_blank");
+      }
+    </script>
+  </body>
+</html>

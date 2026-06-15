@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit and Approve Auction - Vehicle Bidding System</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">Edit and Approve Auction</h1>
+
+      <form
+        th:action="@{/admin/auctions/edit/{id}(id=${auction.auctionId})}"
+        th:object="${auction}"
+        method="post"
+        class="needs-validation"
+        novalidate
+      >
+        <div class="mb-3">
+          <label for="listingId" class="form-label">Vehicle Listing</label>
+          <select
+            id="listingId"
+            th:field="*{listing.listingId}"
+            class="form-select"
+            required
+            disabled
+          >
+            <option
+              th:value="${auction.listing.listingId}"
+              th:text="${auction.listing.make + ' ' + auction.listing.model}"
+              selected
+            ></option>
+          </select>
+          <div class="invalid-feedback">Vehicle listing is required.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="startTime" class="form-label"
+            >Start Time (Mandatory)</label
+          >
+          <input
+            type="datetime-local"
+            id="startTime"
+            th:field="*{startTime}"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">
+            Start time is required and must be in the future.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="endTime" class="form-label">End Time (Mandatory)</label>
+          <input
+            type="datetime-local"
+            id="endTime"
+            th:field="*{endTime}"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">
+            End time is required and must be after start time.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="extensionDuration" class="form-label"
+            >Extension Duration in Seconds (Optional, default 30)</label
+          >
+          <input
+            type="number"
+            id="extensionDuration"
+            th:field="*{extensionDuration}"
+            class="form-control"
+            min="0"
+            placeholder="30"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Approve and Save</button>
+        <a th:href="@{/admin/auctions}" class="btn btn-secondary"
+          >Back to Auctions</a
+        >
+      </form>
+    </div>
+
+    <script>
+      // Bootstrap form validation
+      (function () {
+        "use strict";
+        var forms = document.querySelectorAll(".needs-validation");
+        Array.prototype.slice.call(forms).forEach(function (form) {
+          form.addEventListener(
+            "submit",
+            function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add("was-validated");
+            },
+            false
+          );
+        });
+      })();
+    </script>
+  </body>
+</html>

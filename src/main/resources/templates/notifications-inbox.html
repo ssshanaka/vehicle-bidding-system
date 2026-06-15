@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications - Vehicle Bidding System</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+    <!-- Notifications CSS -->
+    <link th:href="@{/css/notifications.css}" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">
+      <!-- Breadcrumb Navigation -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light rounded p-3 border-0 shadow-sm">
+          <li class="breadcrumb-item">
+            <a href="/dashboard" class="text-decoration-none fw-semibold">
+              <i class="bi bi-house me-1 text-primary"></i>Dashboard
+            </a>
+          </li>
+          <li class="breadcrumb-item active fw-semibold" aria-current="page">
+            <i class="bi bi-bell me-1 text-primary"></i>Notifications
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-gradient-primary text-white border-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h1 class="h3 mb-1 fw-bold">
+                    <i class="bi bi-bell-fill me-2"></i>Notifications Inbox
+                  </h1>
+                  <p class="mb-0 opacity-75">
+                    Stay updated with your auction activities and system
+                    notifications
+                  </p>
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                  <button
+                    class="btn btn-light btn-sm"
+                    onclick="markAllAsRead()"
+                  >
+                    <i class="bi bi-check2-all me-1"></i>Mark All Read
+                  </button>
+                  <span
+                    class="badge bg-danger fs-6 px-3 py-2"
+                    th:text="${unreadCount}"
+                    >0</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enhanced Filter Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light border-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-semibold text-primary">
+                  <i class="bi bi-funnel me-2"></i>Filter & Search Notifications
+                </h6>
+                <div class="d-flex gap-2">
+                  <button
+                    class="btn btn-outline-secondary btn-sm"
+                    onclick="refreshNotifications()"
+                  >
+                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-8">
+                  <label class="form-label fw-semibold text-muted">
+                    <i class="bi bi-tags me-1"></i>Filter by Type
+                  </label>
+                  <div class="btn-group w-100" role="group">
+                    <a
+                      class="btn btn-outline-primary"
+                      th:class="${filterType == null ? 'active' : ''}"
+                      href="/notifications"
+                    >
+                      <i class="bi bi-list-ul me-1"></i>All
+                    </a>
+                    <a
+                      class="btn btn-outline-success"
+                      th:class="${filterType == 'WINNER' ? 'active' : ''}"
+                      href="/notifications/type/WINNER"
+                    >
+                      <i class="bi bi-trophy me-1"></i>Winners
+                    </a>
+                    <a
+                      class="btn btn-outline-danger"
+                      th:class="${filterType == 'OUTBID' ? 'active' : ''}"
+                      href="/notifications/type/OUTBID"
+                    >
+                      <i class="bi bi-arrow-down me-1"></i>Outbid
+                    </a>
+                    <a
+                      class="btn btn-outline-warning"
+                      th:class="${filterType == 'CLOSURE' ? 'active' : ''}"
+                      href="/notifications/type/CLOSURE"
+                    >
+                      <i class="bi bi-clock me-1"></i>Closures
+                    </a>
+                    <a
+                      class="btn btn-outline-info"
+                      th:class="${filterType == 'BID_PLACED' ? 'active' : ''}"
+                      href="/notifications/type/BID_PLACED"
+                    >
+                      <i class="bi bi-hammer me-1"></i>Bids
+                    </a>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold text-muted">
+                    <i class="bi bi-search me-1"></i>Search Notifications
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-primary text-white">
+                      <i class="bi bi-search"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="searchNotifications"
+                      placeholder="Search notifications..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications List -->
+      <div class="row">
+        <div class="col-12">
+          <!-- Empty State -->
+          <div
+            th:if="${#lists.isEmpty(notifications.content)}"
+            class="text-center py-5"
+          >
+            <div class="card border-0 shadow-sm">
+              <div class="card-body py-5">
+                <div class="empty-state">
+                  <i
+                    class="bi bi-bell-slash-fill text-muted mb-3"
+                    style="font-size: 4rem"
+                  ></i>
+                  <h4 class="text-muted mb-2">No notifications found</h4>
+                  <p class="text-muted mb-4">
+                    You don't have any notifications yet.
+                  </p>
+                  <a href="/auctions" class="btn btn-primary">
+                    <i class="bi bi-hammer me-2"></i>Browse Auctions
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notifications Cards -->
+          <div
+            th:each="notification : ${notifications.content}"
+            class="card mb-3 border-0 shadow-sm notification-card"
+            th:class="${notification.read ? 'notification-read' : 'notification-unread'}"
+          >
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <!-- Notification Header -->
+                  <div class="d-flex align-items-center mb-3">
+                    <span
+                      class="badge me-3 fw-semibold px-3 py-2"
+                      th:class="${notification.type.name() == 'WINNER' ? 'bg-success' : 
+                                                   notification.type.name() == 'OUTBID' ? 'bg-danger' : 
+                                                   notification.type.name() == 'CLOSURE' ? 'bg-warning' : 'bg-info'}"
+                      th:text="${notification.type.name()}"
+                      >Type</span
+                    >
+                    <small
+                      class="text-muted me-3"
+                      th:text="${#temporals.format(notification.sentAt, 'MMM dd, yyyy h:mm a')}"
+                      >Jan 01, 2024 12:00 PM</small
+                    >
+                    <span
+                      th:if="${!notification.read}"
+                      class="badge bg-primary fw-semibold px-2 py-1"
+                      ><i class="bi bi-circle-fill me-1"></i>New</span
+                    >
+                  </div>
+
+                  <!-- Notification Content -->
+                  <div class="notification-content mb-3">
+                    <p class="mb-0 fw-medium" th:text="${notification.content}">
+                      Notification content
+                    </p>
+                  </div>
+
+                  <!-- Notification Details -->
+                  <div class="d-flex align-items-center flex-wrap gap-3">
+                    <small class="text-muted d-flex align-items-center">
+                      <i class="bi bi-hammer me-1"></i>Auction #<span
+                        th:text="${notification.auction.auctionId}"
+                        >1</span
+                      >
+                    </small>
+                    <small class="text-muted d-flex align-items-center">
+                      <i class="bi bi-car-front me-1"></i>
+                      <span
+                        th:text="${notification.auction.listing.make + ' ' + notification.auction.listing.model}"
+                        >Vehicle</span
+                      >
+                    </small>
+                    <small
+                      th:if="${notification.emailSent}"
+                      class="text-success d-flex align-items-center"
+                    >
+                      <i class="bi bi-envelope-check me-1"></i>Email sent
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex flex-column gap-2">
+                  <button
+                    th:onclick="'viewNotification(' + ${notification.notificationId} + ')'"
+                    class="btn btn-sm btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#notificationModal"
+                  >
+                    <i class="bi bi-eye me-1"></i>View Details
+                  </button>
+                  <a
+                    th:href="@{/auctions/details/{id}(id=${notification.auction.auctionId})}"
+                    class="btn btn-sm btn-outline-secondary"
+                  >
+                    <i class="bi bi-box-arrow-up-right me-1"></i>Go to Auction
+                  </a>
+                  <div class="d-flex gap-1">
+                    <button
+                      th:if="${!notification.read}"
+                      th:onclick="'markAsRead(' + ${notification.notificationId} + ')'"
+                      class="btn btn-sm btn-outline-success"
+                      title="Mark as Read"
+                    >
+                      <i class="bi bi-check"></i>
+                    </button>
+                    <button
+                      th:onclick="'deleteNotification(' + ${notification.notificationId} + ')'"
+                      class="btn btn-sm btn-outline-danger"
+                      title="Delete Notification"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="row" th:if="${notifications.totalPages > 1}">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <nav aria-label="Notifications pagination">
+                <ul class="pagination justify-content-center mb-0">
+                  <li
+                    class="page-item"
+                    th:class="${notifications.number == 0 ? 'disabled' : ''}"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="${filterType == null ? '/notifications?page=' + (notifications.number - 1) : '/notifications/type/' + filterType + '?page=' + (notifications.number - 1)}"
+                      ><i class="bi bi-chevron-left me-1"></i>Previous</a
+                    >
+                  </li>
+
+                  <li
+                    th:each="pageNum : ${#numbers.sequence(0, notifications.totalPages - 1)}"
+                    class="page-item"
+                    th:class="${pageNum == notifications.number ? 'active' : ''}"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="${filterType == null ? '/notifications?page=' + pageNum : '/notifications/type/' + filterType + '?page=' + pageNum}"
+                      th:text="${pageNum + 1}"
+                      >1</a
+                    >
+                  </li>
+
+                  <li
+                    class="page-item"
+                    th:class="${notifications.number == notifications.totalPages - 1 ? 'disabled' : ''}"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="${filterType == null ? '/notifications?page=' + (notifications.number + 1) : '/notifications/type/' + filterType + '?page=' + (notifications.number + 1)}"
+                      >Next<i class="bi bi-chevron-right ms-1"></i
+                    ></a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-gradient-primary text-white border-0">
+              <h6 class="mb-0 fw-semibold">
+                <i class="bi bi-graph-up me-2"></i>Notification Statistics
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-bell-fill text-primary fs-2 mb-2"></i>
+                    <h5 class="mb-1" th:text="${notifications.totalElements}">
+                      0
+                    </h5>
+                    <small class="text-muted">Total Notifications</small>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-circle-fill text-danger fs-2 mb-2"></i>
+                    <h5 class="mb-1" th:text="${unreadCount}">0</h5>
+                    <small class="text-muted">Unread</small>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center p-3 bg-light rounded">
+                    <i
+                      class="bi bi-check-circle-fill text-success fs-2 mb-2"
+                    ></i>
+                    <h5
+                      class="mb-1"
+                      th:text="${notifications.totalElements - unreadCount}"
+                    >
+                      0
+                    </h5>
+                    <small class="text-muted">Read</small>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="text-center p-3 bg-light rounded">
+                    <i class="bi bi-envelope-check text-info fs-2 mb-2"></i>
+                    <h5 class="mb-1" th:text="${notifications.content.size()}">
+                      0
+                    </h5>
+                    <small class="text-muted">This Page</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Notification Details Modal -->
+    <div
+      class="modal fade"
+      id="notificationModal"
+      tabindex="-1"
+      aria-labelledby="notificationModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-gradient-primary text-white border-0">
+            <h5 class="modal-title fw-semibold" id="notificationModalLabel">
+              <i class="bi bi-bell-fill me-2"></i>Notification Details
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div id="notificationDetails">
+              <!-- Notification details will be loaded here -->
+            </div>
+          </div>
+          <div class="modal-footer border-0 bg-light">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x-circle me-1"></i>Close
+            </button>
+            <a id="goToAuctionBtn" href="#" class="btn btn-primary">
+              <i class="bi bi-box-arrow-up-right me-1"></i>Go to Auction
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container for Notifications -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+      <div
+        id="successToast"
+        class="toast border-0 shadow-lg"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header bg-success text-white border-0">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          <strong class="me-auto">Success</strong>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body" id="successToastBody">
+          Operation completed successfully!
+        </div>
+      </div>
+
+      <div
+        id="errorToast"
+        class="toast border-0 shadow-lg"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header bg-danger text-white border-0">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <strong class="me-auto">Error</strong>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body" id="errorToastBody">An error occurred!</div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Notifications JS -->
+    <script th:src="@{/js/notifications.js}"></script>
+
+    <!-- Custom Styles for Notifications Page -->
+    <style>
+      /* Body Background */
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+      }
+
+      /* Main Content Background */
+      main {
+        background: transparent;
+      }
+
+      /* Modern Card Styling */
+      .card {
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        border: none;
+        overflow: hidden;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      /* Card Header Gradients */
+      .bg-gradient-primary {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ) !important;
+      }
+
+      /* Button Styling */
+      .btn {
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        padding: 0.5rem 1rem;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+      }
+
+      .btn-warning {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .btn-info {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+
+      /* Badge Styling */
+      .badge {
+        border-radius: 25px;
+        font-weight: 600;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+      }
+
+      /* Form Control Styling */
+      .form-control {
+        border-radius: 12px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        padding: 0.75rem 1rem;
+      }
+
+      .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+
+      /* Input Group Styling */
+      .input-group-text {
+        border-radius: 12px 0 0 12px;
+        border: 2px solid #e9ecef;
+        border-right: none;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      /* Breadcrumb Styling */
+      .breadcrumb {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1rem 1.5rem;
+      }
+
+      .breadcrumb-item a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .breadcrumb-item.active {
+        color: #495057;
+        font-weight: 600;
+      }
+
+      /* Empty State Styling */
+      .empty-state {
+        padding: 4rem 2rem;
+      }
+
+      .empty-state i {
+        opacity: 0.6;
+      }
+
+      /* Modal Styling */
+      .modal-content {
+        border-radius: 25px;
+        overflow: hidden;
+      }
+
+      /* Toast Styling */
+      .toast {
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+      }
+
+      /* Page Header Styling */
+      .h3 {
+        font-weight: 700;
+        color: white;
+      }
+
+      /* Filter Section Styling */
+      .btn-group .btn {
+        border-radius: 10px;
+        margin: 0 2px;
+        font-weight: 600;
+      }
+
+      .btn-group .btn:first-child {
+        border-radius: 10px 0 0 10px;
+      }
+
+      .btn-group .btn:last-child {
+        border-radius: 0 10px 10px 0;
+      }
+
+      /* Notification Card Specific Styling */
+      .notification-card {
+        transition: all 0.3s ease;
+      }
+
+      .notification-unread {
+        border-left: 4px solid #667eea;
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .notification-read {
+        background: rgba(248, 249, 250, 0.8);
+        opacity: 0.8;
+      }
+
+      .notification-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+      }
+
+      /* Detail Section Styling */
+      .notification-content {
+        background: rgba(248, 249, 250, 0.5);
+        padding: 1rem;
+        border-radius: 10px;
+        border-left: 3px solid #667eea;
+      }
+
+      /* Statistics Cards */
+      .bg-light {
+        background: rgba(248, 249, 250, 0.8) !important;
+        backdrop-filter: blur(10px);
+      }
+
+      /* Icon Animations */
+      .bi {
+        transition: all 0.3s ease;
+      }
+
+      .card:hover .bi {
+        transform: scale(1.1);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .btn-group .btn {
+          border-radius: 10px !important;
+          margin: 2px 0;
+        }
+
+        .d-flex.gap-2 {
+          flex-direction: column;
+          gap: 0.5rem !important;
+        }
+
+        .notification-card .d-flex {
+          flex-direction: column;
+        }
+
+        .notification-card .d-flex > div:last-child {
+          margin-top: 1rem;
+          align-self: stretch;
+        }
+
+        .notification-card .d-flex > div:last-child .d-flex {
+          flex-direction: row;
+          justify-content: space-between;
+        }
+      }
+
+      /* Loading Animation */
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .loading {
+        animation: pulse 2s infinite;
+      }
+    </style>
+  </body>
+</html>
