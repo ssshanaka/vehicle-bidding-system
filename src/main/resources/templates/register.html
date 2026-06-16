@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Lanka Auto Traders</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="/css/custom.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+          <!-- Register Card -->
+          <div class="card border-0 shadow-lg">
+            <div class="card-header bg-primary text-white text-center border-0">
+              <h4 class="mb-0 fw-bold">
+                <i class="bi bi-person-plus me-2"></i>Create Account
+              </h4>
+              <p class="mb-0 opacity-75">Join Lanka Auto Traders today</p>
+            </div>
+            <div class="card-body p-4">
+              <!-- Alert -->
+              <div
+                id="alert"
+                class="alert alert-danger d-none border-0 shadow-sm"
+              >
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span id="alertText"></span>
+              </div>
+              <!-- Register Form -->
+              <form
+                id="regForm"
+                class="needs-validation"
+                novalidate
+                autocomplete="off"
+              >
+                <!-- Hidden dummy fields to trick Chrome autofill -->
+                <div
+                  style="
+                    position: absolute;
+                    left: -9999px;
+                    opacity: 0;
+                    pointer-events: none;
+                    height: 0;
+                    overflow: hidden;
+                  "
+                >
+                  <input
+                    type="text"
+                    name="username"
+                    autocomplete="username"
+                    tabindex="-1"
+                  />
+                  <input
+                    type="password"
+                    name="password"
+                    autocomplete="current-password"
+                    tabindex="-1"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="userLoginName" class="form-label fw-semibold">
+                    <i class="bi bi-person me-1"></i>Username
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-2">
+                      <i class="bi bi-person text-primary"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control border-2 border-start-0"
+                      id="userLoginName"
+                      name="userLoginName"
+                      placeholder="Enter your username"
+                      autocomplete="off"
+                      required
+                    />
+                  </div>
+                  <div class="invalid-feedback">
+                    Please provide a valid username.
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-label fw-semibold">
+                    <i class="bi bi-envelope me-1"></i>Email
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-2">
+                      <i class="bi bi-envelope text-primary"></i>
+                    </span>
+                    <input
+                      type="email"
+                      class="form-control border-2 border-start-0"
+                      id="email"
+                      name="email"
+                      placeholder="Enter your email"
+                      autocomplete="off"
+                      required
+                    />
+                  </div>
+                  <div class="invalid-feedback">
+                    Please provide a valid email.
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="phone" class="form-label fw-semibold">
+                    <i class="bi bi-telephone me-1"></i>Phone (10 digits)
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-2">
+                      <i class="bi bi-telephone text-primary"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control border-2 border-start-0"
+                      id="phone"
+                      name="phone"
+                      pattern="[0-9]{10}"
+                      placeholder="Enter 10-digit phone number"
+                      autocomplete="off"
+                      required
+                    />
+                  </div>
+                  <div class="invalid-feedback">
+                    Please provide a valid 10-digit phone number.
+                  </div>
+                </div>
+
+                <!-- Hidden dummy fields to trick Chrome autofill -->
+                <div
+                  style="
+                    position: absolute;
+                    left: -9999px;
+                    opacity: 0;
+                    pointer-events: none;
+                  "
+                >
+                  <input
+                    type="text"
+                    name="username"
+                    autocomplete="username"
+                    tabindex="-1"
+                  />
+                  <input
+                    type="password"
+                    name="password"
+                    autocomplete="current-password"
+                    tabindex="-1"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="userPassword" class="form-label fw-semibold">
+                    <i class="bi bi-lock me-1"></i>Password
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-2">
+                      <i class="bi bi-lock text-primary"></i>
+                    </span>
+                    <input
+                      type="password"
+                      class="form-control border-2 border-start-0"
+                      id="userPassword"
+                      name="userPassword"
+                      placeholder="Enter your password"
+                      pattern=".{6,}"
+                      title="Password must be at least 6 characters long"
+                      autocomplete="off"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary border-2 border-start-0"
+                      id="togglePassword"
+                      onclick="togglePasswordVisibility('userPassword', 'togglePassword')"
+                      aria-label="Show password"
+                    >
+                      <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                    </button>
+                  </div>
+                  <div class="invalid-feedback">
+                    Please provide a valid password.
+                  </div>
+                  <div class="form-text">
+                    <small class="text-muted">
+                      <i class="bi bi-info-circle me-1"></i>
+                      Password must be at least 6 characters long
+                    </small>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label
+                    for="userConfirmPassword"
+                    class="form-label fw-semibold"
+                  >
+                    <i class="bi bi-lock-fill me-1"></i>Confirm Password
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-2">
+                      <i class="bi bi-lock-fill text-primary"></i>
+                    </span>
+                    <input
+                      type="password"
+                      class="form-control border-2 border-start-0"
+                      id="userConfirmPassword"
+                      name="userConfirmPassword"
+                      placeholder="Confirm your password"
+                      autocomplete="off"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary border-2 border-start-0"
+                      id="toggleConfirmPassword"
+                      onclick="togglePasswordVisibility('userConfirmPassword', 'toggleConfirmPassword')"
+                      aria-label="Show password"
+                    >
+                      <i class="bi bi-eye" id="toggleConfirmPasswordIcon"></i>
+                    </button>
+                  </div>
+                  <div class="invalid-feedback">
+                    Please confirm your password.
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-primary w-100 fw-semibold py-2"
+                >
+                  <i class="bi bi-person-plus me-2"></i>Create Account
+                </button>
+              </form>
+
+              <!-- Additional Links -->
+              <div class="text-center mt-4">
+                <p class="mb-0">
+                  <span class="text-muted">Already have an account?</span>
+                  <a
+                    href="/login"
+                    class="text-primary fw-semibold text-decoration-none"
+                  >
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Login here
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Features Card -->
+          <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body text-center">
+              <h6 class="fw-semibold text-primary mb-3">
+                <i class="bi bi-star me-1"></i>Why Choose Lanka Auto Traders?
+              </h6>
+              <div class="row g-3">
+                <div class="col-4">
+                  <div class="text-center">
+                    <i class="bi bi-shield-check text-success fs-4"></i>
+                    <small class="d-block text-muted mt-1">Secure</small>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="text-center">
+                    <i class="bi bi-lightning text-warning fs-4"></i>
+                    <small class="d-block text-muted mt-1">Fast</small>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="text-center">
+                    <i class="bi bi-people text-info fs-4"></i>
+                    <small class="d-block text-muted mt-1">Reliable</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Include Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script>
+      // Clear any autofilled values on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        // Clear all form fields to prevent autofill
+        const usernameField = document.getElementById("userLoginName");
+        const passwordField = document.getElementById("userPassword");
+        const confirmField = document.getElementById("userConfirmPassword");
+
+        // Clear fields immediately
+        if (usernameField) usernameField.value = "";
+        if (passwordField) passwordField.value = "";
+        if (confirmField) confirmField.value = "";
+
+        // Additional protection: clear fields after delays to catch delayed autofill
+        setTimeout(function () {
+          if (usernameField) usernameField.value = "";
+          if (passwordField) passwordField.value = "";
+          if (confirmField) confirmField.value = "";
+        }, 100);
+
+        setTimeout(function () {
+          if (usernameField) usernameField.value = "";
+          if (passwordField) passwordField.value = "";
+          if (confirmField) confirmField.value = "";
+        }, 500);
+
+        // Final protection: clear on focus to ensure clean state
+        if (usernameField) {
+          usernameField.addEventListener("focus", function () {
+            if (
+              this.value &&
+              this.value !== this.getAttribute("data-user-input")
+            ) {
+              this.value = "";
+            }
+          });
+        }
+
+        if (passwordField) {
+          passwordField.addEventListener("focus", function () {
+            if (
+              this.value &&
+              this.value !== this.getAttribute("data-user-input")
+            ) {
+              this.value = "";
+            }
+          });
+        }
+
+        if (confirmField) {
+          confirmField.addEventListener("focus", function () {
+            if (
+              this.value &&
+              this.value !== this.getAttribute("data-user-input")
+            ) {
+              this.value = "";
+            }
+          });
+        }
+      });
+
+      // Password visibility toggle function
+      function togglePasswordVisibility(inputId, buttonId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleButton = document.getElementById(buttonId);
+        const icon = toggleButton.querySelector("i");
+
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          icon.classList.remove("bi-eye");
+          icon.classList.add("bi-eye-slash");
+          toggleButton.setAttribute("aria-label", "Hide password");
+        } else {
+          passwordInput.type = "password";
+          icon.classList.remove("bi-eye-slash");
+          icon.classList.add("bi-eye");
+          toggleButton.setAttribute("aria-label", "Show password");
+        }
+      }
+
+      const form = document.getElementById("regForm");
+      const alertBox = document.getElementById("alert");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        alertBox.classList.add("d-none");
+        const username = document.getElementById("userLoginName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const password = document.getElementById("userPassword").value.trim();
+        const confirmPassword = document
+          .getElementById("userConfirmPassword")
+          .value.trim();
+
+        // Check if password is empty FIRST
+        if (!password) {
+          document.getElementById("alertText").textContent =
+            "Password is required";
+          alertBox.classList.remove("d-none");
+          return;
+        }
+
+        // Then check if passwords match
+        if (password !== confirmPassword) {
+          document.getElementById("alertText").textContent =
+            "Passwords do not match";
+          alertBox.classList.remove("d-none");
+          return;
+        }
+        if (password.length < 6) {
+          document.getElementById("alertText").textContent =
+            "Password must be at least 6 characters long";
+          alertBox.classList.remove("d-none");
+          return;
+        }
+        if (!/^\d{10}$/.test(phone)) {
+          document.getElementById("alertText").textContent =
+            "Phone must be exactly 10 digits";
+          alertBox.classList.remove("d-none");
+          return;
+        }
+        try {
+          const res = await fetch("/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, phone, password }),
+          });
+          if (!res.ok) {
+            throw new Error(await res.text());
+          }
+          const data = await res.json();
+          window.location.href = "/login";
+        } catch (err) {
+          console.error("Registration error:", err);
+          document.getElementById("alertText").textContent =
+            err.message || "Registration failed";
+          alertBox.classList.remove("d-none");
+        }
+      });
+
+      // Form validation
+      (function () {
+        "use strict";
+        window.addEventListener(
+          "load",
+          function () {
+            var forms = document.getElementsByClassName("needs-validation");
+            var validation = Array.prototype.filter.call(
+              forms,
+              function (form) {
+                form.addEventListener(
+                  "submit",
+                  function (event) {
+                    if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                  },
+                  false
+                );
+              }
+            );
+          },
+          false
+        );
+      })();
+    </script>
+
+    <!-- Custom Styles for Register Page -->
+    <style>
+      /* Modern Card Styling */
+      .card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: none;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+      }
+
+      .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        font-weight: 600;
+      }
+
+      /* Button Styling */
+      .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        letter-spacing: 0.5px;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+
+      /* Form Control Styling */
+      .form-control {
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+      }
+
+      .input-group-text {
+        border-radius: 8px 0 0 8px;
+        border: 2px solid #e9ecef;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+      }
+
+      .form-control.border-start-0 {
+        border-left: none !important;
+      }
+
+      /* Alert Styling */
+      .alert {
+        border-radius: 8px;
+        border: none;
+        font-weight: 500;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        color: white;
+      }
+
+      /* Link Styling */
+      .text-decoration-none:hover {
+        text-decoration: underline !important;
+      }
+
+      /* Icon Animations */
+      .bi {
+        transition: all 0.3s ease;
+      }
+
+      .card:hover .bi {
+        transform: scale(1.1);
+      }
+
+      /* Body Background */
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      /* Main Content Background */
+      main {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        margin: 1rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Card Header Gradient */
+      .card-header {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ) !important;
+      }
+
+      /* Password Toggle Button Styling */
+      .btn-outline-secondary {
+        border-color: #e9ecef !important;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+      }
+
+      .btn-outline-secondary:hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6 !important;
+      }
+
+      .btn-outline-secondary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+      }
+
+      .btn-outline-secondary i {
+        font-size: 1rem;
+        color: #6c757d;
+        transition: color 0.3s ease;
+      }
+
+      .btn-outline-secondary:hover i {
+        color: #495057;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        main {
+          margin: 0.5rem;
+          padding: 1rem !important;
+        }
+
+        .card-body {
+          padding: 2rem 1.5rem;
+        }
+      }
+    </style>
+  </body>
+</html>

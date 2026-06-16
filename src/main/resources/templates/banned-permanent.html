@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Permanently Banned - Vehicle Bidding System</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="/css/custom.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header bg-danger text-white">
+              <h2 class="mb-0">
+                <i class="fas fa-ban"></i>
+                Your Account Has Been Permanently Banned
+              </h2>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">
+                  <i class="fas fa-exclamation-triangle"></i> Permanent
+                  Restriction
+                </h4>
+                <p class="mb-3">
+                  Your account has been permanently banned due to severe policy
+                  violations.
+                </p>
+                <hr />
+                <p class="mb-0">
+                  <strong>Reason:</strong>
+                  <span th:text="${banReason}">Severe policy violation</span>
+                </p>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h5 class="card-title">
+                        <i class="fas fa-calendar-alt"></i> Ban Details
+                      </h5>
+                      <p class="card-text">
+                        <strong>Ban Type:</strong> Permanent<br />
+                        <strong>Ban Date:</strong>
+                        <span
+                          th:text="${#temporals.format(banStartTime, 'yyyy-MM-dd HH:mm')}"
+                          >2024-01-15 10:00</span
+                        ><br />
+                        <strong>Status:</strong>
+                        <span class="badge bg-danger">Irreversible</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h5 class="card-title">
+                        <i class="fas fa-info-circle"></i> Account Status
+                      </h5>
+                      <div class="h4 text-danger">
+                        <i class="fas fa-ban"></i> Permanently Banned
+                      </div>
+                      <p class="text-muted small">
+                        This ban cannot be reversed or appealed.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <h5><i class="fas fa-info-circle"></i> What This Means</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <i class="fas fa-ban text-danger"></i>
+                    You cannot access any features of the platform
+                  </li>
+                  <li class="list-group-item">
+                    <i class="fas fa-ban text-danger"></i>
+                    You cannot place bids, create listings, or participate in
+                    auctions
+                  </li>
+                  <li class="list-group-item">
+                    <i class="fas fa-ban text-danger"></i>
+                    You cannot create a new account with the same information
+                  </li>
+                  <li class="list-group-item">
+                    <i class="fas fa-times text-danger"></i>
+                    This ban is permanent and cannot be appealed
+                  </li>
+                </ul>
+              </div>
+
+              <div class="mt-4">
+                <h5><i class="fas fa-question-circle"></i> What You Can Do</h5>
+                <div class="alert alert-info" role="alert">
+                  <p class="mb-2">
+                    If you believe you can comply with our Terms of Service, you
+                    may consider:
+                  </p>
+                  <ul class="mb-0">
+                    <li>
+                      Reviewing our
+                      <a href="/terms-of-service" class="alert-link"
+                        >Terms of Service</a
+                      >
+                    </li>
+                    <li>
+                      Creating a new account with different information (if
+                      allowed)
+                    </li>
+                    <li>Contacting support for general inquiries</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="mt-4 text-center">
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                  <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                  </button>
+                </form>
+                <a href="/register" class="btn btn-outline-primary ms-2">
+                  <i class="fas fa-user-plus"></i> Register New Account
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
