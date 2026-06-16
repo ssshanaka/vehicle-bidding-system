@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Bidding History - VehicleBid</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="/css/custom.css" rel="stylesheet" />
+
+    <!-- Modern UI Styles -->
+    <style>
+      /* Hero Section */
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      /* Content Cards */
+      .content-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: none;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 2rem;
+      }
+
+      .content-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .content-card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border: none;
+      }
+
+      .content-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .content-card-body {
+        padding: 2rem;
+      }
+
+      /* Form Controls */
+      .form-control,
+      .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        background: white;
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Buttons */
+      .btn-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+      }
+
+      .btn-outline-custom {
+        border: 2px solid #667eea;
+        color: #667eea;
+        background: transparent;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-outline-custom:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      /* Auction Cards */
+      .auction-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: none;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+      }
+
+      .auction-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .auction-card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 1.5rem;
+        border: none;
+      }
+
+      .auction-card-body {
+        padding: 1.5rem;
+      }
+
+      .auction-card-footer {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border: none;
+      }
+
+      /* Badges */
+      .badge-modern {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-success-modern {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+      }
+
+      .badge-warning-modern {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        color: white;
+      }
+
+      .badge-secondary-modern {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        color: white;
+      }
+
+      .badge-info-modern {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        color: white;
+      }
+
+      /* Statistics */
+      .stat-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .stat-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .stat-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #495057;
+      }
+
+      /* Pagination */
+      .pagination .page-link {
+        border: 2px solid #e9ecef;
+        color: #667eea;
+        border-radius: 10px;
+        margin: 0 0.25rem;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .pagination .page-link:hover {
+        background: #667eea;
+        border-color: #667eea;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: #667eea;
+        color: white;
+      }
+
+      .pagination .page-item.disabled .page-link {
+        background: #f8f9fa;
+        border-color: #e9ecef;
+        color: #6c757d;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+
+      /* Timer Styling */
+      .countdown-timer {
+        font-family: "Courier New", monospace;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+
+      /* Alert Styling */
+      .alert {
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .alert-success {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+        border-left: 4px solid #28a745;
+      }
+
+      .alert-danger {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+      }
+
+      /* Results Info */
+      .results-info {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .results-info .text-muted {
+        color: #6c757d !important;
+        font-weight: 500;
+      }
+
+      /* No Results */
+      .no-results {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        margin: 2rem 0;
+      }
+
+      .no-results i {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+      }
+
+      .no-results h4 {
+        color: #495057;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .no-results p {
+        color: #6c757d;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="container">
+          <div class="hero-content">
+            <div class="row align-items-center">
+              <div class="col-lg-8">
+                <h1 class="hero-title">
+                  <i class="bi bi-hammer me-3"></i>
+                  My Bidding History
+                </h1>
+                <p class="hero-subtitle">
+                  View all auctions where you have placed bids and track your
+                  bidding activity
+                </p>
+                <div class="hero-actions">
+                  <a th:href="@{/auctions}" class="btn-custom">
+                    <i class="bi bi-search me-2"></i>
+                    Browse Active Auctions
+                  </a>
+                  <a th:href="@{/dashboard}" class="btn-outline-custom">
+                    <i class="bi bi-house me-2"></i>
+                    Back to Dashboard
+                  </a>
+                </div>
+              </div>
+              <div class="col-lg-4 text-end" th:if="${user != null}">
+                <div class="stat-item d-inline-block">
+                  <div class="stat-label">Logged in as</div>
+                  <div class="stat-value">
+                    <i class="bi bi-person me-2"></i>
+                    <span th:text="${user.username}">Username</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert Messages -->
+      <div
+        th:if="${success}"
+        class="alert alert-success alert-dismissible fade show"
+        role="alert"
+      >
+        <i class="bi bi-check-circle me-2"></i>
+        <span th:text="${success}">Success message</span>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div
+        th:if="${error}"
+        class="alert alert-danger alert-dismissible fade show"
+        role="alert"
+      >
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <span th:text="${error}">Error message</span>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <!-- Search and Filter Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="content-card">
+            <div class="content-card-header">
+              <h2 class="content-card-title">
+                <i class="bi bi-funnel me-2"></i>
+                Search & Filter
+              </h2>
+            </div>
+            <div class="content-card-body">
+              <form th:action="@{/user/auctions}" method="get" class="row g-3">
+                <!-- Search -->
+                <div class="col-md-4">
+                  <label for="search" class="form-label">
+                    <i class="bi bi-search me-1"></i>
+                    Search Vehicles
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="search"
+                    name="search"
+                    th:value="${searchTerm}"
+                    placeholder="Search by make, model, or description..."
+                  />
+                </div>
+
+                <!-- Status Filter -->
+                <div class="col-md-3">
+                  <label for="status" class="form-label">
+                    <i class="bi bi-funnel me-1"></i>
+                    Auction Status
+                  </label>
+                  <select class="form-select" id="status" name="status">
+                    <option value="">All Statuses</option>
+                    <option
+                      value="ACTIVE"
+                      th:selected="${currentStatus == 'ACTIVE'}"
+                    >
+                      Active
+                    </option>
+                    <option
+                      value="PENDING"
+                      th:selected="${currentStatus == 'PENDING'}"
+                    >
+                      Pending
+                    </option>
+                    <option
+                      value="CLOSED"
+                      th:selected="${currentStatus == 'CLOSED'}"
+                    >
+                      Closed
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Page Size -->
+                <div class="col-md-2">
+                  <label for="size" class="form-label">
+                    <i class="bi bi-list me-1"></i>
+                    Per Page
+                  </label>
+                  <select class="form-select" id="size" name="size">
+                    <option value="12" th:selected="${size == 12}">12</option>
+                    <option value="24" th:selected="${size == 24}">24</option>
+                    <option value="48" th:selected="${size == 48}">48</option>
+                  </select>
+                </div>
+
+                <!-- Actions -->
+                <div class="col-md-3 d-flex align-items-end">
+                  <div class="d-grid gap-2 w-100">
+                    <button type="submit" class="btn-custom">
+                      <i class="bi bi-funnel me-1"></i>
+                      Filter
+                    </button>
+                    <a th:href="@{/user/auctions}" class="btn-outline-custom">
+                      <i class="bi bi-arrow-clockwise me-1"></i>
+                      Clear
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Hidden fields -->
+                <input type="hidden" name="page" th:value="${currentPage}" />
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Info -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="results-info">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="text-muted">
+                  Showing <span th:text="${#lists.size(auctions)}">0</span> of
+                  <span th:text="${totalElements}">0</span> auctions where you
+                  placed bids
+                </span>
+              </div>
+              <div>
+                <span class="text-muted">
+                  Page <span th:text="${currentPage + 1}">1</span> of
+                  <span th:text="${totalPages}">1</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auctions Grid -->
+      <div class="row" th:if="${!#lists.isEmpty(auctions)}">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4" th:each="auction : ${auctions}">
+              <div class="auction-card">
+                <div class="auction-card-header">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6
+                        class="card-title mb-1 fw-bold"
+                        th:text="${auction.listing.make + ' ' + auction.listing.model}"
+                      >
+                        Vehicle
+                      </h6>
+                      <small
+                        class="text-muted"
+                        th:text="${auction.listing.year}"
+                        >2020</small
+                      >
+                    </div>
+                    <span
+                      class="badge-modern"
+                      th:class="${auction.status.name() == 'ACTIVE' ? 'badge-success-modern' : 
+                                                     auction.status.name() == 'PENDING' ? 'badge-warning-modern' : 'badge-secondary-modern'}"
+                    >
+                      <i
+                        class="bi bi-clock me-1"
+                        th:if="${auction.status.name() == 'ACTIVE'}"
+                      ></i>
+                      <i
+                        class="bi bi-hourglass me-1"
+                        th:if="${auction.status.name() == 'PENDING'}"
+                      ></i>
+                      <i
+                        class="bi bi-check-circle me-1"
+                        th:if="${auction.status.name() == 'CLOSED'}"
+                      ></i>
+                      <span th:text="${auction.status.name()}">Status</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="auction-card-body">
+                  <!-- Vehicle Details -->
+                  <div class="row mb-3">
+                    <div class="col-6">
+                      <div class="stat-item">
+                        <div class="stat-label">Mileage</div>
+                        <div class="stat-value">
+                          <span
+                            th:text="${#numbers.formatInteger(auction.listing.mileage, 0, 'COMMA')} + ' km'"
+                            >50,000 km</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="stat-item">
+                        <div class="stat-label">Condition</div>
+                        <div class="stat-value">
+                          <span
+                            class="badge-modern badge-info-modern"
+                            th:text="${auction.listing.condition}"
+                            >Good</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Your Bidding Info -->
+                  <div class="row mb-3">
+                    <div class="col-6">
+                      <div class="stat-item">
+                        <div class="stat-label">Your Highest Bid</div>
+                        <div class="stat-value text-primary">
+                          <span
+                            th:text="${auction.highestBid != null ? 'LKR ' + #numbers.formatDecimal(auction.highestBid, 0, 'COMMA', 0, 'POINT') : 'No bids'}"
+                            >LKR 0</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="stat-item">
+                        <div class="stat-label">Your Bids</div>
+                        <div class="stat-value">
+                          <span
+                            th:text="${auction.bidCount != null ? auction.bidCount : 0}"
+                            >0</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Timer for Active Auctions -->
+                  <div
+                    th:if="${auction.status.name() == 'ACTIVE'}"
+                    class="mb-3"
+                  >
+                    <div class="countdown-timer">
+                      <small class="d-block mb-1">Time Remaining</small>
+                      <div
+                        th:data-auction-id="${auction.auctionId}"
+                        th:data-end-time="${auction.currentEndTime}"
+                      >
+                        <span class="timer-display">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Schedule Info for Pending Auctions -->
+                  <div
+                    th:if="${auction.status.name() == 'PENDING'}"
+                    class="mb-3"
+                  >
+                    <div class="stat-item">
+                      <div class="stat-label">Starts</div>
+                      <div class="stat-value">
+                        <span
+                          th:text="${#temporals.format(auction.startTime, 'MMM dd, yyyy HH:mm')}"
+                          >Jan 01, 2024 12:00</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Winner Info for Closed Auctions -->
+                  <div
+                    th:if="${auction.status.name() == 'CLOSED'}"
+                    class="mb-3"
+                  >
+                    <div class="stat-item">
+                      <div class="stat-label">Result</div>
+                      <div class="stat-value">
+                        <span
+                          class="text-success"
+                          th:if="${auction.winner != null and user != null and auction.winner.userId == user.userId}"
+                        >
+                          <i class="bi bi-trophy me-1"></i>You Won!
+                        </span>
+                        <span th:if="${auction.winner == null}">
+                          No Winner
+                        </span>
+                        <span
+                          th:if="${auction.winner != null and user != null and auction.winner.userId != user.userId}"
+                        >
+                          <span th:text="${auction.winner.username}"
+                            >Other User</span
+                          >
+                          Won
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Description -->
+                  <div class="mb-3">
+                    <div class="stat-item">
+                      <div class="stat-label">Description</div>
+                      <div class="stat-value">
+                        <p
+                          class="mb-0 small"
+                          th:text="${#strings.abbreviate(auction.listing.description, 80)}"
+                        >
+                          Vehicle description...
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="auction-card-footer">
+                  <div class="d-grid gap-2">
+                    <a
+                      th:href="@{/auctions/details/{id}(id=${auction.auctionId})}"
+                      class="btn-custom"
+                    >
+                      <i class="bi bi-eye me-1"></i>
+                      View Details
+                    </a>
+                    <a
+                      th:href="@{/auctions/place-bid/{id}(id=${auction.auctionId})}"
+                      class="btn-outline-custom"
+                      th:if="${auction.status.name() == 'ACTIVE'}"
+                    >
+                      <i class="bi bi-hammer me-1"></i>
+                      Place Another Bid
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div class="row" th:if="${#lists.isEmpty(auctions)}">
+        <div class="col-12">
+          <div class="no-results">
+            <i class="bi bi-hammer"></i>
+            <h4>No bidding history found</h4>
+            <p>
+              You haven't placed any bids yet. Start bidding on auctions to see
+              them here.
+            </p>
+            <a th:href="@{/auctions}" class="btn-custom">
+              <i class="bi bi-search me-1"></i>
+              Browse Active Auctions
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="row" th:if="${totalPages > 1}">
+        <div class="col-12">
+          <nav aria-label="Bidding history pagination">
+            <ul class="pagination justify-content-center">
+              <!-- Previous Page -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/user/auctions(page=${currentPage - 1}, size=${size}, status=${currentStatus}, search=${searchTerm})}"
+                >
+                  <i class="bi bi-chevron-left"></i>
+                  Previous
+                </a>
+              </li>
+
+              <!-- Page Numbers -->
+              <li
+                class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${pageNum == currentPage} ? 'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/user/auctions(page=${pageNum}, size=${size}, status=${currentStatus}, search=${searchTerm})}"
+                  th:text="${pageNum + 1}"
+                  >1</a
+                >
+              </li>
+
+              <!-- Next Page -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/user/auctions(page=${currentPage + 1}, size=${size}, status=${currentStatus}, search=${searchTerm})}"
+                >
+                  Next
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- WebSocket Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <!-- Auction Timer -->
+    <script src="/js/auction-timer.js"></script>
+
+    <!-- JavaScript -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize countdown timers
+        const timers = document.querySelectorAll(".countdown-timer");
+        timers.forEach(function (timer) {
+          const auctionId = timer.dataset.auctionId;
+          const endTime = timer.dataset.endTime;
+
+          if (endTime) {
+            updateCountdown(timer, endTime);
+            setInterval(function () {
+              updateCountdown(timer, endTime);
+            }, 1000);
+          }
+        });
+
+        // Auto-submit form on filter change
+        const filterSelects = document.querySelectorAll("#status, #size");
+        filterSelects.forEach(function (select) {
+          select.addEventListener("change", function () {
+            // Reset to first page when filters change
+            const pageInput = document.querySelector('input[name="page"]');
+            if (pageInput) {
+              pageInput.value = "0";
+            }
+            this.form.submit();
+          });
+        });
+
+        // Add hover effects to auction cards
+        const auctionCards = document.querySelectorAll(".auction-card");
+        auctionCards.forEach(function (card) {
+          card.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-8px)";
+            this.style.boxShadow = "0 12px 40px rgba(0, 0, 0, 0.15)";
+          });
+
+          card.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0)";
+            this.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.08)";
+          });
+        });
+
+        // Add hover effects to stat items
+        const statItems = document.querySelectorAll(".stat-item");
+        statItems.forEach(function (item) {
+          item.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-3px)";
+            this.style.boxShadow = "0 5px 15px rgba(0, 0, 0, 0.1)";
+          });
+
+          item.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0)";
+            this.style.boxShadow = "none";
+          });
+        });
+
+        // Add focus effects to form controls
+        const formControls = document.querySelectorAll(
+          ".form-control, .form-select"
+        );
+        formControls.forEach(function (control) {
+          control.addEventListener("focus", function () {
+            this.style.borderColor = "#667eea";
+            this.style.boxShadow = "0 0 0 0.2rem rgba(102, 126, 234, 0.25)";
+            this.style.background = "white";
+          });
+
+          control.addEventListener("blur", function () {
+            this.style.borderColor = "#e9ecef";
+            this.style.boxShadow = "none";
+            this.style.background = "#f8f9fa";
+          });
+        });
+      });
+
+      function updateCountdown(element, endTime) {
+        const now = new Date().getTime();
+        const end = new Date(endTime).getTime();
+        const distance = end - now;
+
+        if (distance < 0) {
+          element.innerHTML = '<span class="text-danger">EXPIRED</span>';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        let timeString = "";
+        if (days > 0) timeString += days + "d ";
+        if (hours > 0) timeString += hours + "h ";
+        if (minutes > 0) timeString += minutes + "m ";
+        timeString += seconds + "s";
+
+        element.innerHTML =
+          '<span class="timer-display">' + timeString + "</span>";
+      }
+    </script>
+  </body>
+</html>
