@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Place Bid - Lanka Auto Traders</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link href="/css/custom.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-light rounded p-3 border-0 shadow-sm">
+          <li class="breadcrumb-item">
+            <a href="/auctions" class="text-decoration-none fw-semibold">
+              <i class="bi bi-hammer me-1 text-primary"></i>Auctions
+            </a>
+          </li>
+          <li class="breadcrumb-item">
+            <a
+              th:href="@{/auctions/details/{id}(id=${auction != null ? auction.auctionId : 0})}"
+              class="text-decoration-none fw-semibold"
+            >
+              <i class="bi bi-eye me-1 text-primary"></i>Auction Details
+            </a>
+          </li>
+          <li class="breadcrumb-item active fw-semibold" aria-current="page">
+            <i class="bi bi-hammer me-1 text-primary"></i>Place Bid
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Error/Success Messages -->
+      <div id="messageContainer">
+        <!-- Server-side error messages -->
+        <div
+          th:if="${errorMessage}"
+          class="alert alert-danger alert-dismissible fade show border-0 shadow-sm"
+        >
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <span th:text="${errorMessage}"></span>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
+        </div>
+
+        <!-- Server-side success messages -->
+        <div
+          th:if="${successMessage}"
+          class="alert alert-success alert-dismissible fade show border-0 shadow-sm"
+        >
+          <i class="bi bi-check-circle me-2"></i>
+          <span th:text="${successMessage}"></span>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
+        </div>
+      </div>
+
+      <!-- User Eligibility Check -->
+      <div th:if="${userBanned}" class="alert alert-danger border-0 shadow-sm">
+        <h4><i class="bi bi-shield-exclamation me-2"></i>Account Suspended</h4>
+        <p>
+          Your account has been suspended. Please contact support for
+          assistance.
+        </p>
+        <a th:href="@{/banned-permanent}" class="btn btn-outline-danger"
+          ><i class="bi bi-info-circle me-1"></i>View Details</a
+        >
+      </div>
+
+      <div
+        th:if="${auctionClosed}"
+        class="alert alert-warning border-0 shadow-sm"
+      >
+        <h4><i class="bi bi-clock-history me-2"></i>Auction Closed</h4>
+        <p>
+          This auction is no longer active. You cannot place bids on closed
+          auctions.
+        </p>
+        <a th:href="@{/auctions}" class="btn btn-outline-primary"
+          ><i class="bi bi-arrow-left me-1"></i>View Active Auctions</a
+        >
+      </div>
+
+      <!-- Main Content (only show if user is eligible and auction exists) -->
+      <div
+        th:unless="${userBanned or auctionClosed}"
+        th:if="${auction != null}"
+      >
+        <!-- Page Header -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h1 class="h3 mb-1 fw-bold">
+                  <i class="bi bi-hammer me-2 text-primary"></i>
+                  Place Bid on Auction #<span
+                    th:text="${auction.auctionId}"
+                  ></span>
+                </h1>
+                <p class="text-muted mb-0">
+                  <i class="bi bi-car me-1"></i>
+                  <span
+                    th:text="${auction.listing.make + ' ' + auction.listing.model + ' (' + auction.listing.year + ')'}"
+                    >Vehicle</span
+                  >
+                </p>
+              </div>
+              <div>
+                <span class="badge fs-6 fw-semibold px-3 py-2 bg-success">
+                  <i
+                    class="bi bi-circle-fill me-1"
+                    style="font-size: 0.6rem"
+                  ></i>
+                  <span th:text="${auction.status.name()}">ACTIVE</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Vehicle Image and Details -->
+          <div class="col-lg-8 mb-4">
+            <!-- Vehicle Image -->
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-body p-0">
+                <div class="image-gallery">
+                  <!-- Main Image -->
+                  <div class="position-relative">
+                    <img
+                      id="mainImage"
+                      th:src="${auction.listing.images != null and !auction.listing.images.isEmpty()} ? ${auction.listing.images[0].imageUrl} : '/images/placeholder-car.jpg'"
+                      class="card-img-top main-image w-100"
+                      alt="Vehicle Image"
+                      onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTAgMTUwSDQ1MFYyNTBIMjUwVjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+YXRoIGQ9Ik0yNTAgMjc1SDM3NVYzMjVIMjUwVjI3NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg=='; this.style.border='2px solid #dc3545';"
+                    />
+                    <div class="position-absolute top-0 end-0 m-3">
+                      <span
+                        class="badge bg-primary bg-opacity-90 fs-6 fw-semibold"
+                      >
+                        <i class="bi bi-images me-1"></i>
+                        <span
+                          th:text="${auction.listing.images != null ? auction.listing.images.size() : 0}"
+                          >0</span
+                        >
+                        images
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Thumbnail Gallery -->
+                  <div
+                    th:if="${auction.listing.images != null and !auction.listing.images.isEmpty()}"
+                    class="p-3"
+                  >
+                    <div class="d-flex gap-2 overflow-auto">
+                      <img
+                        th:each="image, iterStat : ${auction.listing.images}"
+                        th:src="${image.imageUrl}"
+                        onclick="changeMainImage(this.src)"
+                        class="thumbnail rounded border"
+                        style="min-width: 80px"
+                        th:alt="'Image ' + ${iterStat.index + 1}"
+                        onerror="this.style.display='none';"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- No Images Message -->
+                  <div
+                    th:if="${auction.listing.images == null or auction.listing.images.isEmpty()}"
+                    class="p-4 text-center text-muted"
+                  >
+                    <i class="bi bi-image fs-1 mb-3 text-muted"></i>
+                    <p class="mb-0 fw-semibold">
+                      No images available for this vehicle
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vehicle Details -->
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-info text-white border-0">
+                <h6 class="card-title mb-0 fw-semibold">
+                  <i class="bi bi-car-front me-2"></i>Vehicle Information
+                </h6>
+              </div>
+              <div class="card-body">
+                <!-- Basic Details -->
+                <div class="detail-section">
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <div class="detail-label fw-semibold">
+                        <i class="bi bi-car me-1 text-primary"></i>Make
+                      </div>
+                      <div
+                        class="detail-value fw-semibold"
+                        th:text="${auction.listing.make}"
+                      >
+                        Make
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="detail-label fw-semibold">
+                        <i class="bi bi-tag me-1 text-primary"></i>Model
+                      </div>
+                      <div
+                        class="detail-value fw-semibold"
+                        th:text="${auction.listing.model}"
+                      >
+                        Model
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="detail-label fw-semibold">
+                        <i class="bi bi-calendar me-1 text-primary"></i>Year
+                      </div>
+                      <div
+                        class="detail-value fw-semibold"
+                        th:text="${auction.listing.year}"
+                      >
+                        Year
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="detail-label fw-semibold">
+                        <i class="bi bi-speedometer2 me-1 text-primary"></i
+                        >Mileage
+                      </div>
+                      <div class="detail-value fw-semibold">
+                        <span th:text="${auction.listing.mileage}"
+                          >Mileage</span
+                        >
+                        miles
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Condition & Specifications -->
+                <div class="detail-section">
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <div class="detail-label fw-semibold">
+                        <i class="bi bi-star me-1 text-primary"></i>Condition
+                      </div>
+                      <div class="detail-value">
+                        <span
+                          class="badge fw-semibold"
+                          th:classappend="${auction.listing.condition.name() == 'EXCELLENT'} ? 'bg-success' : (${auction.listing.condition.name() == 'GOOD'} ? 'bg-info' : (${auction.listing.condition.name() == 'FAIR'} ? 'bg-warning' : 'bg-secondary'))"
+                          th:text="${auction.listing.condition.name()}"
+                          >Condition</span
+                        >
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="detail-label fw-semibold">
+                        <i class="bi bi-fuel-pump me-1 text-primary"></i>Fuel
+                        Type
+                      </div>
+                      <div
+                        class="detail-value fw-semibold"
+                        th:text="${auction.listing.fuelType}"
+                      >
+                        Fuel Type
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="detail-label fw-semibold">
+                        <i class="bi bi-gear me-1 text-primary"></i>Transmission
+                      </div>
+                      <div
+                        class="detail-value fw-semibold"
+                        th:text="${auction.listing.transmission}"
+                      >
+                        Transmission
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Auction Information & Bidding -->
+          <div class="col-lg-4 mb-4">
+            <!-- Auction Status & Timer -->
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-header bg-primary text-white border-0">
+                <h6 class="card-title mb-0 fw-semibold">
+                  <i class="bi bi-clock me-2"></i>Auction Status
+                </h6>
+              </div>
+              <div class="card-body">
+                <!-- Countdown Timer for Active Auctions -->
+                <div
+                  th:if="${auction.status.name() == 'ACTIVE'}"
+                  class="countdown-timer-large"
+                  th:data-auction-id="${auction.auctionId}"
+                  th:data-end-time="${auction.endTime}"
+                >
+                  <h6 class="mb-2">Time Remaining</h6>
+                  <div>
+                    <span
+                      class="timer-display fs-2 fw-bold"
+                      th:id="'timer-end-' + ${auction.auctionId}"
+                      >Loading...</span
+                    >
+                  </div>
+                  <small class="opacity-75">
+                    Extension:
+                    <span th:text="${auction.extensionDuration}">30</span>
+                    seconds
+                  </small>
+                </div>
+
+                <!-- Schedule for Pending Auctions -->
+                <div
+                  th:if="${auction.status.name() == 'PENDING'}"
+                  class="countdown-timer-large"
+                  th:data-auction-id="${auction.auctionId}"
+                  th:data-start-time="${auction.startTime}"
+                >
+                  <h6 class="mb-2">Starts In</h6>
+                  <div>
+                    <span
+                      class="timer-display fs-2 fw-bold"
+                      th:id="'timer-start-' + ${auction.auctionId}"
+                      >Loading...</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Winner for Closed Auctions -->
+                <div
+                  th:if="${auction.status.name() == 'CLOSED'}"
+                  class="text-center"
+                >
+                  <h6 class="mb-2">Auction Closed</h6>
+                  <div class="fs-4 fw-bold">
+                    <span
+                      th:text="${auction.winner != null ? auction.winner.username : 'No winner'}"
+                      >No winner</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Current Bid & Bidding Section -->
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-header bg-success text-white border-0">
+                <h6 class="card-title mb-0 fw-semibold">
+                  <i class="bi bi-currency-dollar me-2"></i>Current Bid
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="text-center mb-3">
+                  <div class="fs-1 fw-bold text-success">
+                    <span
+                      id="currentHighestBid"
+                      th:text="${auction.highestBid != null ? #numbers.formatDecimal(auction.highestBid, 0, 0) : '0'}"
+                      >0</span
+                    >
+                    LKR
+                  </div>
+                  <small class="text-muted">
+                    <span
+                      th:text="${auction.status.name() == 'ACTIVE'} ? 'Current Highest Bid' : 'Starting Price'"
+                      >Current Bid</span
+                    >
+                  </small>
+                </div>
+
+                <!-- Bid Form -->
+                <form
+                  th:action="@{/auctions/place-bid/{id}(id=${auction != null ? auction.auctionId : 0})}"
+                  th:object="${bidForm}"
+                  method="post"
+                  class="needs-validation"
+                  novalidate
+                  id="bidForm"
+                >
+                  <div class="mb-3">
+                    <label for="amount" class="form-label fw-semibold">
+                      <i class="bi bi-currency-dollar me-1"></i>Enter Your Bid
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">LKR</span>
+                      <input
+                        type="number"
+                        id="amount"
+                        th:field="*{amount}"
+                        class="form-control"
+                        th:min="${auction != null and auction.highestBid != null ? auction.highestBid + 0.01 : 0.01}"
+                        step="0.01"
+                        required
+                        placeholder="Enter bid amount"
+                      />
+                    </div>
+                    <div class="form-text">
+                      <span id="bidValidationMessage" class="text-muted"></span>
+                    </div>
+                    <div class="invalid-feedback">
+                      Please enter a valid bid amount higher than the current
+                      highest bid.
+                    </div>
+                  </div>
+
+                  <div class="d-grid gap-2">
+                    <button
+                      type="submit"
+                      class="btn btn-success btn-lg fw-semibold"
+                      id="submitBid"
+                    >
+                      <i class="bi bi-hammer me-2"></i>Place Bid
+                    </button>
+                    <a
+                      th:href="@{/auctions/details/{id}(id=${auction != null ? auction.auctionId : 0})}"
+                      class="btn btn-outline-secondary btn-lg fw-semibold"
+                    >
+                      <i class="bi bi-arrow-left me-2"></i>Back to Details
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Bidding Tips -->
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-header bg-warning text-dark border-0">
+                <h6 class="card-title mb-0 fw-semibold">
+                  <i class="bi bi-lightbulb me-2"></i>Bidding Tips
+                </h6>
+              </div>
+              <div class="card-body">
+                <ul class="list-unstyled">
+                  <li class="mb-2">
+                    <i class="bi bi-check-circle text-success me-2"></i>
+                    Your bid must be higher than the current highest bid
+                  </li>
+                  <li class="mb-2">
+                    <i class="bi bi-clock text-warning me-2"></i>
+                    Auctions may extend if bids are placed in the final minutes
+                  </li>
+                  <li class="mb-2">
+                    <i class="bi bi-shield-check text-info me-2"></i>
+                    All bids are final and cannot be withdrawn
+                  </li>
+                  <li class="mb-0">
+                    <i class="bi bi-bell text-primary me-2"></i>
+                    You'll be notified if you're outbid
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Account Info -->
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-secondary text-white border-0">
+                <h6 class="card-title mb-0 fw-semibold">
+                  <i class="bi bi-person me-2"></i>Your Account
+                </h6>
+              </div>
+              <div class="card-body">
+                <p class="mb-1">
+                  <strong>Username:</strong>
+                  <span
+                    th:text="${currentUsername != null ? currentUsername : 'Guest'}"
+                    >Guest</span
+                  >
+                </p>
+                <p class="mb-0">
+                  <strong>Account Status:</strong>
+                  <span class="badge bg-success">Active</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-primary text-white border-0">
+            <h5 class="modal-title fw-semibold">
+              <i class="bi bi-images me-2"></i>Vehicle Images
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body text-center">
+            <img
+              id="modalImage"
+              src=""
+              class="img-fluid rounded"
+              alt="Vehicle Image"
+            />
+          </div>
+          <div class="modal-footer border-0">
+            <button
+              type="button"
+              class="btn btn-secondary fw-semibold"
+              data-bs-dismiss="modal"
+            >
+              <i class="bi bi-x me-1"></i>Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- WebSocket Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <!-- Auction Timer -->
+    <script th:src="@{/js/auction-timer.js}"></script>
+
+    <!-- Custom Styles for Place Bid Page -->
+    <style>
+      /* Modern Card Styling */
+      .card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: none;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+      }
+
+      .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        font-weight: 600;
+      }
+
+      /* Button Styling */
+      .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Badge Styling */
+      .badge {
+        border-radius: 6px;
+        font-weight: 500;
+      }
+
+      /* Alert Styling */
+      .alert {
+        border-radius: 8px;
+        border: none;
+        font-weight: 500;
+      }
+
+      /* Icon Animations */
+      .bi {
+        transition: all 0.3s ease;
+      }
+
+      .card:hover .bi {
+        transform: scale(1.1);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+
+      /* Body Background */
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      /* Main Content Background */
+      main {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        margin: 1rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Card Header Gradients */
+      .card-header.bg-primary {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ) !important;
+      }
+
+      .card-header.bg-success {
+        background: linear-gradient(
+          135deg,
+          #56ab2f 0%,
+          #a8e6cf 100%
+        ) !important;
+      }
+
+      .card-header.bg-warning {
+        background: linear-gradient(
+          135deg,
+          #f093fb 0%,
+          #f5576c 100%
+        ) !important;
+      }
+
+      .card-header.bg-info {
+        background: linear-gradient(
+          135deg,
+          #4facfe 0%,
+          #00f2fe 100%
+        ) !important;
+      }
+
+      .card-header.bg-secondary {
+        background: linear-gradient(
+          135deg,
+          #fa709a 0%,
+          #fee140 100%
+        ) !important;
+      }
+
+      /* Breadcrumb Styling */
+      .breadcrumb {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(10px);
+      }
+
+      /* Detail Section Styling */
+      .detail-section {
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        backdrop-filter: blur(5px);
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.25rem;
+      }
+
+      .detail-value {
+        color: #212529;
+        margin-bottom: 1rem;
+      }
+
+      /* Countdown Timer Styling */
+      .countdown-timer-large {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      /* Image Gallery Styling */
+      .image-gallery {
+        position: relative;
+      }
+
+      .main-image {
+        height: 500px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.2s;
+        border-radius: 8px;
+      }
+
+      .main-image:hover {
+        transform: scale(1.02);
+      }
+
+      .thumbnail {
+        height: 80px;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        border-radius: 4px;
+      }
+
+      .thumbnail:hover,
+      .thumbnail.active {
+        opacity: 1;
+      }
+
+      /* Status Badge Styling */
+      .status-badge {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        main {
+          margin: 0.5rem;
+          padding: 1rem !important;
+        }
+
+        .card-body {
+          padding: 2rem 1.5rem;
+        }
+
+        .main-image {
+          height: 300px;
+        }
+      }
+    </style>
+
+    <script>
+      // Change main image when thumbnail is clicked
+      function changeMainImage(imageUrl) {
+        document.getElementById("mainImage").src = imageUrl;
+
+        // Update active thumbnail
+        document.querySelectorAll(".thumbnail").forEach((thumb) => {
+          thumb.classList.remove("active");
+        });
+        event.target.classList.add("active");
+      }
+
+      // Open image modal
+      function openImageModal() {
+        const mainImage = document.getElementById("mainImage");
+        const modalImage = document.getElementById("modalImage");
+        modalImage.src = mainImage.src;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("imageModal")
+        );
+        modal.show();
+      }
+
+      // Enhanced Place Bid Page JavaScript
+      class PlaceBidManager {
+        constructor() {
+          this.auctionId =
+            /*[[${auction != null ? auction.auctionId : null}]]*/ null;
+          this.currentHighestBid = /*[[${auction != null and auction.highestBid != null ? auction.highestBid : 0}]]*/ 0;
+          this.minBidAmount = this.currentHighestBid + 0.01;
+          this.socket = null;
+          this.stompClient = null;
+          this.timer = null;
+
+          // Only initialize if we have a valid auction
+          if (this.auctionId) {
+            this.init();
+          }
+        }
+
+        init() {
+          this.initializeFormValidation();
+          this.initializeRealTimeValidation();
+          this.initializeAuctionTimer();
+          this.initializeWebSocket();
+          this.initializeFormSubmission();
+        }
+
+        initializeFormValidation() {
+          const form = document.getElementById("bidForm");
+          const amountInput = document.getElementById("amount");
+          const validationMessage = document.getElementById(
+            "bidValidationMessage"
+          );
+          const submitButton = document.getElementById("submitBid");
+
+          // Real-time validation on input
+          amountInput.addEventListener("input", (e) => {
+            this.validateBidAmount(
+              e.target.value,
+              validationMessage,
+              submitButton
+            );
+          });
+
+          // Form submission validation
+          form.addEventListener("submit", (e) => {
+            if (
+              !this.validateBidAmount(
+                amountInput.value,
+                validationMessage,
+                submitButton
+              )
+            ) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+            form.classList.add("was-validated");
+          });
+        }
+
+        validateBidAmount(value, messageElement, submitButton) {
+          const amount = parseFloat(value);
+          const isValid =
+            !isNaN(amount) && amount > this.currentHighestBid && amount > 0;
+
+          if (value === "") {
+            messageElement.textContent = "";
+            messageElement.className = "text-muted";
+            submitButton.disabled = false;
+            return false;
+          }
+
+          if (isValid) {
+            messageElement.textContent = `✓ Valid bid amount (LKR ${this.formatCurrency(
+              amount
+            )})`;
+            messageElement.className = "text-success";
+            submitButton.disabled = false;
+            return true;
+          } else if (amount <= this.currentHighestBid) {
+            messageElement.textContent = `✗ Bid must be higher than LKR ${this.formatCurrency(
+              this.currentHighestBid
+            )}`;
+            messageElement.className = "text-danger";
+            submitButton.disabled = true;
+            return false;
+          } else if (amount <= 0) {
+            messageElement.textContent = "✗ Bid amount must be greater than 0";
+            messageElement.className = "text-danger";
+            submitButton.disabled = true;
+            return false;
+          } else {
+            messageElement.textContent = "✗ Please enter a valid amount";
+            messageElement.className = "text-danger";
+            submitButton.disabled = true;
+            return false;
+          }
+        }
+
+        initializeRealTimeValidation() {
+          // Update minimum bid amount display
+          const minBidElement = document.getElementById("minBidAmount");
+          if (minBidElement) {
+            minBidElement.textContent = `LKR ${this.formatCurrency(
+              this.minBidAmount
+            )}`;
+          }
+
+          // Update input minimum value
+          const amountInput = document.getElementById("amount");
+          if (amountInput) {
+            amountInput.min = this.minBidAmount;
+          }
+        }
+
+        initializeAuctionTimer() {
+          const countdownElement = document.getElementById(
+            `timer-end-${this.auctionId}`
+          );
+          if (
+            countdownElement &&
+            typeof initializeAuctionTimerWithWebSocket === "function"
+          ) {
+            this.timer = initializeAuctionTimerWithWebSocket(
+              this.auctionId,
+              countdownElement
+            );
+
+            // Listen for auction end event
+            countdownElement.addEventListener("auctionEnded", () => {
+              this.handleAuctionEnd();
+            });
+          }
+        }
+
+        initializeWebSocket() {
+          if (typeof SockJS === "undefined" || typeof Stomp === "undefined") {
+            console.warn("WebSocket libraries not available");
+            return;
+          }
+
+          try {
+            this.socket = new SockJS("/ws");
+            this.stompClient = Stomp.over(this.socket);
+
+            this.stompClient.connect(
+              {},
+              (frame) => {
+                console.log("Connected to WebSocket for auction updates");
+
+                // Subscribe to auction-specific updates
+                this.stompClient.subscribe(
+                  `/topic/auctions/${this.auctionId}/bids`,
+                  (message) => {
+                    const bidData = JSON.parse(message.body);
+                    this.handleNewBid(bidData);
+                  }
+                );
+
+                // Subscribe to general auction updates
+                this.stompClient.subscribe(
+                  `/topic/auctions/${this.auctionId}`,
+                  (message) => {
+                    const auctionData = JSON.parse(message.body);
+                    this.handleAuctionUpdate(auctionData);
+                  }
+                );
+              },
+              (error) => {
+                console.error("WebSocket connection error:", error);
+              }
+            );
+          } catch (error) {
+            console.error("Failed to initialize WebSocket:", error);
+          }
+        }
+
+        handleNewBid(bidData) {
+          // Update current highest bid
+          if (bidData.amount > this.currentHighestBid) {
+            this.currentHighestBid = bidData.amount;
+            this.minBidAmount = this.currentHighestBid + 0.01;
+
+            // Update display
+            const currentBidElement =
+              document.getElementById("currentHighestBid");
+            if (currentBidElement) {
+              currentBidElement.textContent = `${this.formatCurrency(
+                this.currentHighestBid
+              )}`;
+            }
+
+            // Update minimum bid display
+            const minBidElement = document.getElementById("minBidAmount");
+            if (minBidElement) {
+              minBidElement.textContent = `LKR ${this.formatCurrency(
+                this.minBidAmount
+              )}`;
+            }
+
+            // Update input minimum
+            const amountInput = document.getElementById("amount");
+            if (amountInput) {
+              amountInput.min = this.minBidAmount;
+              // Re-validate current input
+              this.validateBidAmount(
+                amountInput.value,
+                document.getElementById("bidValidationMessage"),
+                document.getElementById("submitBid")
+              );
+            }
+
+            // Show notification only if it's not our own bid (to avoid duplicate messages)
+            const currentUser = /*[[${currentUsername}]]*/ null;
+            if (bidData.bidder && bidData.bidder.username !== currentUser) {
+              this.showMessage(
+                "New bid placed! Current highest bid updated.",
+                "info"
+              );
+            }
+          }
+        }
+
+        handleAuctionUpdate(auctionData) {
+          // Update auction status if needed
+          if (auctionData.status === "CLOSED") {
+            this.handleAuctionEnd();
+          }
+        }
+
+        handleAuctionEnd() {
+          this.showMessage(
+            "Auction has ended. You can no longer place bids.",
+            "warning"
+          );
+
+          // Disable form
+          const form = document.getElementById("bidForm");
+          const submitButton = document.getElementById("submitBid");
+          const amountInput = document.getElementById("amount");
+
+          if (form) form.style.pointerEvents = "none";
+          if (submitButton) submitButton.disabled = true;
+          if (amountInput) amountInput.disabled = true;
+
+          // Update validation message
+          const validationMessage = document.getElementById(
+            "bidValidationMessage"
+          );
+          if (validationMessage) {
+            validationMessage.textContent = "Auction has ended";
+            validationMessage.className = "text-warning";
+          }
+        }
+
+        initializeFormSubmission() {
+          const form = document.getElementById("bidForm");
+          if (form) {
+            form.addEventListener("submit", (e) => {
+              const submitButton = document.getElementById("submitBid");
+              if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML =
+                  '<i class="bi bi-hourglass-split me-2"></i>Placing Bid...';
+              }
+
+              // Show loading message
+              this.showMessage("Placing your bid...", "info");
+
+              // Allow form to submit normally (no preventDefault)
+              // The server will handle the response and refresh the page
+            });
+          }
+        }
+
+        showMessage(message, type = "info") {
+          const container = document.getElementById("messageContainer");
+          if (!container) return;
+
+          const alertClass =
+            {
+              success: "alert-success",
+              error: "alert-danger",
+              warning: "alert-warning",
+              info: "alert-info",
+            }[type] || "alert-info";
+
+          const alertDiv = document.createElement("div");
+          alertDiv.className = `alert ${alertClass} alert-dismissible fade show border-0 shadow-sm`;
+          alertDiv.innerHTML = `
+            <i class="bi bi-${
+              type === "success"
+                ? "check-circle"
+                : type === "error"
+                ? "exclamation-triangle"
+                : type === "warning"
+                ? "exclamation-triangle"
+                : "info-circle"
+            } me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          `;
+
+          container.appendChild(alertDiv);
+
+          // Auto-remove after 5 seconds
+          setTimeout(() => {
+            if (alertDiv.parentNode) {
+              alertDiv.remove();
+            }
+          }, 5000);
+        }
+
+        formatCurrency(amount) {
+          return new Intl.NumberFormat("en-LK", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(amount);
+        }
+
+        destroy() {
+          if (this.stompClient) {
+            this.stompClient.disconnect();
+          }
+          if (this.timer && this.timer.destroy) {
+            this.timer.destroy();
+          }
+        }
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        window.placeBidManager = new PlaceBidManager();
+
+        // Initialize first thumbnail as active
+        const firstThumbnail = document.querySelector(".thumbnail");
+        if (firstThumbnail) {
+          firstThumbnail.classList.add("active");
+        }
+
+        // Check for success message from server-side
+        const successMessage = document.querySelector(".alert-success");
+        if (successMessage) {
+          // Clear the bid form after successful submission
+          const bidForm = document.getElementById("bidForm");
+          const amountInput = document.getElementById("amount");
+          if (bidForm && amountInput) {
+            amountInput.value = "";
+            bidForm.classList.remove("was-validated");
+
+            // Clear validation message
+            const validationMessage = document.getElementById(
+              "bidValidationMessage"
+            );
+            if (validationMessage) {
+              validationMessage.textContent = "";
+              validationMessage.className = "text-muted";
+            }
+
+            // Re-enable submit button
+            const submitButton = document.getElementById("submitBid");
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.innerHTML =
+                '<i class="bi bi-hammer me-2"></i>Place Bid';
+            }
+          }
+
+          // Scroll to top to show success message
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      });
+
+      // Cleanup when page unloads
+      window.addEventListener("beforeunload", function () {
+        if (window.placeBidManager) {
+          window.placeBidManager.destroy();
+        }
+      });
+    </script>
+  </body>
+</html>
