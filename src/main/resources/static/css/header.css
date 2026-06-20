@@ -1,0 +1,426 @@
+/* Header Fragment Styles - Lanka Auto Traders */
+/* Scoped to #main-header to prevent conflicts with page-level CSS */
+
+/* Critical dropdown positioning and visibility - use !important sparingly */
+#main-header .dropdown-menu {
+  position: absolute !important;
+  z-index: 1050 !important;
+  display: none;
+}
+
+#main-header .dropdown-menu.show {
+  display: block !important;
+}
+
+#main-header .dropdown-toggle[aria-expanded="true"] + .dropdown-menu {
+  display: block !important;
+}
+
+/* Modern Navbar Styling */
+#main-header .navbar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+#main-header .navbar-brand {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: white !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+#main-header .navbar-brand:hover {
+  transform: scale(1.05);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#main-header .navbar-brand i {
+  font-size: 1.8rem;
+  margin-right: 0.5rem;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Modern Navigation Links */
+#main-header .nav-link {
+  font-weight: 600;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9) !important;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px;
+  margin: 0 0.25rem;
+}
+
+#main-header .nav-link::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ffc107, #ff6b6b);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+#main-header .nav-link:hover {
+  color: white !important;
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
+
+#main-header .nav-link:hover::before {
+  width: 80%;
+}
+
+#main-header .nav-link i {
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+#main-header .nav-link:hover i {
+  transform: scale(1.1);
+}
+
+/* Modern Dropdown Menu */
+#main-header .dropdown-menu {
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+  min-width: 250px;
+}
+
+#main-header .dropdown-item {
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #2c3e50;
+  position: relative;
+  border-radius: 8px;
+  margin: 0.25rem 0.5rem;
+}
+
+#main-header .dropdown-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 8px;
+  transition: width 0.3s ease;
+  z-index: -1;
+}
+
+#main-header .dropdown-item:hover {
+  background: transparent;
+  color: white;
+  transform: translateX(5px);
+}
+
+#main-header .dropdown-item:hover::before {
+  width: 100%;
+}
+
+#main-header .dropdown-item i {
+  font-size: 1.1rem;
+  margin-right: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+#main-header .dropdown-item:hover i {
+  transform: scale(1.1);
+}
+
+/* Modern User Profile Section */
+#main-header .navbar-nav .dropdown-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#main-header .navbar-nav .dropdown-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+#main-header .navbar-nav .dropdown-toggle .bg-light {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+#main-header .navbar-nav .dropdown-toggle:hover .bg-light {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.1);
+}
+
+/* Modern Buttons */
+#main-header .btn-outline-light {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-weight: 600;
+  border-radius: 25px;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#main-header .btn-outline-light::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+#main-header .btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+#main-header .btn-outline-light:hover::before {
+  left: 100%;
+}
+
+/* Modern Modal Styling */
+#main-header .modal-content {
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+#main-header .modal-header {
+  border-radius: 20px 20px 0 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+}
+
+#main-header .modal-header.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+#main-header .modal-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+#main-header .modal-body {
+  padding: 2rem;
+}
+
+#main-header .btn-close-white {
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+#main-header .btn-close-white:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Modern Form Styling */
+#main-header .form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+#main-header .form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  background: white;
+}
+
+#main-header .input-group-text {
+  background: rgba(248, 249, 250, 0.8);
+  border: 2px solid #e9ecef;
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+#main-header .form-control:focus + .input-group-text,
+#main-header .form-control:focus ~ .input-group-text {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
+  color: #667eea;
+}
+
+#main-header .form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+/* Modern Button Styling */
+#main-header .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#main-header .btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+#main-header .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+#main-header .btn-primary:hover::before {
+  left: 100%;
+}
+
+#main-header .btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+#main-header .btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+}
+
+/* Modern Badge Styling */
+#main-header .badge {
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  animation: pulse 2s infinite;
+}
+
+#main-header .badge.bg-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+}
+
+/* Modern Alert Styling */
+#main-header .alert {
+  border: none;
+  border-radius: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#main-header .alert-info {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  color: #0c5460;
+  border-left: 4px solid #17a2b8;
+}
+
+/* Modern Form Text */
+#main-header .form-text {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #main-header .navbar-brand {
+    font-size: 1.4rem;
+  }
+
+  #main-header .nav-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  #main-header .dropdown-menu {
+    margin-top: 0.25rem;
+    border-radius: 12px;
+  }
+
+  #main-header .modal-body {
+    padding: 1.5rem;
+  }
+
+  #main-header .btn-primary,
+  #main-header .btn-success {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Performance Optimizations */
+#main-header .navbar,
+#main-header .nav-link,
+#main-header .dropdown-menu,
+#main-header .modal-content {
+  will-change: transform;
+}

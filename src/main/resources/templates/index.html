@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicle Bidding System</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
+
+    <style>
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 120px 0 100px 0;
+        margin-top: 12px;
+      }
+
+      .featured-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .featured-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .search-section {
+        background-color: #f8f9fa;
+        padding: 60px 0;
+      }
+
+      .stats-section {
+        background-color: #343a40;
+        color: white;
+        padding: 60px 0;
+      }
+
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+
+      .btn-custom {
+        border-radius: 25px;
+        padding: 10px 30px;
+        font-weight: 500;
+      }
+
+      .current-bid {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .vehicle-image {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+      }
+
+      .footer {
+        background-color: #2c3e50;
+        color: white;
+        padding: 40px 0 20px;
+      }
+
+      .footer a {
+        color: #bdc3c7;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Include Header -->
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- Clear any existing JWT cookies on page load -->
+    <script>
+      // Clear any existing JWT cookies when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        // Check if user is not authenticated but JWT cookie exists
+        const jwtCookie = document.cookie
+          .split(";")
+          .find((cookie) => cookie.trim().startsWith("JWT="));
+        if (jwtCookie) {
+          console.log("JWT cookie found, redirecting to clear session...");
+          // Redirect to clear-session endpoint to properly clear server-side cookies
+          window.location.href = "/clear-session";
+          return;
+        }
+
+        // Also clear client-side cookies as backup
+        document.cookie = "JWT=; Path=/; Max-Age=0; HttpOnly;";
+        document.cookie = "JWT=; Path=/; Max-Age=0;";
+        document.cookie =
+          "JWT=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+        document.cookie =
+          "JWT=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly;";
+      });
+    </script>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <h1 class="display-4 fw-bold mb-4">
+              Discover and Bid on Quality Vehicles Today!
+            </h1>
+            <p class="lead mb-4">
+              An online showroom for second-hand vehicles – browse, bid, and
+              connect with sellers. Find your perfect vehicle from our curated
+              collection of quality automobiles.
+            </p>
+            <div class="d-flex gap-3">
+              <a href="/auctions" class="btn btn-light btn-custom">
+                <i class="bi bi-hammer"></i> Browse Auctions
+              </a>
+              <a
+                href="#search-section"
+                class="btn btn-outline-light btn-custom"
+              >
+                <i class="bi bi-funnel"></i> Search Vehicles
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="text-center">
+              <i
+                class="bi bi-car-front"
+                style="font-size: 15rem; opacity: 0.3"
+              ></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search and Filter Section -->
+    <section id="search-section" class="search-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="card shadow">
+              <div class="card-body p-4">
+                <h3 class="text-center mb-4">
+                  <i class="bi bi-search"></i> Find Your Perfect Vehicle
+                </h3>
+                <form action="/auctions" method="get" id="searchForm">
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <label for="search" class="form-label">Make/Model</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="search"
+                        name="search"
+                        placeholder="e.g., Toyota Camry"
+                      />
+                    </div>
+                    <div class="col-md-2">
+                      <label for="yearFrom" class="form-label">Year From</label>
+                      <select class="form-select" id="yearFrom" name="yearFrom">
+                        <option value="">Any</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="yearTo" class="form-label">Year To</label>
+                      <select class="form-select" id="yearTo" name="yearTo">
+                        <option value="">Any</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="condition" class="form-label"
+                        >Condition</label
+                      >
+                      <select
+                        class="form-select"
+                        id="condition"
+                        name="condition"
+                      >
+                        <option value="">Any</option>
+                        <option value="EXCELLENT">Excellent</option>
+                        <option value="GOOD">Good</option>
+                        <option value="FAIR">Fair</option>
+                        <option value="POOR">Poor</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <label for="maxPrice" class="form-label"
+                        >Max Price (LKR)</label
+                      >
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="maxPrice"
+                        name="maxPrice"
+                        placeholder="e.g., 5000000"
+                      />
+                    </div>
+                  </div>
+                  <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-custom">
+                      <i class="bi bi-search"></i> Search Vehicles
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-custom ms-2"
+                      onclick="clearSearch()"
+                    >
+                      <i class="bi bi-arrow-clockwise"></i> Clear
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="row text-center">
+          <div class="col-md-3 mb-4">
+            <div class="h2 text-warning" th:text="${totalListings}">0</div>
+            <p class="mb-0">Total Listings</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="h2 text-success" th:text="${activeAuctions}">0</div>
+            <p class="mb-0">Active Auctions</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="h2 text-info" th:text="${totalUsers}">0</div>
+            <p class="mb-0">Registered Users</p>
+          </div>
+          <div class="col-md-3 mb-4">
+            <div class="h2 text-primary" th:text="${completedAuctions}">0</div>
+            <p class="mb-0">Completed Auctions</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Auctions Section -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h2 class="text-center mb-5">
+              <i class="bi bi-hammer text-warning"></i> Featured Auctions
+            </h2>
+          </div>
+        </div>
+
+        <div
+          class="row"
+          th:if="${featuredAuctions != null and !featuredAuctions.isEmpty()}"
+        >
+          <div
+            class="col-lg-4 col-md-6 mb-4"
+            th:each="auction : ${featuredAuctions}"
+          >
+            <div class="card featured-card h-100">
+              <!-- Vehicle Image -->
+              <div class="position-relative">
+                <img
+                  th:src="${auction.vehicleImageUrl != null and !auction.vehicleImageUrl.isEmpty()} ? ${auction.vehicleImageUrl} : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTAgMTUwSDQ1MFYyNTBIMjUwVjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+YXRoIGQ9Ik0yNTAgMjc1SDM3NVYzMjVIMjUwVjI3NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg=='"
+                  class="vehicle-image"
+                  th:alt="${auction.vehicleMake + ' ' + auction.vehicleModel + ' (' + auction.vehicleYear + ')'}"
+                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNTAgMTUwSDQ1MFYyNTBIMjUwVjE1MFoiIGZpbGw9IiM5Q0EzQUYiLz4KPHA+YXRoIGQ9Ik0yNTAgMjc1SDM3NVYzMjVIMjUwVjI3NVoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+Cg=='; this.style.border='2px solid #dc3545';"
+                />
+
+                <!-- Auction Status Badge -->
+                <div class="position-absolute top-0 end-0 m-2">
+                  <span
+                    th:if="${auction.status == 'ACTIVE'}"
+                    class="badge bg-success"
+                    >Live Auction</span
+                  >
+                  <span
+                    th:if="${auction.status == 'PENDING'}"
+                    class="badge bg-warning"
+                    >Scheduled</span
+                  >
+                </div>
+
+                <!-- Countdown Timer -->
+                <div class="position-absolute bottom-0 start-0 m-2">
+                  <div class="countdown-timer">
+                    <i class="bi bi-clock"></i>
+                    <span
+                      th:if="${auction.status == 'ACTIVE'}"
+                      th:data-end-time="${auction.endTime}"
+                      th:id="'timer-end-' + ${auction.id}"
+                      >Loading...</span
+                    >
+                    <span
+                      th:if="${auction.status == 'PENDING'}"
+                      th:data-start-time="${auction.startTime}"
+                      th:id="'timer-start-' + ${auction.id}"
+                      >Loading...</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-body d-flex flex-column">
+                <h5
+                  class="card-title"
+                  th:text="${auction.vehicleMake + ' ' + auction.vehicleModel + ' (' + auction.vehicleYear + ')'}"
+                >
+                  Vehicle Name
+                </h5>
+
+                <div class="mb-2">
+                  <small class="text-muted">
+                    <i class="bi bi-tag"></i>
+                    <span th:text="${auction.condition}">Good</span>
+                  </small>
+                </div>
+
+                <!-- Current Bid or Starting Price -->
+                <div class="mt-auto">
+                  <div
+                    th:if="${auction.status == 'ACTIVE'}"
+                    class="current-bid"
+                  >
+                    <i class="bi bi-currency-dollar"></i>
+                    <span
+                      th:text="${#numbers.formatDecimal(auction.currentBid, 0, 0)}"
+                      >0</span
+                    >
+                    LKR
+                  </div>
+                  <div th:if="${auction.status == 'PENDING'}" class="text-info">
+                    <i class="bi bi-currency-dollar"></i>
+                    <span
+                      th:text="${#numbers.formatDecimal(auction.startingBid, 0, 0)}"
+                      >0</span
+                    >
+                    LKR
+                  </div>
+                  <small
+                    class="text-muted"
+                    th:text="${auction.status == 'ACTIVE'} ? 'Current Highest Bid' : 'Starting Price'"
+                    >Current Bid</small
+                  >
+                </div>
+              </div>
+
+              <div class="card-footer bg-transparent">
+                <div class="d-flex gap-2">
+                  <a
+                    th:href="@{/auctions/details/{id}(id=${auction.id})}"
+                    class="btn btn-outline-primary btn-sm flex-fill"
+                  >
+                    <i class="bi bi-eye"></i> View Details
+                  </a>
+
+                  <!-- Show different buttons based on authentication status -->
+                  <div th:if="${user == null}">
+                    <!-- For visitors: Login to Bid button -->
+                    <button
+                      class="btn btn-warning btn-sm flex-fill"
+                      data-bs-toggle="modal"
+                      data-bs-target="#loginModal"
+                    >
+                      <i class="bi bi-box-arrow-in-right"></i> Login to Bid
+                    </button>
+                  </div>
+                  <div th:if="${user != null}">
+                    <!-- For logged in users: Bid button -->
+                    <a
+                      th:href="@{/auctions/place-bid/{id}(id=${auction.id})}"
+                      class="btn btn-success btn-sm flex-fill"
+                    >
+                      <i class="bi bi-hammer"></i> Bid Now
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Show message if no auctions available -->
+        <div
+          class="row"
+          th:if="${featuredAuctions == null or featuredAuctions.isEmpty()}"
+        >
+          <div class="col-12 text-center">
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle"></i>
+              No auctions available at the moment. Check back later for new
+              auctions!
+            </div>
+          </div>
+        </div>
+
+        <!-- View All Button -->
+        <div class="text-center mt-4">
+          <a href="/auctions" class="btn btn-primary btn-custom">
+            <i class="bi bi-hammer"></i> View All Auctions
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div
+      class="modal fade"
+      id="loginModal"
+      tabindex="-1"
+      aria-labelledby="loginModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginModalLabel">
+              <i class="bi bi-box-arrow-in-right"></i> Login Required
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>You need to be logged in to place bids on auctions.</p>
+            <div class="d-grid gap-2">
+              <a href="/login" class="btn btn-primary">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+              </a>
+              <a href="/register" class="btn btn-outline-secondary">
+                <i class="bi bi-person-plus"></i> Create Account
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Page-specific JavaScript - Loaded after header and footer scripts -->
+    <script th:src="@{/js/homepage.js}"></script>
+  </body>
+</html>
